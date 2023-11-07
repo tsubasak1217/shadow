@@ -9,6 +9,7 @@ class Player{
 	float speed_;
 
 public:
+
 	Player(Map map) {
 		pos_ = {
 			map.firstPlayerPos_.x,
@@ -25,9 +26,9 @@ public:
 
 	void Init(int sceneNum);
 
-	void Update(char* keys,Scene scene);
+	void Update(char* keys);
 
-	void Draw(Resources rs,Scene scene, Map map);
+	void Draw(Resources rs,Map map);
 
 	//アクセッサ
 	Vec2 GetPos() { return pos_; }

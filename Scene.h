@@ -1,6 +1,4 @@
 #pragma once
-#include "Resources.h"
-
 enum SCENENAME {
 	TITLE,
 	SELECT,
@@ -9,9 +7,13 @@ enum SCENENAME {
 };
 
 class Scene{
-	int sceneNum_ = GAME;
 	
 public:
-	int GetSceneNum() { return sceneNum_; }
+	
+	static int sceneNum_;
+	Scene();
+	~Scene();
+	
+	//int GetSceneNum() { return sceneNum_; }
 };
 

@@ -1,7 +1,11 @@
 ﻿#include "Map.h"
 
+int Map::stageNum_ = 0;
+
 //コンストラクタ============================================================================================
-Map::Map(Global global) {
+Map::Map(Resources rs) {
+
+	stageNum_ = 0;
 
 	//要素を消去
 	pos_.clear();
@@ -10,16 +14,16 @@ Map::Map(Global global) {
 	vertex_.clear();
 
 	//マップ読み込み
-	mapChip_ = LoadFile("./Resources/mapChip.csv");
+	mapChip_ = LoadFile(rs.mapCsv_[stageNum_]);
 	//行を反転(ワールド座標表示のため)
 //	std::reverse(mapChip_.begin(), mapChip_.end());
 
 
 	//ブロックの縦横幅
 	size_ = {
-		((float(global.windowSize_.x) / 4.0f) * 3.0f) / mapChip_[0].size(),
-		((float(global.windowSize_.x) / 4.0f) * 3.0f) / mapChip_[0].size(),
-		((float(global.windowSize_.x) / 4.0f) * 3.0f) / mapChip_[0].size()
+		((float(Global::windowSize_.x) / 4.0f) * 3.0f) / mapChip_[0].size(),
+		((float(Global::windowSize_.x) / 4.0f) * 3.0f) / mapChip_[0].size(),
+		((float(Global::windowSize_.x) / 4.0f) * 3.0f) / mapChip_[0].size()
 	};
 
 	puzzleMapSize_ = {
@@ -144,8 +148,8 @@ Map::Map(Global global) {
 
 
 	//パズルマップの左上座標をいい感じに設定
-	puzzleLeftTop_.x = (global.windowSize_.x * 0.5f) - (mapChip_[0].size() * size_.x) * 0.5f;
-	puzzleLeftTop_.y = global.windowSize_.y - ((mapChip_.size() * size_.y) +((mapChip_.size() * size_.y) * 0.4f));
+	puzzleLeftTop_.x = (Global::windowSize_.x * 0.5f) - (mapChip_[0].size() * size_.x) * 0.5f;
+	puzzleLeftTop_.y = Global::windowSize_.y - ((mapChip_.size() * size_.y) +((mapChip_.size() * size_.y) * 0.4f));
 }
 
 
@@ -177,9 +181,9 @@ void Map::Init(int sceneNum) {
 
 
 //====================================================アップデート=============================================================
-void Map::Update(char* keys,Resources rs,Scene scene,Global global) {
+void Map::Update(char* keys,Resources rs ) {
 
-	switch (scene.GetSceneNum()) {
+	switch (Scene::sceneNum_) {
 		//====================================================================================
 	case TITLE://							   タイトル画面
 		//====================================================================================
@@ -210,16 +214,16 @@ void Map::Update(char* keys,Resources rs,Scene scene,Global global) {
 		vertex_.clear();
 
 		//マップ読み込み
-		mapChip_ = LoadFile("./Resources/mapChip.csv");
+		mapChip_ = LoadFile(rs.mapCsv_[stageNum_]);
 		//行を反転(ワールド座標表示のため)
 	//	std::reverse(mapChip_.begin(), mapChip_.end());
 
 
 		//ブロックの縦横幅
 		size_ = {
-			((float(global.windowSize_.x) / 4.0f) * 3.0f) / mapChip_[0].size(),
-			((float(global.windowSize_.x) / 4.0f) * 3.0f) / mapChip_[0].size(),
-			((float(global.windowSize_.x) / 4.0f) * 3.0f) / mapChip_[0].size()
+			((float(Global::windowSize_.x) / 4.0f) * 3.0f) / mapChip_[0].size(),
+			((float(Global::windowSize_.x) / 4.0f) * 3.0f) / mapChip_[0].size(),
+			((float(Global::windowSize_.x) / 4.0f) * 3.0f) / mapChip_[0].size()
 		};
 
 		puzzleMapSize_ = {
@@ -344,16 +348,16 @@ void Map::Update(char* keys,Resources rs,Scene scene,Global global) {
 
 
 		//パズルマップの左上座標をいい感じに設定
-		puzzleLeftTop_.x = (global.windowSize_.x * 0.5f) - (mapChip_[0].size() * size_.x) * 0.5f;
-		puzzleLeftTop_.y = global.windowSize_.y - ((mapChip_.size() * size_.y) + ((mapChip_.size() * size_.y) * 0.4f));
+		puzzleLeftTop_.x = (Global::windowSize_.x * 0.5f) - (mapChip_[0].size() * size_.x) * 0.5f;
+		puzzleLeftTop_.y = Global::windowSize_.y - ((mapChip_.size() * size_.y) + ((mapChip_.size() * size_.y) * 0.4f));
 	}
 };
 
 
 //====================================================描画=============================================================
-void Map::Draw(Resources rs,Scene scene) {
+void Map::Draw(Resources rs) {
 
-	switch (scene.GetSceneNum()) {
+	switch (Scene::sceneNum_) {
 		//====================================================================================
 	case TITLE://							   タイトル画面
 		//====================================================================================
@@ -382,7 +386,7 @@ void Map::Draw(Resources rs,Scene scene) {
 						int(puzzleLeftTop_.y + pos_[row][col].y - size_.y * 0.5f),
 						0, 0,
 						1, 1,
-						rs.whiteGH,
+						rs.whiteGH_,
 						0x0000ffff
 					);
 
@@ -399,7 +403,7 @@ void Map::Draw(Resources rs,Scene scene) {
 						int(puzzleLeftTop_.y + pos_[row][col].y - size_.y * 0.5f),
 						0, 0,
 						1, 1,
-						rs.whiteGH,
+						rs.whiteGH_,
 						0x00ff00ff
 					);
 				}

@@ -107,7 +107,7 @@ void Screen::Draw(Map map, Resources rs, Light light) {
 		int(LRTB_.w),
 		0, 0,
 		1, 1,
-		rs.whiteGH,
+		rs.whiteGH_,
 		0xffffffff
 	);
 
@@ -125,7 +125,7 @@ void Screen::Draw(Map map, Resources rs, Light light) {
 			int(boxPos_[i][3].y),
 			0, 0,
 			1, 1,
-			rs.whiteGH,
+			rs.whiteGH_,
 			0x000000ff
 		);
 
@@ -326,7 +326,6 @@ void Screen::Draw(Map map, Resources rs, Light light) {
 
 		//描画--------------------------------------------------------
 
-
 		Novice::DrawQuad(
 			int(map.GetPuzzleLeftTop().x + map.GetVertex()[i][6].x),
 			int(map.GetPuzzleLeftTop().y + map.GetVertex()[i][6].y),
@@ -338,7 +337,7 @@ void Screen::Draw(Map map, Resources rs, Light light) {
 			int(bellowShadowCrossPos[3].y),
 			0, 0,
 			1, 1,
-			rs.whiteGH,
+			rs.whiteGH_,
 			0x0000ffff
 		);
 
@@ -355,7 +354,7 @@ void Screen::Draw(Map map, Resources rs, Light light) {
 			int(bellowShadowCrossPos[1].y),
 			0, 0,
 			1, 1,
-			rs.whiteGH,
+			rs.whiteGH_,
 			0x0000ffff
 		);
 
@@ -370,7 +369,7 @@ void Screen::Draw(Map map, Resources rs, Light light) {
 			int(bellowShadowCrossPos[3].y),
 			0, 0,
 			1, 1,
-			rs.whiteGH,
+			rs.whiteGH_,
 			0x0000ffff
 		);
 
