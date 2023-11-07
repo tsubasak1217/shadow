@@ -38,6 +38,7 @@ public:
 	Vec3 GetSize() { return size_; }
 	Vec2 GetPuzzleLeftTop() { return puzzleLeftTop_; }
 	Vec2 GetPuzzleMapSize() { return puzzleMapSize_; }
+	std::vector<std::vector<Vec2>>GetPos() { return pos_; }
 
 	//ブロックの頂点座標を取得する関数
 	std::vector<std::vector<Vec3>>GetVertex() { return vertex_; }

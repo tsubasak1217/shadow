@@ -57,16 +57,6 @@ void Player::Update(char* keys,Map map) {
 		pos_.x += velocity_.x;
 		pos_.y += velocity_.y;
 
-		//プレイヤーの番地計算
-		for (int i = 0; i < 4; i++) {
-			preAddress_[i] = address_[i];
-			
-			address_[i] = {
-				int((pos_.y - map.GetPuzzleLeftTop().y)/map.GetSize().y),
-				int((pos_.x - map.GetPuzzleLeftTop().x) / map.GetSize().x)
-			};
-
-		}
 
 
 		/*-------------------------------押し戻し-------------------------------*/
@@ -92,6 +82,43 @@ void Player::Update(char* keys,Map map) {
 			pos_.x = map.GetPuzzleLeftTop().x + size_.x * 0.5f;
 		
 		}
+
+		//前フレーム番地の保存
+		for (int i = 0; i < 4; i++) {
+			preAddress_[i] = address_[i];
+
+			Novice::ScreenPrintf(0, i * 20, "[%d,%d]", address_[i].x, address_[i].y);
+		}
+
+		//プレイヤーの番地計算
+		CalcAddress(
+			address_,
+			{ pos_.x - map.GetPuzzleLeftTop().x,pos_.y - map.GetPuzzleLeftTop().y },
+			{ map.GetSize().x,map.GetSize().y },
+			size_.x * 0.5f
+		);
+
+
+		//マップチップの当たり判定
+		PushBackMapChip(
+			int(map.GetMapChip().size()), int(map.GetMapChip()[0].size()),
+			&pos_,
+			address_, preAddress_,
+			size_,
+			velocity_,
+			map.GetPos(),
+			map.GetMapChip(),
+			{ map.GetSize().x,map.GetSize().y }
+		);
+
+
+		//プレイヤーの番地を再計算
+		CalcAddress(
+			address_,
+			{pos_.x - map.GetPuzzleLeftTop().x,pos_.y - map.GetPuzzleLeftTop().y},
+			{ map.GetSize().x,map.GetSize().y}, 
+			size_.x * 0.5f
+		);
 
 		break;
 		//====================================================================================

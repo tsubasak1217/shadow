@@ -1,5 +1,20 @@
 ﻿#include "LocalFunc.h"
 /*===============================プレイヤーとブロックの当たり判定===================================*/
+void CalcAddress(Vector2<int>address[4], Vec2 pos, Vec2 size, float radius){
+
+	address[LeftTop].x = int((pos.x - radius) / size.x);
+	address[LeftTop].y = int((pos.y - radius) / size.y);
+
+	address[RightTop].x = int((pos.x + radius - 1) / size.x);
+	address[RightTop].y = int((pos.y - radius) / size.y);
+
+	address[LeftBottom].x = int((pos.x - radius) / size.x);
+	address[LeftBottom].y = int((pos.y + radius - 1) / size.y);
+
+	address[RightBottom].x = int((pos.x + radius - 1) / size.x);
+	address[RightBottom].y = int((pos.y + radius - 1) / size.y);
+}
+
 int PushBackMapChip(
 	int rowMAX, int colMAX,
 	Vec2* playerCenterPos,
@@ -44,7 +59,7 @@ int PushBackMapChip(
 
 									//x座標を押し戻す
 									playerCenterPos->x = blockPos[playerAddress[i].y][playerAddress[i].x].x +
-										blockSize.x + (playerSize.x * 0.5f);
+										(blockSize.x  * 0.5f)+ (playerSize.x * 0.5f);
 
 
 								}
@@ -59,7 +74,7 @@ int PushBackMapChip(
 								if (blockType[playerAddress[i].y][playerAddress[i].x] >= 1) {
 
 									//x座標を押し戻す
-									playerCenterPos->x = blockPos[playerAddress[i].y][playerAddress[i].x].x - (playerSize.x * 0.5f);
+									playerCenterPos->x = blockPos[playerAddress[i].y][playerAddress[i].x].x -(blockSize.x * 0.5f) - (playerSize.x * 0.5f);
 
 								}
 							}
@@ -74,7 +89,7 @@ int PushBackMapChip(
 
 									//x座標を押し戻す
 									playerCenterPos->x = blockPos[playerAddress[i].y][playerAddress[i].x].x +
-										blockSize.x + (playerSize.x * 0.5f);
+										(blockSize.x  * 0.5f)+ (playerSize.x * 0.5f);
 
 								}
 							}
@@ -88,7 +103,7 @@ int PushBackMapChip(
 								if (blockType[playerAddress[i].y][playerAddress[i].x] >= 1) {
 
 									//x座標を押し戻す
-									playerCenterPos->x = blockPos[playerAddress[i].y][playerAddress[i].x].x - (playerSize.x * 0.5f);
+									playerCenterPos->x = blockPos[playerAddress[i].y][playerAddress[i].x].x -(blockSize.x * 0.5f) - (playerSize.x * 0.5f);
 
 								}
 							}
@@ -115,7 +130,7 @@ int PushBackMapChip(
 
 									//y座標を押し戻す
 									playerCenterPos->y = blockPos[playerAddress[i].y][playerAddress[i].x].y +
-										blockSize.y + (playerSize.x * 0.5f);
+										(blockSize.y  * 0.5f)+ (playerSize.y * 0.5f);
 
 								}
 							}
@@ -130,7 +145,7 @@ int PushBackMapChip(
 
 									//y座標を押し戻す
 									playerCenterPos->y = blockPos[playerAddress[i].y][playerAddress[i].x].y +
-										blockSize.y + (playerSize.x * 0.5f);
+										(blockSize.y  * 0.5f)+ (playerSize.y * 0.5f);
 								}
 							}
 
@@ -143,7 +158,7 @@ int PushBackMapChip(
 								if (blockType[playerAddress[i].y][playerAddress[i].x] >= 1) {
 
 									//y座標を押し戻す
-									playerCenterPos->y = blockPos[playerAddress[i].y][playerAddress[i].x].y - (playerSize.y * 0.5f);
+									playerCenterPos->y = blockPos[playerAddress[i].y][playerAddress[i].x].y - (blockSize.y * 0.5f) - (playerSize.y * 0.5f);
 
 								}
 							}
@@ -157,7 +172,7 @@ int PushBackMapChip(
 								if (blockType[playerAddress[i].y][playerAddress[i].x] >= 1) {
 
 									//y座標を押し戻す
-									playerCenterPos->y = blockPos[playerAddress[i].y][playerAddress[i].x].y - (playerSize.y * 0.5f);
+									playerCenterPos->y = blockPos[playerAddress[i].y][playerAddress[i].x].y - (blockSize.y * 0.5f) - (playerSize.y * 0.5f);
 
 								}
 							}
@@ -190,9 +205,9 @@ int PushBackMapChip(
 
 									//x,y両方押し戻す
 									playerCenterPos->y = blockPos[playerAddress[i].y][playerAddress[i].x].y +
-										blockSize.y + (playerSize.x * 0.5f);
+										(blockSize.y  * 0.5f)+ (playerSize.y * 0.5f);
 									playerCenterPos->x = blockPos[playerAddress[i].y][playerAddress[i].x].x +
-										blockSize.x + (playerSize.x * 0.5f);
+										(blockSize.x  * 0.5f)+ (playerSize.x * 0.5f);
 
 									surface = Right_Bottom;
 
@@ -203,7 +218,7 @@ int PushBackMapChip(
 
 									//xを押し戻す
 									playerCenterPos->x = blockPos[playerAddress[i].y][playerAddress[i].x].x +
-										blockSize.x + (playerSize.x * 0.5f);
+										(blockSize.x  * 0.5f)+ (playerSize.x * 0.5f);
 
 									surface = Right;
 									//======================プレイヤーの左にブロックがない場合=========================
@@ -213,7 +228,7 @@ int PushBackMapChip(
 
 									//yを押し戻す
 									playerCenterPos->y = blockPos[playerAddress[i].y][playerAddress[i].x].y +
-										blockSize.y + (playerSize.x * 0.5f);
+										(blockSize.y  * 0.5f)+ (playerSize.y * 0.5f);
 
 									surface = Bottom;
 									//========================行先にしかブロックがない場合===========================
@@ -228,19 +243,19 @@ int PushBackMapChip(
 									float rateY = sqrtf(powf(playerCenterPos->y - prePos.y, 2)) / sqrtf(powf(playerCenterPos->x - prePos.x, 2));
 									/*前座標　⇒　ブロック右下までのYの移動量の比率*/
 									float rateY2 =
-										sqrtf(powf(blockPos[playerAddress[i].y][playerAddress[i].x].y + blockSize.y - prePos.y, 2)) /
-										sqrtf(powf(blockPos[playerAddress[i].y][playerAddress[i].x].x + blockSize.x - prePos.x, 2));
+										sqrtf(powf(blockPos[playerAddress[i].y][playerAddress[i].x].y + (blockSize.y  * 0.5f)- prePos.y, 2)) /
+										sqrtf(powf(blockPos[playerAddress[i].y][playerAddress[i].x].x + (blockSize.x * 0.5f)- prePos.x, 2));
 
 									if (rateY > rateY2) {
 										//xを押し戻す
 										playerCenterPos->x = blockPos[playerAddress[i].y][playerAddress[i].x].x +
-											blockSize.x + (playerSize.x * 0.5f);
+											(blockSize.x  * 0.5f)+ (playerSize.x * 0.5f);
 
 										surface = Right;
 									} else {
 										//yを押し戻す
 										playerCenterPos->y = blockPos[playerAddress[i].y][playerAddress[i].x].y +
-											blockSize.y + (playerSize.x * 0.5f);
+											(blockSize.y  * 0.5f)+ (playerSize.y * 0.5f);
 
 										surface = Bottom;
 									}
@@ -256,7 +271,7 @@ int PushBackMapChip(
 
 									//xを押し戻す
 									playerCenterPos->x = blockPos[playerAddress[i].y][playerAddress[i].x].x +
-										blockSize.x + (playerSize.x * 0.5f);
+										(blockSize.x  * 0.5f)+ (playerSize.x * 0.5f);
 
 								}
 
@@ -271,7 +286,7 @@ int PushBackMapChip(
 
 									//yを押し戻す
 									playerCenterPos->y = blockPos[playerAddress[i].y][playerAddress[i].x].y +
-										blockSize.y + (playerSize.x * 0.5f);
+										(blockSize.y  * 0.5f)+ (playerSize.y * 0.5f);
 
 								}
 
@@ -292,8 +307,8 @@ int PushBackMapChip(
 
 									//x,y両方押し戻す
 									playerCenterPos->y = blockPos[playerAddress[i].y][playerAddress[i].x].y +
-										blockSize.y + (playerSize.x * 0.5f);
-									playerCenterPos->x = blockPos[playerAddress[i].y][playerAddress[i].x].x - (playerSize.x * 0.5f);
+										(blockSize.y  * 0.5f)+ (playerSize.y * 0.5f);
+									playerCenterPos->x = blockPos[playerAddress[i].y][playerAddress[i].x].x -(blockSize.x * 0.5f) - (playerSize.x * 0.5f);
 
 									surface = Bottom_Left;
 
@@ -303,7 +318,7 @@ int PushBackMapChip(
 									blockType[playerAddress[i].y][playerAddress[i].x - 1] < 1) {
 
 									//xを押し戻す
-									playerCenterPos->x = blockPos[playerAddress[i].y][playerAddress[i].x].x - (playerSize.x * 0.5f);
+									playerCenterPos->x = blockPos[playerAddress[i].y][playerAddress[i].x].x -(blockSize.x * 0.5f) - (playerSize.x * 0.5f);
 
 									surface = Left;
 
@@ -314,7 +329,7 @@ int PushBackMapChip(
 
 									//yを押し戻す
 									playerCenterPos->y = blockPos[playerAddress[i].y][playerAddress[i].x].y +
-										blockSize.y + (playerSize.x * 0.5f);
+										(blockSize.y  * 0.5f)+ (playerSize.y * 0.5f);
 
 									surface = Bottom;
 
@@ -330,18 +345,18 @@ int PushBackMapChip(
 									float rateY = sqrtf(powf(playerCenterPos->y - prePos.y, 2)) / sqrtf(powf(playerCenterPos->x - prePos.x, 2));
 									/*前座標　⇒　ブロック右下までのYの移動量の比率*/
 									float rateY2 =
-										sqrtf(powf(blockPos[playerAddress[i].y][playerAddress[i].x].y + blockSize.y - prePos.y, 2)) /
-										sqrtf(powf(blockPos[playerAddress[i].y][playerAddress[i].x].x + blockSize.x - prePos.x, 2));
+										sqrtf(powf(blockPos[playerAddress[i].y][playerAddress[i].x].y + (blockSize.y  * 0.5f)- prePos.y, 2)) /
+										sqrtf(powf(blockPos[playerAddress[i].y][playerAddress[i].x].x + (blockSize.x * 0.5f)- prePos.x, 2));
 
 									if (rateY > rateY2) {
 										//xを押し戻す
-										playerCenterPos->x = blockPos[playerAddress[i].y][playerAddress[i].x].x - (playerSize.x * 0.5f);
+										playerCenterPos->x = blockPos[playerAddress[i].y][playerAddress[i].x].x -(blockSize.x * 0.5f) - (playerSize.x * 0.5f);
 
 										surface = Left;
 									} else {
 										//yを押し戻す
 										playerCenterPos->y = blockPos[playerAddress[i].y][playerAddress[i].x].y +
-											blockSize.y + (playerSize.x * 0.5f);
+											(blockSize.y  * 0.5f)+ (playerSize.y * 0.5f);
 										surface = Bottom;
 									}
 								}
@@ -355,7 +370,7 @@ int PushBackMapChip(
 								if (blockType[playerAddress[i].y][playerAddress[i].x] >= 1) {
 
 									//xを押し戻す
-									playerCenterPos->x = blockPos[playerAddress[i].y][playerAddress[i].x].x - (playerSize.x * 0.5f);
+									playerCenterPos->x = blockPos[playerAddress[i].y][playerAddress[i].x].x -(blockSize.x * 0.5f) - (playerSize.x * 0.5f);
 
 								}
 
@@ -370,7 +385,7 @@ int PushBackMapChip(
 
 									//yを押し戻す
 									playerCenterPos->y = blockPos[playerAddress[i].y][playerAddress[i].x].y +
-										blockSize.y + (playerSize.x * 0.5f);
+										(blockSize.y  * 0.5f)+ (playerSize.y * 0.5f);
 
 								}
 
@@ -391,9 +406,9 @@ int PushBackMapChip(
 									blockType[playerAddress[i].y][playerAddress[i].x + 1] >= 1) {
 
 									//x,y両方押し戻す
-									playerCenterPos->y = blockPos[playerAddress[i].y][playerAddress[i].x].y - (playerSize.y * 0.5f);
+									playerCenterPos->y = blockPos[playerAddress[i].y][playerAddress[i].x].y - (blockSize.y * 0.5f) - (playerSize.y * 0.5f);
 									playerCenterPos->x = blockPos[playerAddress[i].y][playerAddress[i].x].x +
-										blockSize.x + (playerSize.x * 0.5f);
+										(blockSize.x  * 0.5f)+ (playerSize.x * 0.5f);
 
 									surface = Top_Right;
 
@@ -404,7 +419,7 @@ int PushBackMapChip(
 
 									//xを押し戻す
 									playerCenterPos->x = blockPos[playerAddress[i].y][playerAddress[i].x].x +
-										blockSize.x + (playerSize.x * 0.5f);
+										(blockSize.x  * 0.5f)+ (playerSize.x * 0.5f);
 
 									surface = Right;
 
@@ -414,7 +429,7 @@ int PushBackMapChip(
 									blockType[playerAddress[i].y][playerAddress[i].x + 1] >= 1) {
 
 									//yを押し戻す
-									playerCenterPos->y = blockPos[playerAddress[i].y][playerAddress[i].x].y - (playerSize.y * 0.5f);
+									playerCenterPos->y = blockPos[playerAddress[i].y][playerAddress[i].x].y - (blockSize.y * 0.5f) - (playerSize.y * 0.5f);
 
 									surface = Top;
 
@@ -430,18 +445,18 @@ int PushBackMapChip(
 									float rateY = sqrtf(powf(playerCenterPos->y - prePos.y, 2)) / sqrtf(powf(playerCenterPos->x - prePos.x, 2));
 									/*前座標　⇒　ブロック右下までのYの移動量の比率*/
 									float rateY2 =
-										sqrtf(powf(blockPos[playerAddress[i].y][playerAddress[i].x].y + blockSize.y - prePos.y, 2)) /
-										sqrtf(powf(blockPos[playerAddress[i].y][playerAddress[i].x].x + blockSize.x - prePos.x, 2));
+										sqrtf(powf(blockPos[playerAddress[i].y][playerAddress[i].x].y + (blockSize.y  * 0.5f)- prePos.y, 2)) /
+										sqrtf(powf(blockPos[playerAddress[i].y][playerAddress[i].x].x + (blockSize.x * 0.5f)- prePos.x, 2));
 
 									if (rateY > rateY2) {
 										//xを押し戻す
 										playerCenterPos->x = blockPos[playerAddress[i].y][playerAddress[i].x].x +
-											blockSize.x + (playerSize.x * 0.5f);
+											(blockSize.x  * 0.5f)+ (playerSize.x * 0.5f);
 
 										surface = Right;
 									} else {
 										//yを押し戻す
-										playerCenterPos->y = blockPos[playerAddress[i].y][playerAddress[i].x].y - (playerSize.y * 0.5f);
+										playerCenterPos->y = blockPos[playerAddress[i].y][playerAddress[i].x].y - (blockSize.y * 0.5f) - (playerSize.y * 0.5f);
 
 										surface = Top;
 									}
@@ -456,7 +471,7 @@ int PushBackMapChip(
 
 									//xを押し戻す
 									playerCenterPos->x = blockPos[playerAddress[i].y][playerAddress[i].x].x +
-										blockSize.x + (playerSize.x * 0.5f);
+										(blockSize.x  * 0.5f)+ (playerSize.x * 0.5f);
 
 								}
 
@@ -470,7 +485,7 @@ int PushBackMapChip(
 								if (blockType[playerAddress[i].y][playerAddress[i].x] >= 1) {
 
 									//yを押し戻す
-									playerCenterPos->y = blockPos[playerAddress[i].y][playerAddress[i].x].y - (playerSize.y * 0.5f);
+									playerCenterPos->y = blockPos[playerAddress[i].y][playerAddress[i].x].y - (blockSize.y * 0.5f) - (playerSize.y * 0.5f);
 
 								}
 
@@ -490,8 +505,8 @@ int PushBackMapChip(
 									blockType[playerAddress[i].y][playerAddress[i].x - 1] >= 1) {
 
 									//x,y両方押し戻す
-									playerCenterPos->y = blockPos[playerAddress[i].y][playerAddress[i].x].y - (playerSize.y * 0.5f);
-									playerCenterPos->x = blockPos[playerAddress[i].y][playerAddress[i].x].x - (playerSize.x * 0.5f);
+									playerCenterPos->y = blockPos[playerAddress[i].y][playerAddress[i].x].y - (blockSize.y * 0.5f) - (playerSize.y * 0.5f);
+									playerCenterPos->x = blockPos[playerAddress[i].y][playerAddress[i].x].x -(blockSize.x * 0.5f) - (playerSize.x * 0.5f);
 
 									surface = Left_Top;
 									//=======================プレイヤーの上にブロックがない場合========================
@@ -500,7 +515,7 @@ int PushBackMapChip(
 									blockType[playerAddress[i].y][playerAddress[i].x - 1] < 1) {
 
 									//xを押し戻す
-									playerCenterPos->x = blockPos[playerAddress[i].y][playerAddress[i].x].x - (playerSize.x * 0.5f);
+									playerCenterPos->x = blockPos[playerAddress[i].y][playerAddress[i].x].x -(blockSize.x * 0.5f) - (playerSize.x * 0.5f);
 
 									surface = Left;
 
@@ -510,7 +525,7 @@ int PushBackMapChip(
 									blockType[playerAddress[i].y][playerAddress[i].x - 1] >= 1) {
 
 									//yを押し戻す
-									playerCenterPos->y = blockPos[playerAddress[i].y][playerAddress[i].x].y - (playerSize.y * 0.5f);
+									playerCenterPos->y = blockPos[playerAddress[i].y][playerAddress[i].x].y - (blockSize.y * 0.5f) - (playerSize.y * 0.5f);
 
 									surface = Top;
 
@@ -526,12 +541,12 @@ int PushBackMapChip(
 									float rateY = sqrtf(powf(playerCenterPos->y - prePos.y, 2)) / sqrtf(powf(playerCenterPos->x - prePos.x, 2));
 									/*前座標　⇒　ブロック右下までのYの移動量の比率*/
 									float rateY2 =
-										sqrtf(powf(blockPos[playerAddress[i].y][playerAddress[i].x].y + blockSize.y - prePos.y, 2)) /
-										sqrtf(powf(blockPos[playerAddress[i].y][playerAddress[i].x].x + blockSize.x - prePos.x, 2));
+										sqrtf(powf(blockPos[playerAddress[i].y][playerAddress[i].x].y + (blockSize.y  * 0.5f)- prePos.y, 2)) /
+										sqrtf(powf(blockPos[playerAddress[i].y][playerAddress[i].x].x + (blockSize.x * 0.5f)- prePos.x, 2));
 
 									if (rateY > rateY2) {
 										//xを押し戻す
-										playerCenterPos->x = blockPos[playerAddress[i].y][playerAddress[i].x].x - (playerSize.x * 0.5f);
+										playerCenterPos->x = blockPos[playerAddress[i].y][playerAddress[i].x].x -(blockSize.x * 0.5f) - (playerSize.x * 0.5f);
 
 										surface = Left;
 									} else {
@@ -551,7 +566,7 @@ int PushBackMapChip(
 								if (blockType[playerAddress[i].y][playerAddress[i].x] >= 1) {
 
 									//xを押し戻す
-									playerCenterPos->x = blockPos[playerAddress[i].y][playerAddress[i].x].x - (playerSize.x * 0.5f);
+									playerCenterPos->x = blockPos[playerAddress[i].y][playerAddress[i].x].x -(blockSize.x * 0.5f) - (playerSize.x * 0.5f);
 								}
 
 								surface = Left;
@@ -564,7 +579,7 @@ int PushBackMapChip(
 								if (blockType[playerAddress[i].y][playerAddress[i].x] >= 1) {
 
 									//yを押し戻す
-									playerCenterPos->y = blockPos[playerAddress[i].y][playerAddress[i].x].y - (playerSize.y * 0.5f);
+									playerCenterPos->y = blockPos[playerAddress[i].y][playerAddress[i].x].y - (blockSize.y * 0.5f) - (playerSize.y * 0.5f);
 
 								}
 								surface = Top;
