@@ -1,5 +1,5 @@
 #pragma once
-#include "Resources.h"
+#include "ChangeScene.h"
 
 class Global{
 public:
