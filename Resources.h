@@ -1,5 +1,5 @@
 #pragma once
-#include "MyFunc.h"
+#include "LocalFunc.h"
 class Resources{
 
 public:
