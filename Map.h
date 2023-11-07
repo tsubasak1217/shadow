@@ -22,13 +22,13 @@ public:
 	//コンストラクタ
 	Map(Global global);
 
-	void Init();
+	void Init(int sceneNum);
 
 	//
-	void Update(char* keys, Global global);
+	void Update(char* keys,Resources rs,Scene scene,Global global);
 
 	//
-	void Draw(Resources rs);
+	void Draw(Resources rs,Scene scene);
 
 	//アクセッサ
 	std::vector<std::vector<int>>GetMapChip() { return mapChip_; }

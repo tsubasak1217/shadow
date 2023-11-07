@@ -30,7 +30,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	char keys[256] = {0};
 	char preKeys[256] = {0};
 
+	
 	Resources rs;
+	
+	Scene scene;
+	ChangeScene cs;
+	
 	Map map(global);
 	Player player(map);
 	Light light(global,map);
@@ -49,7 +54,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓更新処理ここから
 		///
 
-		player.Update(keys);
+		map.Update(keys,rs,scene,global);
+		player.Update(keys,scene);
 		light.Update(keys,map,((3.0f/4.0f) * float(M_PI)),global);
 		screen.Update(map, light);
 
@@ -63,8 +69,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		
 		screen.Draw(map,rs,light);
 		light.Draw(map);
-		map.Draw(rs);
-		player.Draw(rs,map);
+		map.Draw(rs,scene);
+		player.Draw(rs,scene,map);
 
 		///
 		/// ↑描画処理ここまで

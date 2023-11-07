@@ -23,11 +23,11 @@ public:
 
 	}
 
-	void Init();
+	void Init(int sceneNum);
 
-	void Update(char* keys);
+	void Update(char* keys,Scene scene);
 
-	void Draw(Resources rs, Map map);
+	void Draw(Resources rs,Scene scene, Map map);
 
 	//アクセッサ
 	Vec2 GetPos() { return pos_; }

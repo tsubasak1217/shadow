@@ -62,6 +62,12 @@
     <ClCompile Include="LocalFunc.cpp">
       <Filter>KamataEngine</Filter>
     </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>KamataEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="ChangeScene.cpp">
+      <Filter>KamataEngine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="C:\KamataEngine\DirectXGame\audio\Audio.h">
@@ -139,5 +145,7 @@
     <ClInclude Include="global.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="LocalFunc.h" />
+    <ClInclude Include="Scene.h" />
+    <ClInclude Include="ChangeScene.h" />
   </ItemGroup>
 </Project>

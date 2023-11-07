@@ -1,5 +1,6 @@
 ﻿#include "Map.h"
 
+//コンストラクタ============================================================================================
 Map::Map(Global global) {
 
 	//要素を消去
@@ -147,10 +148,59 @@ Map::Map(Global global) {
 	puzzleLeftTop_.y = global.windowSize_.y - ((mapChip_.size() * size_.y) +((mapChip_.size() * size_.y) * 0.4f));
 }
 
-void Map::Update(char* keys,Global global) {
+
+//=========================================================初期化関数==============================================================
+void Map::Init(int sceneNum) {
+
+	switch (sceneNum) {
+		//====================================================================================
+	case TITLE://							   タイトル画面
+		//====================================================================================
+		break;
+		//====================================================================================
+	case SELECT://							   ステージ選択
+		//====================================================================================
+		break;
+		//====================================================================================
+	case GAME://								ゲーム本編
+		//====================================================================================
+		break;
+		//====================================================================================
+	case CLEAR://								クリア画面
+		//====================================================================================
+		break;
+
+	default:
+		break;
+	}
+}
 
 
-	//ENTERキーでホットリロードする
+//====================================================アップデート=============================================================
+void Map::Update(char* keys,Resources rs,Scene scene,Global global) {
+
+	switch (scene.GetSceneNum()) {
+		//====================================================================================
+	case TITLE://							   タイトル画面
+		//====================================================================================
+		break;
+		//====================================================================================
+	case SELECT://							   ステージ選択
+		//====================================================================================
+		break;
+		//====================================================================================
+	case GAME://								ゲーム本編
+		//====================================================================================
+		break;
+		//====================================================================================
+	case CLEAR://								クリア画面
+		//====================================================================================
+		break;
+
+	default:
+		break;
+	}
+
 	if (keys[DIK_RETURN]) {
 		
 		//要素を消去
@@ -299,67 +349,92 @@ void Map::Update(char* keys,Global global) {
 	}
 };
 
-void Map::Draw(Resources rs) {
 
-	for (int row = 0; row < mapChip_.size(); row++) {
-		for (int col = 0; col < mapChip_[0].size(); col++) {
+//====================================================描画=============================================================
+void Map::Draw(Resources rs,Scene scene) {
 
-			if (mapChip_[row][col] == 1) {
+	switch (scene.GetSceneNum()) {
+		//====================================================================================
+	case TITLE://							   タイトル画面
+		//====================================================================================
+		break;
+		//====================================================================================
+	case SELECT://							   ステージ選択
+		//====================================================================================
+		break;
+		//====================================================================================
+	case GAME://								ゲーム本編
+		//====================================================================================
 
-				Novice::DrawQuad(
-					int(puzzleLeftTop_.x + pos_[row][col].x - size_.x * 0.5f),
-					int(puzzleLeftTop_.y + pos_[row][col].y + size_.y * 0.5f),
-					int(puzzleLeftTop_.x + pos_[row][col].x + size_.x * 0.5f),
-					int(puzzleLeftTop_.y + pos_[row][col].y + size_.y * 0.5f),
-					int(puzzleLeftTop_.x + pos_[row][col].x - size_.x * 0.5f),
-					int(puzzleLeftTop_.y + pos_[row][col].y - size_.y * 0.5f),
-					int(puzzleLeftTop_.x + pos_[row][col].x + size_.x * 0.5f),
-					int(puzzleLeftTop_.y + pos_[row][col].y - size_.y * 0.5f),
-					0, 0,
-					1, 1,
-					rs.whiteGH,
-					0x0000ffff
-				);
-			
-			}else if (mapChip_[row][col] == 2) {
+		for (int row = 0; row < mapChip_.size(); row++) {
+			for (int col = 0; col < mapChip_[0].size(); col++) {
 
-				Novice::DrawQuad(
-					int(puzzleLeftTop_.x + pos_[row][col].x - size_.x * 0.5f),
-					int(puzzleLeftTop_.y + pos_[row][col].y + size_.y * 0.5f),
-					int(puzzleLeftTop_.x + pos_[row][col].x + size_.x * 0.5f),
-					int(puzzleLeftTop_.y + pos_[row][col].y + size_.y * 0.5f),
-					int(puzzleLeftTop_.x + pos_[row][col].x - size_.x * 0.5f),
-					int(puzzleLeftTop_.y + pos_[row][col].y - size_.y * 0.5f),
-					int(puzzleLeftTop_.x + pos_[row][col].x + size_.x * 0.5f),
-					int(puzzleLeftTop_.y + pos_[row][col].y - size_.y * 0.5f),
-					0, 0,
-					1, 1,
-					rs.whiteGH,
-					0x00ff00ff
-				);
+				if (mapChip_[row][col] == 1) {
+
+					Novice::DrawQuad(
+						int(puzzleLeftTop_.x + pos_[row][col].x - size_.x * 0.5f),
+						int(puzzleLeftTop_.y + pos_[row][col].y + size_.y * 0.5f),
+						int(puzzleLeftTop_.x + pos_[row][col].x + size_.x * 0.5f),
+						int(puzzleLeftTop_.y + pos_[row][col].y + size_.y * 0.5f),
+						int(puzzleLeftTop_.x + pos_[row][col].x - size_.x * 0.5f),
+						int(puzzleLeftTop_.y + pos_[row][col].y - size_.y * 0.5f),
+						int(puzzleLeftTop_.x + pos_[row][col].x + size_.x * 0.5f),
+						int(puzzleLeftTop_.y + pos_[row][col].y - size_.y * 0.5f),
+						0, 0,
+						1, 1,
+						rs.whiteGH,
+						0x0000ffff
+					);
+
+				} else if (mapChip_[row][col] == 2) {
+
+					Novice::DrawQuad(
+						int(puzzleLeftTop_.x + pos_[row][col].x - size_.x * 0.5f),
+						int(puzzleLeftTop_.y + pos_[row][col].y + size_.y * 0.5f),
+						int(puzzleLeftTop_.x + pos_[row][col].x + size_.x * 0.5f),
+						int(puzzleLeftTop_.y + pos_[row][col].y + size_.y * 0.5f),
+						int(puzzleLeftTop_.x + pos_[row][col].x - size_.x * 0.5f),
+						int(puzzleLeftTop_.y + pos_[row][col].y - size_.y * 0.5f),
+						int(puzzleLeftTop_.x + pos_[row][col].x + size_.x * 0.5f),
+						int(puzzleLeftTop_.y + pos_[row][col].y - size_.y * 0.5f),
+						0, 0,
+						1, 1,
+						rs.whiteGH,
+						0x00ff00ff
+					);
+				}
 			}
 		}
-	}
 
-	for (int row = 0; row < mapChip_.size() + 1; row++) {
+		for (int row = 0; row < mapChip_.size() + 1; row++) {
 
-		Novice::DrawLine(
-			int(puzzleLeftTop_.x),
-			int(puzzleLeftTop_.y + size_.y * row),
-			int(puzzleLeftTop_.x + size_.x * mapChip_[0].size()),
-			int(puzzleLeftTop_.y + size_.y * row),
-			0xffffff77
-		);
-	}
+			Novice::DrawLine(
+				int(puzzleLeftTop_.x),
+				int(puzzleLeftTop_.y + size_.y * row),
+				int(puzzleLeftTop_.x + size_.x * mapChip_[0].size()),
+				int(puzzleLeftTop_.y + size_.y * row),
+				0xffffff77
+			);
+		}
 
-	for (int col = 0; col < mapChip_[0].size() + 1; col++) {
+		for (int col = 0; col < mapChip_[0].size() + 1; col++) {
 
-		Novice::DrawLine(
-			int(puzzleLeftTop_.x + size_.x * col),
-			int(puzzleLeftTop_.y),
-			int(puzzleLeftTop_.x + size_.x * col),
-			int(puzzleLeftTop_.y + size_.y * mapChip_.size()),
-			0xffffff77
-		);
+			Novice::DrawLine(
+				int(puzzleLeftTop_.x + size_.x * col),
+				int(puzzleLeftTop_.y),
+				int(puzzleLeftTop_.x + size_.x * col),
+				int(puzzleLeftTop_.y + size_.y * mapChip_.size()),
+				0xffffff77
+			);
+		}
+
+		break;
+		//====================================================================================
+	case CLEAR://								クリア画面
+		//====================================================================================
+		break;
+
+	default:
+		break;
 	}
 }
