@@ -25,7 +25,7 @@ public:
 	void Init();
 
 	//
-	void Update();
+	void Update(char* keys, Global global);
 
 	//
 	void Draw(Resources rs);
