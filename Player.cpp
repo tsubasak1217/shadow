@@ -27,7 +27,7 @@ void Player::Init(int sceneNum) {
 }
 
 //====================================================アップデート=============================================================
-void Player::Update(char* keys) {
+void Player::Update(char* keys,Map map) {
 
 	switch (Scene::sceneNum_) {
 		//====================================================================================
@@ -42,6 +42,8 @@ void Player::Update(char* keys) {
 	case GAME://								ゲーム本編
 		//====================================================================================
 		
+
+		/*-------------------------------移動処理-------------------------------*/
 		velocity_ = { 0.0f,0.0f };
 
 		direction_.x = float(keys[DIK_RIGHT] - keys[DIK_LEFT]);
@@ -54,7 +56,43 @@ void Player::Update(char* keys) {
 
 		pos_.x += velocity_.x;
 		pos_.y += velocity_.y;
+
+		//プレイヤーの番地計算
+		for (int i = 0; i < 4; i++) {
+			preAddress_[i] = address_[i];
+			
+			address_[i] = {
+				int((pos_.y - map.GetPuzzleLeftTop().y)/map.GetSize().y),
+				int((pos_.x - map.GetPuzzleLeftTop().x) / map.GetSize().x)
+			};
+
+		}
+
+
+		/*-------------------------------押し戻し-------------------------------*/
 		
+		//上下===============================================
+		//下に出た時
+		if (pos_.y >= (map.GetPuzzleLeftTop().y + map.GetPuzzleMapSize().y) - size_.y * 0.5f) {
+			pos_.y = (map.GetPuzzleLeftTop().y + map.GetPuzzleMapSize().y) - size_.y * 0.5f;
+
+			//上に出た時
+		} else if (pos_.y <= map.GetPuzzleLeftTop().y + size_.y * 0.5f) {
+			pos_.y = map.GetPuzzleLeftTop().y + size_.y * 0.5f;
+
+		}
+
+		//左右===============================================
+		//右に出た時
+		if (pos_.x >= (map.GetPuzzleLeftTop().x + map.GetPuzzleMapSize().x) - size_.x * 0.5f) {
+			pos_.x = (map.GetPuzzleLeftTop().x + map.GetPuzzleMapSize().x) - size_.x * 0.5f;
+		
+			//左に出た時
+		} else if (pos_.x <= map.GetPuzzleLeftTop().x + size_.x * 0.5f) {
+			pos_.x = map.GetPuzzleLeftTop().x + size_.x * 0.5f;
+		
+		}
+
 		break;
 		//====================================================================================
 	case CLEAR://								クリア画面
@@ -68,7 +106,7 @@ void Player::Update(char* keys) {
 
 
 //====================================================描画=============================================================
-void Player::Draw(Resources rs, Map map) {
+void Player::Draw(const Resources& rs, Map map) {
 
 	//シーンに応じて処理を分ける
 	switch (Scene::sceneNum_) {
@@ -85,14 +123,14 @@ void Player::Draw(Resources rs, Map map) {
 		//====================================================================================
 
 		Novice::DrawQuad(
-			int(map.GetPuzzleLeftTop().x + pos_.x - size_.x * 0.5f),
-			int(map.GetPuzzleLeftTop().y + pos_.y + size_.y * 0.5f),
-			int(map.GetPuzzleLeftTop().x + pos_.x + size_.x * 0.5f),
-			int(map.GetPuzzleLeftTop().y + pos_.y + size_.y * 0.5f),
-			int(map.GetPuzzleLeftTop().x + pos_.x - size_.x * 0.5f),
-			int(map.GetPuzzleLeftTop().y + pos_.y - size_.y * 0.5f),
-			int(map.GetPuzzleLeftTop().x + pos_.x + size_.x * 0.5f),
-			int(map.GetPuzzleLeftTop().y + pos_.y - size_.y * 0.5f),
+			int(pos_.x - size_.x * 0.5f),
+			int(pos_.y + size_.y * 0.5f),
+			int(pos_.x + size_.x * 0.5f),
+			int(pos_.y + size_.y * 0.5f),
+			int(pos_.x - size_.x * 0.5f),
+			int(pos_.y - size_.y * 0.5f),
+			int(pos_.x + size_.x * 0.5f),
+			int(pos_.y - size_.y * 0.5f),
 			0, 0,
 			1, 1,
 			rs.whiteGH_,

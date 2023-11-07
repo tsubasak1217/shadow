@@ -3,7 +3,7 @@
 int Map::stageNum_ = 0;
 
 //コンストラクタ============================================================================================
-Map::Map(Resources rs) {
+Map::Map(const Resources& rs) {
 
 	stageNum_ = 0;
 
@@ -150,6 +150,23 @@ Map::Map(Resources rs) {
 	//パズルマップの左上座標をいい感じに設定
 	puzzleLeftTop_.x = (Global::windowSize_.x * 0.5f) - (mapChip_[0].size() * size_.x) * 0.5f;
 	puzzleLeftTop_.y = Global::windowSize_.y - ((mapChip_.size() * size_.y) +((mapChip_.size() * size_.y) * 0.4f));
+
+	//読み込んだマップチップの情報決定
+	for (int i = 0; i < mapChip_.size(); i++) {
+		for (int j = 0; j < mapChip_[0].size(); j++) {
+
+			pos_[i][j].x += puzzleLeftTop_.x;
+			pos_[i][j].y += puzzleLeftTop_.y;
+		}
+	}
+
+	for (int i = 0; i < vertex_.size(); i++) {
+		for (int j = 0; j < vertex_[0].size(); j++) {
+
+			vertex_[i][j].x += puzzleLeftTop_.x;
+			vertex_[i][j].y += puzzleLeftTop_.y;
+		}
+	}
 }
 
 
@@ -181,7 +198,7 @@ void Map::Init(int sceneNum) {
 
 
 //====================================================アップデート=============================================================
-void Map::Update(char* keys,Resources rs ) {
+void Map::Update(char* keys, const Resources& rs) {
 
 	switch (Scene::sceneNum_) {
 		//====================================================================================
@@ -350,12 +367,29 @@ void Map::Update(char* keys,Resources rs ) {
 		//パズルマップの左上座標をいい感じに設定
 		puzzleLeftTop_.x = (Global::windowSize_.x * 0.5f) - (mapChip_[0].size() * size_.x) * 0.5f;
 		puzzleLeftTop_.y = Global::windowSize_.y - ((mapChip_.size() * size_.y) + ((mapChip_.size() * size_.y) * 0.4f));
+
+		//読み込んだマップチップの情報決定
+		for (int i = 0; i < mapChip_.size(); i++) {
+			for (int j = 0; j < mapChip_[0].size(); j++) {
+
+				pos_[i][j].x += puzzleLeftTop_.x;
+				pos_[i][j].y += puzzleLeftTop_.y;
+			}
+		}
+
+		for (int i = 0; i < vertex_.size(); i++) {
+			for (int j = 0; j < vertex_[0].size(); j++) {
+
+				vertex_[i][j].x += puzzleLeftTop_.x;
+				vertex_[i][j].y += puzzleLeftTop_.y;
+			}
+		}
 	}
 };
 
 
 //====================================================描画=============================================================
-void Map::Draw(Resources rs) {
+void Map::Draw(const Resources &rs) {
 
 	switch (Scene::sceneNum_) {
 		//====================================================================================
@@ -376,14 +410,14 @@ void Map::Draw(Resources rs) {
 				if (mapChip_[row][col] == 1) {
 
 					Novice::DrawQuad(
-						int(puzzleLeftTop_.x + pos_[row][col].x - size_.x * 0.5f),
-						int(puzzleLeftTop_.y + pos_[row][col].y + size_.y * 0.5f),
-						int(puzzleLeftTop_.x + pos_[row][col].x + size_.x * 0.5f),
-						int(puzzleLeftTop_.y + pos_[row][col].y + size_.y * 0.5f),
-						int(puzzleLeftTop_.x + pos_[row][col].x - size_.x * 0.5f),
-						int(puzzleLeftTop_.y + pos_[row][col].y - size_.y * 0.5f),
-						int(puzzleLeftTop_.x + pos_[row][col].x + size_.x * 0.5f),
-						int(puzzleLeftTop_.y + pos_[row][col].y - size_.y * 0.5f),
+						int(pos_[row][col].x - size_.x * 0.5f),
+						int(pos_[row][col].y + size_.y * 0.5f),
+						int(pos_[row][col].x + size_.x * 0.5f),
+						int(pos_[row][col].y + size_.y * 0.5f),
+						int(pos_[row][col].x - size_.x * 0.5f),
+						int(pos_[row][col].y - size_.y * 0.5f),
+						int(pos_[row][col].x + size_.x * 0.5f),
+						int(pos_[row][col].y - size_.y * 0.5f),
 						0, 0,
 						1, 1,
 						rs.whiteGH_,
@@ -393,14 +427,14 @@ void Map::Draw(Resources rs) {
 				} else if (mapChip_[row][col] == 2) {
 
 					Novice::DrawQuad(
-						int(puzzleLeftTop_.x + pos_[row][col].x - size_.x * 0.5f),
-						int(puzzleLeftTop_.y + pos_[row][col].y + size_.y * 0.5f),
-						int(puzzleLeftTop_.x + pos_[row][col].x + size_.x * 0.5f),
-						int(puzzleLeftTop_.y + pos_[row][col].y + size_.y * 0.5f),
-						int(puzzleLeftTop_.x + pos_[row][col].x - size_.x * 0.5f),
-						int(puzzleLeftTop_.y + pos_[row][col].y - size_.y * 0.5f),
-						int(puzzleLeftTop_.x + pos_[row][col].x + size_.x * 0.5f),
-						int(puzzleLeftTop_.y + pos_[row][col].y - size_.y * 0.5f),
+						int(pos_[row][col].x - size_.x * 0.5f),
+						int(pos_[row][col].y + size_.y * 0.5f),
+						int(pos_[row][col].x + size_.x * 0.5f),
+						int(pos_[row][col].y + size_.y * 0.5f),
+						int(pos_[row][col].x - size_.x * 0.5f),
+						int(pos_[row][col].y - size_.y * 0.5f),
+						int(pos_[row][col].x + size_.x * 0.5f),
+						int(pos_[row][col].y - size_.y * 0.5f),
 						0, 0,
 						1, 1,
 						rs.whiteGH_,
@@ -410,6 +444,7 @@ void Map::Draw(Resources rs) {
 			}
 		}
 
+		//縦横のライン
 		for (int row = 0; row < mapChip_.size() + 1; row++) {
 
 			Novice::DrawLine(

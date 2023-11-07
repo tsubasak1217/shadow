@@ -45,8 +45,8 @@ public:
 					CrossPos(
 						light.GetEmitPos(),
 						{
-							map.GetPuzzleLeftTop().x + map.GetVertex(i,j).x,
-						map.GetPuzzleLeftTop().y + map.GetVertex(i,j).y
+							map.GetVertex(i,j).x,
+							map.GetVertex(i,j).y
 						},
 						map.GetPuzzleLeftTop(),
 						{
@@ -54,7 +54,8 @@ public:
 							map.GetPuzzleLeftTop().y
 						}
 					).x,
-					map.GetPuzzleLeftTop().y - (map.GetVertex(i,j).z * ((map.GetVertex(i,j).y / map.GetPuzzleMapSize().y) * 3.0f))
+					map.GetPuzzleLeftTop().y
+					- (map.GetVertex(i,j).z * (((map.GetVertex(i,j).y - map.GetPuzzleLeftTop().y) / map.GetPuzzleMapSize().y) * 4.0f))
 					}
 				);
 			}
@@ -65,6 +66,6 @@ public:
 
 	void Update(Map map, Light light);
 
-	void Draw(Map map, Resources rs, Light light);
+	void Draw(Map map, const Resources& rs, Light light);
 };
 

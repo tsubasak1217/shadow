@@ -23,15 +23,15 @@ public:
 	Vec2 firstPlayerPos_;
 
 	//コンストラクタ
-	Map(Resources rs);
+	Map(const Resources& rs);
 
 	void Init(int sceneNum);
 
 	//
-	void Update(char* keys, Resources rs);
+	void Update(char* keys, const Resources& rs);
 
 	//
-	void Draw(Resources rs);
+	void Draw(const Resources& rs);
 
 	//アクセッサ
 	std::vector<std::vector<int>>GetMapChip() { return mapChip_; }
