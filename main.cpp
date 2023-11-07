@@ -49,6 +49,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓更新処理ここから
 		///
 
+		map.Update(keys,global);
 		player.Update(keys);
 		light.Update(keys,map,((3.0f/4.0f) * float(M_PI)),global);
 		screen.Update(map, light);
