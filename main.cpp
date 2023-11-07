@@ -59,6 +59,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		light.Update(keys, map, ((3.0f / 4.0f) * float(M_PI)));
 		screen.Update(map, light);
 
+		if (keys[DIK_1]) {
+			Scene::sceneNum_ = TITLE;
+		} else if (keys[DIK_2]) {
+			Scene::sceneNum_ = SELECT;
+		} else if (keys[DIK_3]) {
+			Scene::sceneNum_ = GAME;
+		} else if (keys[DIK_4]) {
+			Scene::sceneNum_ = CLEAR;
+		}
+
 		///
 		/// ↑更新処理ここまで
 		///
