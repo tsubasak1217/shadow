@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "MyFunc.h"
 
-void CalcAddress(Vector2<int>address[4], Vec2 pos, Vec2 size, float radius);
+void CalcAddress(Vector2<int>*address, Vec2 pos, Vec2 size, float radius);
 
 /// <summary>
 /// マップチップの押し戻しを行う関数(当たった面も取得できるよ)

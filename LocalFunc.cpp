@@ -1,18 +1,18 @@
 ﻿#include "LocalFunc.h"
 /*===============================プレイヤーとブロックの当たり判定===================================*/
-void CalcAddress(Vector2<int>address[4], Vec2 pos, Vec2 size, float radius){
+void CalcAddress(Vector2<int>*address, Vec2 pos, Vec2 size, float radius){
 
-	address[LeftTop].x = int((pos.x - radius) / size.x);
-	address[LeftTop].y = int((pos.y - radius) / size.y);
+	address[LeftTop].x = int(int(pos.x - radius + 1) / size.x);
+	address[LeftTop].y = int(int(pos.y - radius + 1) / size.y);
 
-	address[RightTop].x = int((pos.x + radius - 1) / size.x);
-	address[RightTop].y = int((pos.y - radius) / size.y);
+	address[RightTop].x = int(int(pos.x + radius - 1) / size.x);
+	address[RightTop].y = int(int(pos.y - radius + 1) / size.y);
 
-	address[LeftBottom].x = int((pos.x - radius) / size.x);
-	address[LeftBottom].y = int((pos.y + radius - 1) / size.y);
+	address[LeftBottom].x = int(int(pos.x - radius + 1) / size.x);
+	address[LeftBottom].y = int(int(pos.y + radius - 1) / size.y);
 
-	address[RightBottom].x = int((pos.x + radius - 1) / size.x);
-	address[RightBottom].y = int((pos.y + radius - 1) / size.y);
+	address[RightBottom].x = int(int(pos.x + radius - 1) / size.x);
+	address[RightBottom].y = int(int(pos.y + radius - 1) / size.y);
 }
 
 int PushBackMapChip(
