@@ -145,7 +145,7 @@ void Screen::Draw(Map map, const Resources& rs, Light light) {
 		0, 0,
 		1, 1,
 		rs.whiteGH_,
-		0xffffffff
+		0xbbbbbbff
 	);
 
 

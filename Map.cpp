@@ -387,6 +387,120 @@ void Map::Update(char* keys, const Resources& rs) {
 			}
 		}
 	}
+
+
+
+	//要素を消去	
+	touchable_.clear();
+	vertex_.clear();
+
+	//マップチップの情報更新
+	for (int i = 0; i < mapChip_.size(); i++) {
+
+		std::vector<Vec2>rowPos;
+		std::vector<bool>rowTouchable;
+
+		for (int j = 0; j < mapChip_[0].size(); j++) {
+
+			//座標決定
+			rowPos.push_back(pos_[i][j]);
+
+			//存在フラグ決定
+			if (mapChip_[i][j] == -1) {
+				firstPlayerPos_ = {
+			size_.x + (j * size_.x) - (size_.x * 0.5f),
+			size_.y + (i * size_.y) - (size_.y * 0.5f)
+				};
+			}
+
+			if (mapChip_[i][j] > 0) {
+				rowTouchable.push_back(true);
+
+			} else {
+				rowTouchable.push_back(false);
+			}
+
+			//各頂点の座標計算(3d)------------------------------------------------
+			if (mapChip_[i][j] == 1 or mapChip_[i][j] == 2) {
+				std::vector<Vec3>objVertex;
+				float zRate = (5.0f / 3.0f);
+
+				//手前 → 奥
+				//LT,RT,LB,RB の順番
+
+				//光源から見て手前-------------------------------
+				objVertex.push_back(
+					{//手前左上
+						rowPos[j].x - (size_.x * 0.5f),
+						rowPos[j].y + (size_.y * 0.5f),
+						size_.z * (1 + ((mapChip_[i][j] - 1) * (zRate - 1)))
+					}
+				);
+
+				objVertex.push_back(
+					{//手前右上
+						rowPos[j].x + (size_.x * 0.5f),
+						rowPos[j].y + (size_.y * 0.5f),
+						size_.z * (1 + ((mapChip_[i][j] - 1) * (zRate - 1)))
+					}
+				);
+
+				objVertex.push_back(
+					{//手前左下
+						rowPos[j].x - (size_.x * 0.5f),
+						rowPos[j].y + (size_.y * 0.5f),
+						0
+					}
+				);
+
+				objVertex.push_back(
+					{//手前右下
+						rowPos[j].x + (size_.x * 0.5f),
+						rowPos[j].y + (size_.y * 0.5f),
+						0
+					}
+				);
+
+				//光源から見て奥-------------------------------
+				objVertex.push_back(
+					{//奥左上
+						rowPos[j].x - (size_.x * 0.5f),
+						rowPos[j].y - (size_.y * 0.5f),
+						size_.z * (1 + ((mapChip_[i][j] - 1) * (zRate - 1)))
+					}
+				);
+
+				objVertex.push_back(
+					{//奥右上
+						rowPos[j].x + (size_.x * 0.5f),
+						rowPos[j].y - (size_.y * 0.5f),
+						size_.z * (1 + ((mapChip_[i][j] - 1) * (zRate - 1)))
+					}
+				);
+
+				objVertex.push_back(
+					{//奥左下
+						rowPos[j].x - (size_.x * 0.5f),
+						rowPos[j].y - (size_.y * 0.5f),
+						0
+					}
+				);
+
+				objVertex.push_back(
+					{//奥右下
+						rowPos[j].x + (size_.x * 0.5f),
+						rowPos[j].y - (size_.y * 0.5f),
+						0
+					}
+				);
+
+				//ひとつのブロックの頂点情報を格納
+				vertex_.push_back(objVertex);
+			}
+		}
+
+		touchable_.push_back(rowTouchable);
+	}
 };
 
 

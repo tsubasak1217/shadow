@@ -35,10 +35,15 @@ public:
 
 	//アクセッサ
 	std::vector<std::vector<int>>GetMapChip() { return mapChip_; }
+	void SetMapChip(int row, int col, int value) { mapChip_[row][col] = value; }
+
 	Vec3 GetSize() { return size_; }
 	Vec2 GetPuzzleLeftTop() { return puzzleLeftTop_; }
 	Vec2 GetPuzzleMapSize() { return puzzleMapSize_; }
+
 	std::vector<std::vector<Vec2>>GetPos() { return pos_; }
+	Vec2* GetPosP(int row, int col) { return &pos_[row][col]; }
+	void SetPos(int row,int col,Vec2 pos) { pos_[row][col] = pos; }
 
 	//ブロックの頂点座標を取得する関数
 	std::vector<std::vector<Vec3>>GetVertex() { return vertex_; }

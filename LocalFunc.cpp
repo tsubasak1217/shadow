@@ -43,7 +43,7 @@ int PushBackMapChip(
 
 		if (playerAddress[i].x >= 0 && playerAddress[i].x < colMAX) {
 			if (playerAddress[i].y >= 0 && playerAddress[i].y < rowMAX) {
-				if (blockType[playerAddress[i].y][playerAddress[i].x] != 9 && blockType[playerAddress[i].y][playerAddress[i].x] != 9) {
+				if (blockType[playerAddress[i].y][playerAddress[i].x] != 0 && blockType[playerAddress[i].y][playerAddress[i].x] != 9) {
 					/*------------------前フレームとX座標の番地のみが違う場合--------------------*/
 
 					if (playerAddress[i].x != playerPreAddress[i].x &&

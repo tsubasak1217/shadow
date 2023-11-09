@@ -10,6 +10,15 @@ class Player{
 	Vector2<int>preAddress_[4];
 	float speed_;
 
+	//ブロックの移動中かどうか
+	bool isMoveBlock_;
+	float blockMoveT_;
+	int moveTime_;
+	int moveDirection_;
+	Vector2<int>moveBlockAddress_;
+	Vec2 moveStartPos_;
+	Vec2 savedPlayerPos_;
+
 public:
 
 	Player(Map map) {
@@ -26,11 +35,20 @@ public:
 			address_[i] = {0,0};
 			preAddress_[i] = address_[i];
 		}
+
+		isMoveBlock_ = false;
+		blockMoveT_ = 0.0f;
+		moveTime_ = 32;
+		moveDirection_ = 0;
+		moveBlockAddress_ = {0,0};
+		moveStartPos_ = { 0.0f,0.0f };
+		savedPlayerPos_ = { 0.0f,0.0f };
+
 	}
 
 	void Init(int sceneNum);
 
-	void Update(char* keys,Map map);
+	void Update(char* keys,Map& map);
 
 	void Draw(const Resources& rs,Map map);
 
