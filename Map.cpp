@@ -43,21 +43,21 @@ Map::Map(const Resources& rs) {
 			//座標決定
 			rowPos.push_back(
 				{
-				size_.x + float(int((j * size_.x) - (size_.x * 0.5f))),
-				size_.y + float(int((i * size_.y) - (size_.y * 0.5f)))
+				size_.x + (j * size_.x) - (size_.x * 0.5f),
+				size_.y + (i * size_.y) - (size_.y * 0.5f)
 				}
 			);
 
 			//存在フラグ決定
-			if (mapChip_[i][j] > 0) {
-				rowTouchable.push_back(true);
+			if (mapChip_[i][j] == -1) {
+				firstPlayerPos_ = {
+			size_.x + (j * size_.x) - (size_.x * 0.5f),
+			size_.y + (i * size_.y) - (size_.y * 0.5f)
+				};
+			}
 
-				if (mapChip_[i][j] == 9) {
-					firstPlayerPos_ = {
-				size_.x + (j * size_.x) - (size_.x * 0.5f),
-				size_.y + (i * size_.y) - (size_.y * 0.5f)
-					};
-				}
+			if (mapChip_[i][j] >= 0) {
+				rowTouchable.push_back(true);
 
 			} else {
 				rowTouchable.push_back(false);
@@ -155,22 +155,18 @@ Map::Map(const Resources& rs) {
 	for (int i = 0; i < mapChip_.size(); i++) {
 		for (int j = 0; j < mapChip_[0].size(); j++) {
 
-			pos_[i][j].x += int(puzzleLeftTop_.x);
-			pos_[i][j].y += int(puzzleLeftTop_.y);
+			pos_[i][j].x += puzzleLeftTop_.x;
+			pos_[i][j].y += puzzleLeftTop_.y;
 
-			pos_[i][j].x = float(int(pos_[i][j].x));
-			pos_[i][j].y = float(int(pos_[i][j].y));
 		}
 	}
 
 	for (int i = 0; i < vertex_.size(); i++) {
 		for (int j = 0; j < vertex_[0].size(); j++) {
 
-			vertex_[i][j].x += int(puzzleLeftTop_.x);
-			vertex_[i][j].y += int(puzzleLeftTop_.y);
+			vertex_[i][j].x += puzzleLeftTop_.x;
+			vertex_[i][j].y += puzzleLeftTop_.y;
 
-			vertex_[i][j].x = float(int(vertex_[i][j].x));
-			vertex_[i][j].y = float(int(vertex_[i][j].y));
 		}
 	}
 }
@@ -272,15 +268,15 @@ void Map::Update(char* keys, const Resources& rs) {
 				);
 
 				//存在フラグ決定
-				if (mapChip_[i][j] > 0) {
-					rowTouchable.push_back(true);
+				if (mapChip_[i][j] == -1) {
+					firstPlayerPos_ = {
+				size_.x + (j * size_.x) - (size_.x * 0.5f),
+				size_.y + (i * size_.y) - (size_.y * 0.5f)
+					};
+				}
 
-					if (mapChip_[i][j] == 9) {
-						firstPlayerPos_ = {
-					size_.x + (j * size_.x) - (size_.x * 0.5f),
-					size_.y + (i * size_.y) - (size_.y * 0.5f)
-						};
-					}
+				if (mapChip_[i][j] >= 0) {
+					rowTouchable.push_back(true);
 
 				} else {
 					rowTouchable.push_back(false);
@@ -445,6 +441,23 @@ void Map::Draw(const Resources &rs) {
 						1, 1,
 						rs.whiteGH_,
 						0x00ff00ff
+					);
+				
+				} else if (mapChip_[row][col] == 8) {
+
+					Novice::DrawQuad(
+						int(pos_[row][col].x - size_.x * 0.5f),
+						int(pos_[row][col].y + size_.y * 0.5f),
+						int(pos_[row][col].x + size_.x * 0.5f),
+						int(pos_[row][col].y + size_.y * 0.5f),
+						int(pos_[row][col].x - size_.x * 0.5f),
+						int(pos_[row][col].y - size_.y * 0.5f),
+						int(pos_[row][col].x + size_.x * 0.5f),
+						int(pos_[row][col].y - size_.y * 0.5f),
+						0, 0,
+						1, 1,
+						rs.whiteGH_,
+						0xffff00ff
 					);
 				}
 			}

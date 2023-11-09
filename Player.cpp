@@ -111,11 +111,21 @@ void Player::Update(char* keys,Map map) {
 			{ map.GetSize().x,map.GetSize().y }
 		);
 
+		Novice::ScreenPrintf(0,200, "%d", PushBackMapChip(
+			int(map.GetMapChip().size()), int(map.GetMapChip()[0].size()),
+			&pos_,
+			address_, preAddress_,
+			size_,
+			velocity_,
+			map.GetPos(),
+			map.GetMapChip(),
+			{ map.GetSize().x,map.GetSize().y }
+		));
 
 		//プレイヤーの番地を再計算
 		CalcAddress(
 			address_,
-			{ pos_.x - map.GetPuzzleLeftTop().x + 1,pos_.y - map.GetPuzzleLeftTop().y + 1 },
+			{ pos_.x - map.GetPuzzleLeftTop().x + 1,pos_.y - map.GetPuzzleLeftTop().y + 1},
 			{ map.GetSize().x,map.GetSize().y}, 
 			size_.x * 0.5f
 		);
