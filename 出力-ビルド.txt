@@ -1,0 +1,90 @@
+﻿ビルドを開始しました...
+1>------ ビルド開始: プロジェクト: shadow, 構成: Debug x64 ------
+1>Light.cpp
+1>PlayerShadow.cpp
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): error C2220: 次の警告はエラーとして処理されます
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0xe4 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0xe6 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0xe8 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0xea から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0xeb から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0xec から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0xed から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x1c9 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x1cb から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x1cd から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x1cf から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x1d1 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x1d3 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x1d4 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x2aa から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x2ac から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x2ae から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x2af から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x2b0 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x2b2 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x2b3 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x334 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x337 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x338 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x339 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x33a から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x33b から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x502 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x504 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x505 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x506 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x508 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x509 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x5d2 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x5d4 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x5d6 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x5d7 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x5d8 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x5db から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x5dc から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x5dd から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x5de から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x5e1 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x5e2 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x5e3 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x5e4 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x5e9 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x5ea から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x5eb から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x67e から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x680 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x682 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x684 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x685 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x686 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x687 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x763 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x765 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x767 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x769 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x76b から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x76d から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x76e から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x844 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x846 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x848 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x849 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x84a から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x84c から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0x84d から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0xa7d から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0xa7f から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0xa80 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0xa81 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0xa83 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(1,1): warning C4828: オフセット 0xa84 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.h(1,1): warning C4828: オフセット 0x2df から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。 (ソース ファイルをコンパイルしています PlayerShadow.cpp)
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.h(1,1): warning C4828: オフセット 0x2e1 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。 (ソース ファイルをコンパイルしています PlayerShadow.cpp)
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.h(1,1): warning C4828: オフセット 0x2e3 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。 (ソース ファイルをコンパイルしています PlayerShadow.cpp)
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.h(1,1): warning C4828: オフセット 0x2e5 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。 (ソース ファイルをコンパイルしています PlayerShadow.cpp)
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.h(1,1): warning C4828: オフセット 0x2e7 から始まる、現在のソースの文字セット (コードページ 65001) では使用できない文字がファイルに含まれています。 (ソース ファイルをコンパイルしています PlayerShadow.cpp)
+1>C:\Users\k023g\source\repos\shadow\PlayerShadow.cpp(3,44): warning C4100: 'map': 引数は関数の本体部で 1 度も参照されません。
+1>プロジェクト "shadow.vcxproj" のビルドが終了しました -- 失敗。
+========== ビルド: 成功 0、失敗 1、最新の状態 0、スキップ 0 ==========
+========== ビルド は 11:21 に開始され、02.014 秒 かかりました ==========

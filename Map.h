@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "global.h"
 #include "ChangeScene.h"
 
 class Map
@@ -32,6 +31,7 @@ public:
 
 	//
 	void Draw(const Resources& rs);
+	void DrawBG();
 
 	//アクセッサ
 	std::vector<std::vector<int>>GetMapChip() { return mapChip_; }
@@ -48,6 +48,8 @@ public:
 	//ブロックの頂点座標を取得する関数
 	std::vector<std::vector<Vec3>>GetVertex() { return vertex_; }
 	Vec3 GetVertex(int BlockNum, int vertexNum) { return vertex_[BlockNum][vertexNum]; }
+
+	int GetStageNum(){return stageNum_;}
 };
 
 enum BlockType {

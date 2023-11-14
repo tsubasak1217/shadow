@@ -61,11 +61,11 @@ void Light::Update(char* keys, Map map, float rangeTheta) {
 
 
 
-		if (keys[DIK_A]) {
+		if (keys[DIK_Q]) {
 			emitPos_.x -= 2.0f;
 		}
 
-		if (keys[DIK_D]) {
+		if (keys[DIK_E]) {
 			emitPos_.x += 2.0f;
 		}
 
@@ -107,7 +107,7 @@ void Light::Draw(Map map) {
 			int(leftVec_.y),
 			int(rightVec_.x),
 			int(rightVec_.y),
-			0xffff003f,
+			0xffffff22,
 			kFillModeSolid
 		);
 
@@ -115,7 +115,7 @@ void Light::Draw(Map map) {
 			int(emitPos_.x),
 			int(emitPos_.y),
 			32, 32, 0.0f,
-			0xff0000ff,
+			0xffffffff,
 			kFillModeSolid
 		);
 

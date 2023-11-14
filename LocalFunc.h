@@ -24,7 +24,8 @@ int PushBackMapChip(
 	Vec2 playerVelocity,
 	std::vector<std::vector<Vec2>>blockPos,
 	std::vector<std::vector<int>>blockType,
-	Vec2 blockSize
+	Vec2 blockSize,
+	bool& isHitMapChip
 );
 
 enum Vertex {
@@ -40,3 +41,12 @@ enum HitDirection {
 	Bottom = 3,
 	Left = 4
 };
+
+
+//矩形と円の押し戻し関数
+void PushBackBox_Ball(
+	Vec2 leftTop, Vec2 rightTop, Vec2 leftBottom, Vec2 rightBottom,
+	Vec2& ballPos, Vec2 preBallPos, float ballRadius,
+	bool& isDrop, bool& isJump, float& dropSpeed, float& jumpSpeed,
+	int& hitCount
+);

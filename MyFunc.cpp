@@ -113,7 +113,7 @@ Vec2 Normalize(Vec2 pos1, Vec2 pos2) {
 	}
 };
 
-//内積を求める関数
+//内積を求める関数(正規化する)
 float Dot(Vec2 pos1, Vec2 pos2, Vec2 targetPos) {
 
 	Vec2 lineVector = { pos2.x - pos1.x,pos2.y - pos1.y };
@@ -121,6 +121,15 @@ float Dot(Vec2 pos1, Vec2 pos2, Vec2 targetPos) {
 	Vec2 forTarget = { targetPos.x - pos1.x,targetPos.y - pos1.y };
 
 	return ((lineVector.x * forTarget.x) + (lineVector.y * forTarget.y)) / lineLength;
+};
+
+//内積を求める関数(正規化しない)
+float NoInitDot(Vec2 pos1, Vec2 pos2, Vec2 targetPos) {
+
+	Vec2 lineVector = { pos2.x - pos1.x,pos2.y - pos1.y };
+	Vec2 forTarget = { targetPos.x - pos1.x,targetPos.y - pos1.y };
+
+	return ((lineVector.x * forTarget.x) + (lineVector.y * forTarget.y));
 };
 
 //外積を求める関数
@@ -147,6 +156,15 @@ float Cross(Vec2 pos1, Vec2 pos2, Vec2 targetPos) {
 	return ((lineVector.x * forTarget.y) - (lineVector.y * forTarget.x)) / lineLength;
 }
 
+//正規化しないもの
+float NoInitCross(Vec2 pos1, Vec2 pos2, Vec2 targetPos) {
+	Vec2 lineVector = { pos2.x - pos1.x,pos2.y - pos1.y };
+	Vec2 forTarget = { targetPos.x - pos1.x,targetPos.y - pos1.y };
+
+	return (lineVector.x * forTarget.y) - (lineVector.y * forTarget.x);
+}
+
+
 // ベクトルの交点を求める関数
 Vec2 CrossPos(Vec2 line1Pos1, Vec2 line1Pos2, Vec2 line2Pos1, Vec2 line2Pos2) {
 	float s1 =
@@ -164,6 +182,22 @@ Vec2 CrossPos(Vec2 line1Pos1, Vec2 line1Pos2, Vec2 line2Pos1, Vec2 line2Pos2) {
 
 	return crossPos;
 }
+
+//内積で角度を計算する関数
+float CalcAngle(Vec2 pos1, Vec2 pos2, Vec2 pos3) {
+	// ベクトルAとBの内積
+	float dotProduct = NoInitDot(pos1, pos2, pos3);
+
+	// ベクトルの大きさ
+	float magnitudeA = CheckLength(pos1, pos2);
+	float magnitudeB = CheckLength(pos1, pos3);
+
+	// 角度を求める
+	float angle = dotProduct / (magnitudeA * magnitudeB);
+
+	return angle;
+}
+
 
 // 線を平行移動する関数
 Vec2 ShiftLine(Vec2 pos1, Vec2 pos2, float distance) {
@@ -803,6 +837,69 @@ int IsHitBox_BallDirection(Vec2 boxCenter, Vec2 ballPos, Vec2 boxSize, float bal
 		}
 	}
 }
+
+
+//矩形と円(矩形がどの角度でもいい)
+bool ColisionBox_Ball(Vec2 leftTop, Vec2 rightTop, Vec2 leftBottom, Vec2 rightBottom, Vec2 ballPos, float ballRadius) {
+
+	float cross[4] = { 0.0f };
+	int crossInCount = 0;
+
+	cross[0] = Cross(leftTop, rightTop, ballPos);
+	cross[1] = Cross(rightTop, rightBottom, ballPos);
+	cross[2] = Cross(rightBottom, leftBottom, ballPos);
+	cross[3] = Cross(leftBottom, leftTop, ballPos);
+
+	for (int i = 0; i < 4; i++) {
+		if (cross[i] > -ballRadius) {
+			crossInCount++;
+		}
+
+	}
+
+	//円が矩形に完全に含まれていればtrue
+	if (crossInCount >= 4) {
+		return true;
+	};
+
+	//各ベクトルどれかに触れていればtrue
+	for (int i = 0; i < 4; i++) {
+		if (cross[i] > -ballRadius && cross[i] < ballRadius) {
+
+			float dot = 0.0f;
+
+			switch (i) {
+
+			case 0:
+				dot = NoInitDot(leftTop, rightTop, ballPos);
+				break;
+
+			case 1:
+				dot = NoInitDot(rightTop, rightBottom, ballPos);
+				break;
+
+			case 2:
+				dot = NoInitDot(rightBottom, leftBottom, ballPos);
+				break;
+
+			case 3:
+				dot = NoInitDot(leftBottom, leftTop, ballPos);
+				break;
+
+			default:
+				break;
+			}
+
+			if (dot >= 0.0f && dot <= 1.0f) {
+				return true;
+			}
+		}
+	}
+
+	//当てはまらなければfalse
+	return false;
+};
+
 
 //================================================================
 //                     オリジナル描画関数
