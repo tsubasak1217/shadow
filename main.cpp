@@ -1,5 +1,6 @@
 #include "PlayerShadow.h"
 #include "Player.h"
+#include "selectDoor.h"
 #include "ImGuiManager.h"
 
 //======================================================
@@ -35,13 +36,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	Scene scene;
 	//ChangeScene cs;
+	ChangeScene SC;
 
 	Map map(rs);
 	Player player(map);
 	Light light(map);
 	Screen screen(map, light);
-	Shadow shadow(rs,screen);
+	Shadow shadow(rs, screen);
 	PlayerShadow playerShadow(screen, shadow);
+	DOOR DOOR;
+
+	DOOR.Init();
+
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -57,11 +63,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 
 		map.Update(keys, rs);
-		player.Update(keys,map);
+		player.Update(keys, map);
 		light.Update(keys, map, ((3.0f / 4.0f) * float(M_PI)));
 		screen.Update(map, light);
-		playerShadow.Update(keys,screen,shadow);
+		playerShadow.Update(keys, screen, shadow);
 
+
+		DOOR.SelectDoor(keys, preKeys);
+		SC.SelectFromGameUpDate(DOOR.isChangeScene_, DOOR.CPos_, DOOR.selectNum_);
+		SC.Reset(DOOR.isChangeScene_);
+		DOOR.Reset(keys,preKeys);
 		if (keys[DIK_1]) {
 			Scene::sceneNum_ = TITLE;
 		} else if (keys[DIK_2]) {
@@ -88,7 +99,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		light.Draw(map);
 		map.Draw(rs);
 		player.Draw(rs);
+		DOOR.Draw();
+		SC.SelectFromGameDraw(DOOR.GH_, DOOR.color_);
 
+
+		
 		//デバッグ
 		switch (Scene::sceneNum_) {
 
@@ -109,7 +124,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			break;
 		}
 
-		
+
 		//ImGui::Begin("window");
 		//ImGui::End();
 

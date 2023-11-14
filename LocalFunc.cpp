@@ -1,4 +1,32 @@
 ﻿#include "LocalFunc.h"
+
+
+void VectorVertexS(Vec2 vertex[4], Vec2 CPos, float Wradius, float Hradius) {
+	vertex[0].x = CPos.x - Wradius / 2;
+	vertex[0].y = CPos.y - Hradius / 2;
+	vertex[1].x = CPos.x + Wradius / 2;
+	vertex[1].y = CPos.y - Hradius / 2;
+	vertex[2].x = CPos.x - Wradius / 2;
+	vertex[2].y = CPos.y + Hradius / 2;
+	vertex[3].x = CPos.x + Wradius / 2;
+	vertex[3].y = CPos.y + Hradius / 2;
+};
+
+
+Vec2 rotateVect(Vec2 a, float aSin, float aCos)
+{
+	return { a.x * aCos - a.y * aSin,a.x * aSin + a.y * aCos };
+}
+
+
+
+Vec2 getVectAdd(Vec2 a, Vec2 b)
+{
+	return { a.x + b.x,a.y + b.y };
+}
+
+
+
 /*===============================プレイヤーとブロックの当たり判定===================================*/
 void CalcAddress(Vector2<int>* address, Vec2 pos, Vec2 size, float radius) {
 

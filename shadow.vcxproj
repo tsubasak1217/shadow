@@ -122,6 +122,7 @@
     <ClCompile Include="Resources.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Screen.cpp" />
+    <ClCompile Include="selectDoor.cpp" />
     <ClCompile Include="Shadow.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -160,6 +161,7 @@
     <ClInclude Include="Resources.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Screen.h" />
+    <ClInclude Include="selectDoor.h" />
     <ClInclude Include="Shadow.h" />
     <ClInclude Include="VectorN.h" />
   </ItemGroup>

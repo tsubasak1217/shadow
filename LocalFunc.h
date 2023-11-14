@@ -1,6 +1,13 @@
 ﻿#pragma once
 #include "MyFunc.h"
 
+
+
+Vec2 getVectAdd(Vec2 a, Vec2 b);
+Vec2 rotateVect(Vec2 a, float aSin, float aCos);
+void VectorVertexS(Vec2 vertex[4], Vec2 CPos, float Wradius, float Hradius);
+
+
 void CalcAddress(Vector2<int>*address, Vec2 pos, Vec2 size, float radius);
 
 /// <summary>
