@@ -1,40 +1,49 @@
 ﻿#pragma once
 #include "global.h"
+#include "ChangeScene.h"
 
 class Map
 {
-	//変数
-	std::vector<std::vector<Vec2>>pos_;
-	std::vector<std::vector<int>>mapChip_;
-	std::vector<std::vector<bool>>touchable_;
+	//マップチップ
+	std::vector<std::vector<Vec2>>pos_;//座標
+	std::vector<std::vector<int>>mapChip_;//マップチップ番号
+	std::vector<std::vector<bool>>touchable_;//存在フラグ
 
-	std::vector<std::vector<Vec3>>vertex_;
+	std::vector<std::vector<Vec3>>vertex_;//マップのブロックの各頂点座標(疑似的な三次元)
 
-	Vec3 size_;
-	Vec2 puzzleLeftTop_;
-	Vec2 puzzleMapSize_;
+	Vec3 size_;//ブロックの縦横奥ゆき
+	Vec2 puzzleLeftTop_;//パズル(画面下半分ののマップチップ)の左上座標
+	Vec2 puzzleMapSize_;//パズル画面の縦横幅
 
 public:
+
+	static int stageNum_;
 
 	//マップチップから取得したプレイヤーの初期座標を格納する変数		
 	Vec2 firstPlayerPos_;
 
 	//コンストラクタ
-	Map(Global global);
+	Map(const Resources& rs);
 
-	void Init();
-
-	//
-	void Update(char* keys, Global global);
+	void Init(int sceneNum);
 
 	//
-	void Draw(Resources rs);
+	void Update(char* keys, const Resources& rs);
+
+	//
+	void Draw(const Resources& rs);
 
 	//アクセッサ
 	std::vector<std::vector<int>>GetMapChip() { return mapChip_; }
+	void SetMapChip(int row, int col, int value) { mapChip_[row][col] = value; }
+
 	Vec3 GetSize() { return size_; }
 	Vec2 GetPuzzleLeftTop() { return puzzleLeftTop_; }
 	Vec2 GetPuzzleMapSize() { return puzzleMapSize_; }
+
+	std::vector<std::vector<Vec2>>GetPos() { return pos_; }
+	Vec2* GetPosP(int row, int col) { return &pos_[row][col]; }
+	void SetPos(int row,int col,Vec2 pos) { pos_[row][col] = pos; }
 
 	//ブロックの頂点座標を取得する関数
 	std::vector<std::vector<Vec3>>GetVertex() { return vertex_; }

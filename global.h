@@ -3,9 +3,9 @@
 
 class Global{
 public:
-	Vector2<int>windowSize_;
+	static Vector2<int>windowSize_;
+	static const int stageMAX = 8;
 
-	Global(){
-		windowSize_ = { 480,720 };
-	}
+	Global();
+	~Global();
 };

@@ -1,56 +1,134 @@
-#include "Light.h"
+﻿#include "Light.h"
 
-void Light::Update(char* keys,Map map, float rangeTheta,Global global) {
+//=========================================================初期化関数==============================================================
+void Light::Init(int sceneNum) {
+	switch (sceneNum) {
+		//====================================================================================
+	case TITLE://							   タイトル画面
+		//====================================================================================
+		break;
+		//====================================================================================
+	case SELECT://							   ステージ選択
+		//====================================================================================
+		break;
+		//====================================================================================
+	case GAME://								ゲーム本編
+		//====================================================================================
+		break;
+		//====================================================================================
+	case CLEAR://								クリア画面
+		//====================================================================================
+		break;
 
-	lightHitSpot_.clear();
-
+	default:
+		break;
+	}
 	
+}
+
+//====================================================アップデート=============================================================
+void Light::Update(char* keys, Map map, float rangeTheta) {
+
+	switch (Scene::sceneNum_) {
+		//====================================================================================
+	case TITLE://							   タイトル画面
+		//====================================================================================
+		break;
+		//====================================================================================
+	case SELECT://							   ステージ選択
+		//====================================================================================
+		break;
+		//====================================================================================
+	case GAME://								ゲーム本編
+		//====================================================================================
+
+		lightHitSpot_.clear();
+
+		aimPos_ = { emitPos_.x,emitPos_.y - Global::windowSize_.y };
+
+		leftVec_ = Multiply(
+			aimPos_.operator-(emitPos_),
+			AffineMatrix({ 1.0f,1.0f }, -(rangeTheta * 0.5f), emitPos_)
+		);
+
+		rightVec_ = Multiply(
+			aimPos_.operator-(emitPos_),
+			AffineMatrix({ 1.0f,1.0f }, rangeTheta * 0.5f, emitPos_)
+		);
+
+		leftVec_ = CrossPos(emitPos_, leftVec_, { 0,0 }, { float(Global::windowSize_.x),0 });
+		rightVec_ = CrossPos(emitPos_, rightVec_, { 0,0 }, { float(Global::windowSize_.x),0 });
 
 
-	aimPos_ = { emitPos_.x,emitPos_.y - global.windowSize_.y };
 
-	leftVec_ = Multiply(
-		aimPos_.operator-(emitPos_),
-		AffineMatrix({ 1.0f,1.0f }, -(rangeTheta * 0.5f), emitPos_)
-	);
+		if (keys[DIK_A]) {
+			emitPos_.x -= 2.0f;
+		}
 
-	rightVec_ = Multiply(
-		aimPos_.operator-(emitPos_),
-		AffineMatrix({ 1.0f,1.0f }, rangeTheta * 0.5f, emitPos_)
-	);
+		if (keys[DIK_D]) {
+			emitPos_.x += 2.0f;
+		}
 
-	leftVec_ = CrossPos(emitPos_, leftVec_, { 0,0 }, {float(global.windowSize_.x),0});
-	rightVec_ = CrossPos(emitPos_, rightVec_, { 0,0 }, { float(global.windowSize_.x),0 });
+		break;
 
 
+		//====================================================================================
+	case CLEAR://								クリア画面
+		//====================================================================================
+		break;
 
-	if (keys[DIK_A]) {
-		emitPos_.x -= 2.0f;
+	default:
+		break;
 	}
 
-	if (keys[DIK_D]) {
-		emitPos_.x += 2.0f;
-	}
 };
 
+
+//====================================================描画=============================================================
 void Light::Draw(Map map) {
 
-	Novice::DrawTriangle(
-		int(emitPos_.x),
-		int(emitPos_.y),
-		int(leftVec_.x),
-		int(leftVec_.y),
-		int(rightVec_.x),
-		int(rightVec_.y),
-		0xffff003f,
-		kFillModeSolid
-	);
+	switch (Scene::sceneNum_) {
+		//====================================================================================
+	case TITLE://							   タイトル画面
+		//====================================================================================
+		break;
+		//====================================================================================
+	case SELECT://							   ステージ選択
+		//====================================================================================
+		break;
+		//====================================================================================
+	case GAME://								ゲーム本編
+		//====================================================================================
 
-	Novice::DrawEllipse(
-		int(emitPos_.x),
-		int(emitPos_.y),
-		32, 32, 0.0f,
-		0xff0000ff,
-		kFillModeSolid
-	);
+		Novice::DrawTriangle(
+			int(emitPos_.x),
+			int(emitPos_.y),
+			int(leftVec_.x),
+			int(leftVec_.y),
+			int(rightVec_.x),
+			int(rightVec_.y),
+			0xffff003f,
+			kFillModeSolid
+		);
+
+		Novice::DrawEllipse(
+			int(emitPos_.x),
+			int(emitPos_.y),
+			32, 32, 0.0f,
+			0xff0000ff,
+			kFillModeSolid
+		);
+
+		break;
+
+
+		//====================================================================================
+	case CLEAR://								クリア画面
+		//====================================================================================
+		break;
+
+	default:
+		break;
+	}
+
 };
