@@ -1,4 +1,4 @@
-#include "Screen.h"
+#include "PlayerShadow.h"
 #include "Player.h"
 #include "ImGuiManager.h"
 
@@ -40,6 +40,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Player player(map);
 	Light light(map);
 	Screen screen(map, light);
+	Shadow shadow(rs,screen);
+	PlayerShadow playerShadow(screen, shadow);
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -58,6 +60,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		player.Update(keys,map);
 		light.Update(keys, map, ((3.0f / 4.0f) * float(M_PI)));
 		screen.Update(map, light);
+		playerShadow.Update(keys,screen,shadow);
 
 		if (keys[DIK_1]) {
 			Scene::sceneNum_ = TITLE;
@@ -77,10 +80,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓描画処理ここから
 		///
 
+		map.DrawBG();
 		screen.Draw(map, rs, light);
+		shadow.Draw(rs);
+		playerShadow.Draw();
+
 		light.Draw(map);
 		map.Draw(rs);
-		player.Draw(rs, map);
+		player.Draw(rs);
 
 		//デバッグ
 		switch (Scene::sceneNum_) {
@@ -102,7 +109,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			break;
 		}
 
-
+		
 		//ImGui::Begin("window");
 		//ImGui::End();
 

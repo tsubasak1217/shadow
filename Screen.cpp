@@ -346,7 +346,7 @@ void Screen::Draw(Map map, const Resources& rs, Light light) {
 			0, 0,
 			1, 1,
 			rs.whiteGH_,
-			0x0000ffff
+			0x666666ff
 		);
 
 
@@ -363,7 +363,7 @@ void Screen::Draw(Map map, const Resources& rs, Light light) {
 			0, 0,
 			1, 1,
 			rs.whiteGH_,
-			0x0000ffff
+			0x666666ff
 		);
 
 		Novice::DrawQuad(
@@ -378,7 +378,7 @@ void Screen::Draw(Map map, const Resources& rs, Light light) {
 			0, 0,
 			1, 1,
 			rs.whiteGH_,
-			0x0000ffff
+			0x666666ff
 		);
 
 
@@ -390,7 +390,7 @@ void Screen::Draw(Map map, const Resources& rs, Light light) {
 			int(bellowShadowCrossPos[1].y),
 			int(boxPos_[i][2].x),
 			int(boxPos_[i][2].y),
-			0x0000ffff,
+			0x666666ff,
 			kFillModeSolid
 		);
 
@@ -401,7 +401,7 @@ void Screen::Draw(Map map, const Resources& rs, Light light) {
 			int(bellowShadowCrossPos[3].y),
 			int(boxPos_[i][3].x),
 			int(boxPos_[i][3].y),
-			0x0000ffff,
+			0x666666ff,
 			kFillModeSolid
 		);
 
@@ -412,7 +412,7 @@ void Screen::Draw(Map map, const Resources& rs, Light light) {
 			int(boxPos_[i][7].y),
 			int(boxPos_[i][2].x),
 			int(boxPos_[i][2].y),
-			0x0000ffff,
+			0x666666ff,
 			kFillModeSolid
 		);
 
@@ -423,7 +423,7 @@ void Screen::Draw(Map map, const Resources& rs, Light light) {
 			int(boxPos_[i][3].y),
 			int(boxPos_[i][6].x),
 			int(boxPos_[i][6].y),
-			0x0000ffff,
+			0x666666ff,
 			kFillModeSolid
 		);
 	}

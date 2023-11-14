@@ -68,6 +68,12 @@
     <ClCompile Include="ChangeScene.cpp">
       <Filter>KamataEngine</Filter>
     </ClCompile>
+    <ClCompile Include="Shadow.cpp">
+      <Filter>KamataEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerShadow.cpp">
+      <Filter>KamataEngine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="C:\KamataEngine\DirectXGame\audio\Audio.h">
@@ -147,5 +153,7 @@
     <ClInclude Include="LocalFunc.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="ChangeScene.h" />
+    <ClInclude Include="Shadow.h" />
+    <ClInclude Include="PlayerShadow.h" />
   </ItemGroup>
 </Project>

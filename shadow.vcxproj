@@ -118,9 +118,11 @@
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="MyFunc.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PlayerShadow.cpp" />
     <ClCompile Include="Resources.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Screen.cpp" />
+    <ClCompile Include="Shadow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="C:\KamataEngine\DirectXGame\3d\CircleShadow.h" />
@@ -154,9 +156,11 @@
     <ClInclude Include="MatrixNxN.h" />
     <ClInclude Include="MyFunc.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="PlayerShadow.h" />
     <ClInclude Include="Resources.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Screen.h" />
+    <ClInclude Include="Shadow.h" />
     <ClInclude Include="VectorN.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -4,7 +4,7 @@
 class Screen {
 
 	Vec2 size_;
-	Vec2 LeftTop_;
+	Vec2 leftTop_;
 	Vec4 LRTB_;
 	Vec2 centerPos_;
 
@@ -30,6 +30,8 @@ public:
 			map.GetPuzzleLeftTop().y - size_.y,//top
 			map.GetPuzzleLeftTop().y//bottom
 		};
+
+		leftTop_ = { LRTB_.x,LRTB_.z };
 
 
 		for (int i = 0; i < map.GetVertex().size(); i++) {
@@ -67,5 +69,10 @@ public:
 	void Update(Map map, Light light);
 
 	void Draw(Map map, const Resources& rs, Light light);
+
+	Vec2 GetScreenLeftTop() { return leftTop_; }
+	Vec2 GetSize() { return size_; }
+	std::vector<std::vector<Vec2>>GetPos() { return boxPos_; }
+	Vec2 GetPos(int boxNumber,int vertex) { return boxPos_[boxNumber][vertex]; }
 };
 

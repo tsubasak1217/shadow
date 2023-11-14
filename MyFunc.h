@@ -48,6 +48,9 @@ Vec2 Normalize(Vec2 pos1, Vec2 pos2);
 //内積を求める
 float Dot(Vec2 pos1, Vec2 pos2, Vec2 targetPos);
 
+//内積を求める(正規化しない)
+float NoInitDot(Vec2 pos1, Vec2 pos2, Vec2 targetPos);
+
 //外積を求める関数
 float Cross(
 	float line1StartX, float line1StartY,
@@ -56,6 +59,12 @@ float Cross(
 );
 
 float Cross(Vec2 pos1, Vec2 pos2, Vec2 targetPos);
+
+//外積(正規化しない)
+float NoInitCross(Vec2 pos1, Vec2 pos2, Vec2 targetPos);
+
+//内積で角度を計算する関数
+float CalcAngle(Vec2 pos1, Vec2 pos2, Vec2 pos3);
 
 //線と線の交点を求める関数
 Vec2 CrossPos(
@@ -128,6 +137,9 @@ void Vec2ScreenPrintf(int posX, int posY, Vec2 vector);
 bool IsHitBox_Ball(Vec2 boxCenter, Vec2 ballPos, Vec2 boxSize, float ballRasius);
 //回転していない矩形と円の当たり判定(当たった面を返す)
 int IsHitBox_BallDirection(Vec2 boxCenter, Vec2 ballPos, Vec2 boxSize, float ballRasius);
+
+//矩形と円の当たり判定
+bool ColisionBox_Ball(Vec2 leftTop, Vec2 rightTop, Vec2 leftBottom, Vec2 rightBottom, Vec2 ballPos, float ballRadius);
 
 //================================================================
 //                     オリジナル描画関数

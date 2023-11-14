@@ -505,6 +505,54 @@ void Map::Update(char* keys, const Resources& rs) {
 
 
 //====================================================描画=============================================================
+void Map::DrawBG() {
+
+	switch (Scene::sceneNum_) {
+		//====================================================================================
+	case TITLE://							   タイトル画面
+		//====================================================================================
+		break;
+		//====================================================================================
+	case SELECT://							   ステージ選択
+		//====================================================================================
+		break;
+		//====================================================================================
+	case GAME://								ゲーム本編
+		//====================================================================================
+		
+		Novice::DrawBox(
+			0,
+			0,
+			Global::windowSize_.x,
+			Global::windowSize_.y,
+			0.0f,
+			0x000000ff,
+			kFillModeSolid
+		);
+
+		Novice::DrawBox(
+			int(puzzleLeftTop_.x),
+			int(puzzleLeftTop_.y),
+			int(puzzleMapSize_.x),
+			int(puzzleMapSize_.y),
+			0.0f,
+			0xffffffff,
+			kFillModeSolid
+		);
+
+
+		break;
+		//====================================================================================
+	case CLEAR://								クリア画面
+		//====================================================================================
+		break;
+
+	default:
+		break;
+	}
+
+};
+
 void Map::Draw(const Resources &rs) {
 
 	switch (Scene::sceneNum_) {
@@ -559,6 +607,7 @@ void Map::Draw(const Resources &rs) {
 				
 				} else if (mapChip_[row][col] == 8) {
 
+					//穴が開いて通れない地面
 					Novice::DrawQuad(
 						int(pos_[row][col].x - size_.x * 0.5f),
 						int(pos_[row][col].y + size_.y * 0.5f),
@@ -571,7 +620,7 @@ void Map::Draw(const Resources &rs) {
 						0, 0,
 						1, 1,
 						rs.whiteGH_,
-						0xffff00ff
+						0x000000ff
 					);
 				}
 			}
