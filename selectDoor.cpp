@@ -15,6 +15,11 @@ void DOOR::Init() {
 		VectorVertexS(vertex_[i], CPos_[i], size_.x, size_.y);
 	}
 
+	
+
+
+
+
 	//*-------------------------------選択範囲の座標-------------------------------------*//
 	selectPos_ = CPos_[0];//CPos_[0]が決定したのでここでselectPos_に代入
 #pragma endregion

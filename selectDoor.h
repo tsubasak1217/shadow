@@ -81,7 +81,7 @@ public:
 		isEaseS_ = false;
 		DrawTimerMax_ = 45;
 		DrawTimer_ = DrawTimerMax_;
-		easeTimerS_ = 1.0f;
+		easeTimerS_ = 2.0f;
 		selectT_ = 0.0f;
 		selectAddT_ = 0.0f;
 		selectMinPos_ = CPos_[0];
