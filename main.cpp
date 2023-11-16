@@ -61,7 +61,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		/// ↓更新処理ここから
 		///
-
+		Novice::ScreenPrintf(0, 0, "StageNum=%d", Map::stageNum_);
 		map.Update(keys, rs);
 		player.Update(keys, map);
 		light.Update(keys, map, ((3.0f / 4.0f) * float(M_PI)));
@@ -70,9 +70,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 
 		DOOR.SelectDoor(keys, preKeys);
-		SC.SelectFromGameUpDate(DOOR.isChangeScene_, DOOR.CPos_, DOOR.selectNum_);
+		SC.UpDate(DOOR.isChangeScene_, DOOR.CPos_, DOOR.selectNum_);
 		SC.Reset(DOOR.isChangeScene_);
-		DOOR.Reset(keys,preKeys);
+		//DOOR.Reset(keys,preKeys);
 		if (keys[DIK_1]) {
 			Scene::sceneNum_ = TITLE;
 		} else if (keys[DIK_2]) {
@@ -100,7 +100,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		map.Draw(rs);
 		player.Draw(rs);
 		DOOR.Draw();
-		SC.SelectFromGameDraw(DOOR.GH_, DOOR.color_);
+		SC.Draw(DOOR.GH_, DOOR.color_);
 
 
 		

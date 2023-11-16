@@ -7,9 +7,10 @@
 class ChangeScene {
 
 	/*-------------------------------セレクトからゲーム画面への状態遷移変数----------------------------------*/
-	/**/
-	bool isChangeSelect_;
-
+	/*セレクト画面のシーン遷移フラグ*/
+	//bool isChangeSelect_;
+	bool isStartChange_;
+	bool isEndChange_;
 
 	//状態遷移イージング用
 	//SCはSceneChangeの略
@@ -18,7 +19,9 @@ class ChangeScene {
 	Vec2 SCVertex_[4];//状態遷移用の扉の４頂点
 	float SCT_;//SceneChangeのｔ
 	float SCAddT_;//SceneChangeのaddT
-	unsigned int  SCColor_;
+	unsigned int  SCColor_;//欄間から見える光の色
+
+
 
 	//大きさ・座標の最大最小
 	Vec2 minSCSize_;
@@ -49,11 +52,13 @@ class ChangeScene {
 	float addBCColor_;
 	bool isChangeColor_;
 	unsigned int BCColor_;
+
 	/*----------------------------------セレクトからゲーム画面ここまで--------------------------------*/
 public:
 	ChangeScene(){
-		isChangeSelect_ = false;
-
+		//isChangeSelect_ = false;
+		isStartChange_=false;
+		isEndChange_=false;
 		//状態遷移イージング用
 		SCCPos_ = { -200,-100 };
 		SCSize_ = { 50,100 };
@@ -94,8 +99,8 @@ public:
 		BCColor_ = 0xFFFFFF00;
 	}
 
-	void SelectFromGameUpDate(bool&isChangeScene,Vec2 CPos[],int selectNum);
-	void SelectFromGameDraw(int GH, unsigned int DoorColor);
+	void UpDate(bool&isChangeScene,Vec2 CPos[],int selectNum);
+	void Draw(int GH, unsigned int DoorColor);
 	void Reset(bool& isChangeScene);
 };
 

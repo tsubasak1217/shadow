@@ -50,8 +50,6 @@ public:
 	Vec2 EllPos_;
 
 
-	bool isAllDraw_;
-
 	int debugNum = 0;
 
 
@@ -83,7 +81,7 @@ public:
 		isEaseS_ = false;
 		DrawTimerMax_ = 45;
 		DrawTimer_ = DrawTimerMax_;
-		easeTimerS_ = 10.0f;
+		easeTimerS_ = 1.0f;
 		selectT_ = 0.0f;
 		selectAddT_ = 0.0f;
 		selectMinPos_ = CPos_[0];
@@ -92,7 +90,6 @@ public:
 		EllSize_ = { 260,276 };
 		EllPos_ = { 240,615 };
 
-		isAllDraw_ = true;
 
 		isChangeScene_=false;
 	};
@@ -102,5 +99,5 @@ public:
 
 	void SelectDoor(char* keys, char* preKeys);
 	void Debug(char* keys, char* preKeys);
-	void Reset(char* keys, char* preKeys);
+	void Reset();
 };

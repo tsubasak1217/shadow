@@ -11,6 +11,49 @@ void VectorVertexS(Vec2 vertex[4], Vec2 CPos, float Wradius, float Hradius) {
 	vertex[3].x = CPos.x + Wradius / 2;
 	vertex[3].y = CPos.y + Hradius / 2;
 };
+void VectorVertexTL(Vec2 vertex[3], Vec2 Cpos, float Width, float Height) {
+	vertex[2].y = Cpos.y;
+	vertex[0].x = Cpos.x;
+	vertex[0].y = Cpos.y - Height;
+	vertex[1].x = Cpos.x + Width;
+	vertex[1].y = Cpos.y;
+	vertex[2].x = Cpos.x - Width * 0.9f;
+};
+void VectorVertexTR(Vec2 vertex[3], Vec2 Cpos, float Width, float Height) {
+	vertex[0].x = Cpos.x;
+	vertex[0].y = Cpos.y - Height;
+	vertex[1].x = Cpos.x + Width * 0.9f;
+	vertex[1].y = Cpos.y;
+	vertex[2].x = Cpos.x - Width;
+	vertex[2].y = Cpos.y;
+};
+
+
+void DrawCat(Vec2 CPos, float Width, float Height, unsigned int color) {
+	Vec2 TriCPos[2];
+	TriCPos[0] = { CPos.x - (Width / 2) / 2.4f, CPos.y - (Height / 2) / 2 };
+	TriCPos[1] = { CPos.x + (Width / 2) / 2.4f, CPos.y - (Height / 2) / 2 };
+	float TriSizeH = (Height / 2);
+	float TriSizeW = (Width / 2) / 2;
+	Vec2 TriVertexL[3] = { 0 };
+	Vec2 TriVertexR[3] = { 0 };
+	VectorVertexTL(TriVertexL, TriCPos[0], TriSizeW, TriSizeH);
+	VectorVertexTR(TriVertexR, TriCPos[1], TriSizeW, TriSizeH);
+
+
+	Novice::DrawEllipse(static_cast<int>(CPos.x), static_cast<int>(CPos.y), static_cast<int>(Height / 2), static_cast<int>(Width / 2), 0.0f, color, kFillModeSolid);
+
+	Novice::DrawTriangle(static_cast<int>(TriVertexL[0].x), static_cast<int>(TriVertexL[0].y),
+		static_cast<int>(TriVertexL[1].x), static_cast<int>(TriVertexL[1].y),
+		static_cast<int>(TriVertexL[2].x), static_cast<int>(TriVertexL[2].y),
+		color, kFillModeSolid);
+
+	Novice::DrawTriangle(static_cast<int>(TriVertexR[0].x), static_cast<int>(TriVertexR[0].y),
+		static_cast<int>(TriVertexR[1].x), static_cast<int>(TriVertexR[1].y),
+		static_cast<int>(TriVertexR[2].x), static_cast<int>(TriVertexR[2].y),
+		color, kFillModeSolid);
+
+}
 
 
 Vec2 rotateVect(Vec2 a, float aSin, float aCos)

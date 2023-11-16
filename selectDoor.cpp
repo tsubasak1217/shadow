@@ -31,80 +31,81 @@ void DOOR::Draw() {
 	case SELECT://							   ステージ選択
 		//====================================================================================
 #pragma region"描画"
-		if (isAllDraw_) {
-			Novice::DrawBox(0, 0, int(480), int(720), 0.0f, 0x444444FF, kFillModeSolid);
-			//size_に応じてSpriteの表示サイズを変更
-			Drawsize_.x = size_.x / 100;
-			Drawsize_.y = size_.y / 200;
 
-			//床の円
-			Novice::DrawEllipse(static_cast<int>(EllPos_.x), static_cast<int>(EllPos_.y), static_cast<int>(EllSize_.x), static_cast<int>(EllSize_.y), 0.0f, 0x000000FF, kFillModeWireFrame);
+		Novice::DrawBox(0, 0, int(480), int(720), 0.0f, 0x444444FF, kFillModeSolid);
+		//size_に応じてSpriteの表示サイズを変更
+		Drawsize_.x = size_.x / 100;
+		Drawsize_.y = size_.y / 200;
 
-			/*------------------------------選択する扉の描画------------------------------*/
-			//扉の描画
-			for (int i = 0; i < DOOR_MAX; i++)
-			{
-				if (isDraw_[i]) {
-					//扉の欄間から見える光
-					Novice::DrawBox(static_cast<int>(CPos_[i].x - size_.x / 2), static_cast<int>(CPos_[i].y - size_.y / 2),
-						static_cast<int>(size_.x), static_cast<int>(size_.y), 0.0f, lightColor_, kFillModeSolid);
-					//扉の外枠
-					Novice::DrawBox(static_cast<int>(CPos_[i].x - size_.x / 2), static_cast<int>(CPos_[i].y - size_.y / 2),
-						static_cast<int>(size_.x), static_cast<int>(size_.y), 0.0f, 0x000000FF, kFillModeWireFrame);
-					//ドア本体
-					Novice::DrawQuad(static_cast<int>(vertex_[i][0].x), static_cast<int>(vertex_[i][0].y), static_cast<int>(vertex_[i][1].x), static_cast<int>(vertex_[i][1].y),
-						static_cast<int>(vertex_[i][2].x), static_cast<int>(vertex_[i][2].y), static_cast<int>(vertex_[i][3].x), static_cast<int>(vertex_[i][3].y), 0, 0, 100, 200, GH_, color_);
+		//床の円
+		Novice::DrawEllipse(static_cast<int>(EllPos_.x), static_cast<int>(EllPos_.y), static_cast<int>(EllSize_.x), static_cast<int>(EllSize_.y), 0.0f, 0x000000FF, kFillModeWireFrame);
+
+		/*------------------------------選択する扉の描画------------------------------*/
+		//扉の描画
+		for (int i = 0; i < DOOR_MAX; i++)
+		{
+			if (isDraw_[i]) {
+				//扉の欄間から見える光
+				Novice::DrawBox(static_cast<int>(CPos_[i].x - size_.x / 2), static_cast<int>(CPos_[i].y - size_.y / 2),
+					static_cast<int>(size_.x), static_cast<int>(size_.y), 0.0f, lightColor_, kFillModeSolid);
+				//扉の外枠
+				Novice::DrawBox(static_cast<int>(CPos_[i].x - size_.x / 2), static_cast<int>(CPos_[i].y - size_.y / 2),
+					static_cast<int>(size_.x), static_cast<int>(size_.y), 0.0f, 0x000000FF, kFillModeWireFrame);
+				//ドア本体
+				Novice::DrawQuad(static_cast<int>(vertex_[i][0].x), static_cast<int>(vertex_[i][0].y), static_cast<int>(vertex_[i][1].x), static_cast<int>(vertex_[i][1].y),
+					static_cast<int>(vertex_[i][2].x), static_cast<int>(vertex_[i][2].y), static_cast<int>(vertex_[i][3].x), static_cast<int>(vertex_[i][3].y), 0, 0, 100, 200, GH_, color_);
+			}
+		}
+
+		/*------------------------------選択範囲の描画------------------------------*/
+		//点滅させる
+		DrawTimer_ -= 1;
+		if (!isEaseS_) {
+			if (DrawTimer_ == 0) {
+				if (isSelectDraw_) {
+					isSelectDraw_ = false;
+					DrawTimer_ = DrawTimerMax_;
+				} else {
+					isSelectDraw_ = true;
+					DrawTimer_ = DrawTimerMax_;
 				}
 			}
+		} else {
+			isSelectDraw_ = true;
+			DrawTimer_ = DrawTimerMax_;
+		}
 
-			/*------------------------------選択範囲の描画------------------------------*/
-			//点滅させる
-			DrawTimer_ -= 1;
-			if (!isEaseS_) {
-				if (DrawTimer_ == 0) {
-					if (isSelectDraw_) {
-						isSelectDraw_ = false;
-						DrawTimer_ = DrawTimerMax_;
-					} else {
-						isSelectDraw_ = true;
-						DrawTimer_ = DrawTimerMax_;
-					}
-				}
-			} else {
-				isSelectDraw_ = true;
-				DrawTimer_ = DrawTimerMax_;
-			}
-
-			//選択範囲の描画
-			if (isSelectDraw_) {
-				Novice::DrawBox(static_cast<int>(selectPos_.x - (size_.x / 2) - 1), static_cast<int>(selectPos_.y - (size_.y / 2) - 1),
-					static_cast<int>(size_.x + 1), static_cast<int>(size_.y + 1), 0.0f, selectColor_, kFillModeWireFrame);
-			}
-
-
-			/*------------------------------状態遷移時の暗幕----------------------------------------*/
-			//Novice::DrawBox(0, 0, 480, 720, 0.0f, BCColor_, kFillModeSolid);
+		//選択範囲の描画
+		if (isSelectDraw_) {
+			Novice::DrawBox(static_cast<int>(selectPos_.x - (size_.x / 2) - 1), static_cast<int>(selectPos_.y - (size_.y / 2) - 1),
+				static_cast<int>(size_.x + 1), static_cast<int>(size_.y + 1), 0.0f, selectColor_, kFillModeWireFrame);
 		}
 
 
-		/*------------------------------状態遷移用の扉----------------------------------------*/
-		/*
-		//扉の欄間から見える光
-		Novice::DrawBox(static_cast<int>(SCCPos_.x - SCSize_.x / 2), static_cast<int>(SCCPos_.y - SCSize_.y / 2),
-			static_cast<int>(SCSize_.x), static_cast<int>(SCSize_.y), 0.0f, SCColor_, kFillModeSolid);
-		if (isAllDraw_) {
-			//ドア本体
-			Novice::DrawQuad(static_cast<int>(SCVertex_[0].x), static_cast<int>(SCVertex_[0].y), static_cast<int>(SCVertex_[1].x), static_cast<int>(SCVertex_[1].y),
-				static_cast<int>(SCVertex_[2].x), static_cast<int>(SCVertex_[2].y), static_cast<int>(SCVertex_[3].x), static_cast<int>(SCVertex_[3].y),
-				0, 0, 100, 200, GH_, color_);
-		}
-		*/
+		/*------------------------------状態遷移時の暗幕----------------------------------------*/
+
+
+
+	/*------------------------------状態遷移用の扉----------------------------------------*/
+	/*
+	//扉の欄間から見える光
+	Novice::DrawBox(static_cast<int>(SCCPos_.x - SCSize_.x / 2), static_cast<int>(SCCPos_.y - SCSize_.y / 2),
+		static_cast<int>(SCSize_.x), static_cast<int>(SCSize_.y), 0.0f, SCColor_, kFillModeSolid);
+	if (isAllDraw_) {
+		//ドア本体
+		Novice::DrawQuad(static_cast<int>(SCVertex_[0].x), static_cast<int>(SCVertex_[0].y), static_cast<int>(SCVertex_[1].x), static_cast<int>(SCVertex_[1].y),
+			static_cast<int>(SCVertex_[2].x), static_cast<int>(SCVertex_[2].y), static_cast<int>(SCVertex_[3].x), static_cast<int>(SCVertex_[3].y),
+			0, 0, 100, 200, GH_, color_);
+	}
+	*/
 #pragma endregion
 
 		break;
 		//====================================================================================
 	case GAME://								ゲーム本編
 		//====================================================================================
+
+
 		break;
 		//====================================================================================
 	case CLEAR://								クリア画面
@@ -124,6 +125,13 @@ void DOOR::SelectDoor(char* keys, char* preKeys) {
 		//====================================================================================
 	case TITLE://							   タイトル画面
 		//====================================================================================
+
+#pragma region"タイトルでの処理"
+		Reset();
+
+#pragma endregion
+
+
 		break;
 		//====================================================================================
 	case SELECT://							   ステージ選択
@@ -178,10 +186,13 @@ void DOOR::SelectDoor(char* keys, char* preKeys) {
 			}
 		}
 
+#pragma endregion
 
+#pragma region"シーン遷移開始させる"
 		if (keys[DIK_SPACE] && !preKeys[DIK_SPACE] &&
 			!isChangeScene_) {
 			//何か条件を追加しないと連打でバグるかも
+			Map::stageNum_ = selectNum_;
 			isChangeScene_ = true;
 		}
 #pragma endregion
@@ -190,6 +201,11 @@ void DOOR::SelectDoor(char* keys, char* preKeys) {
 		//====================================================================================
 	case GAME://								ゲーム本編
 		//====================================================================================
+
+#pragma region"ゲームでの処理"
+		Reset();
+#pragma endregion
+
 		break;
 		//====================================================================================
 	case CLEAR://								クリア画面
@@ -417,107 +433,68 @@ void DOOR::Debug(char* keys, char* preKeys) {
 #pragma endregion
 
 
-void DOOR::Reset(char* keys, char* preKeys) {
+void DOOR::Reset() {
+
 #pragma region"リセット"
-	if (keys[DIK_RETURN] && !preKeys[DIK_RETURN]) {
-		if (Scene::sceneNum_ == GAME) {
-
-			//ドア本体の変数
-			for (int i = 0; i < DOOR_MAX; i++) {
-				CPos_[i] = { 0 };
-				size_ = { 50,100 };
-				Drawsize_ = { 0 };
-				theta_[i] = { 0 };
-				isDraw_[i] = true;
-				rotateLength_[i] = { 0 };
-				for (int j = 0; j < 4; j++) {
-					vertex_[i][j] = { 0 };
-				}
-			}
-			color_ = 0x000000FF;
-			lightColor_ = 0xFFFFFFFF;
-			//GH_ = Novice::LoadTexture("./images/Door.png");
-			//円周上に並んでいるドアの原点
-			originPos_ = { 240,512 };
-			length_ = { 215,0 };
 
 
-			/*
-			//状態遷移イージング用
-			SCCPos_ = { -200,-100 };
-			SCSize_ = { 50,100 };
-			for (int i = 0; i < 4; i++) {
-				SCVertex_[i] = { 0 };
-			}
-			SCT_ = 0;
-			SCAddT_ = 0;
-			SCColor_ = 0xFFFFFF00;
-			minSCSize_ = { 0 };
-			maxSCSize_ = { 0 };
-			minSCCPos_ = { 0 };
-			maxSCCPos_ = { 0 };
-			SCEaseTimer_ = 120;
-			isSetSCPos_ = false;
-			isEaseSC_ = false;
+	/*変数の値リセット*/
 
-			//ドアを開くイージング用
-			openT_ = 0;
-			openAddT_ = 0;
-			easeDirO_ = 1;
-			for (int j = 0; j < 2; j++) {
-				minVertexO_[j] = { 0,0 };
-				maxVertexO_[j] = { 0,0 };
-			}
-			isEaseO_ = false;
-			isSetVertexO_ = false;
-
-			//暗幕変数(blackoutCurtainと呼称	BC)
-			BCT_ = 0;
-			BCAddT_ = 0;
-			BCEaseTimer_ = 51;
-			BCEaseDir_ = 1;
-			maxBCColor_ = 0xff;
-			minBCColor_ = 0x0;
-			addBCColor_ = 0x0;
-			isChangeColor_ = false;
-			BCColor_ = 0xFFFFFF00;
-			*/
-			//選択範囲の変数
-			selectNum_ = 0;
-			selectPos_ = { 0 };
-			selectColor_ = 0xFF0000FF;
-			isSelectDraw_ = false;
-			isEaseS_ = false;
-			DrawTimerMax_ = 45;
-			DrawTimer_ = DrawTimerMax_;
-			easeTimerS_ = 10.0f;
-			selectT_ = 0.0f;
-			selectAddT_ = 0.0f;
-			selectMinPos_ = CPos_[0];
-			selectMaxPos_ = CPos_[0];
-			//床の円
-			EllSize_ = { 260,276 };
-			EllPos_ = { 240,615 };
-
-			isAllDraw_ = true;
-
-			//*-------------------------------各ドアの座標を求める----------------------------------*//
-			for (int i = 0; i < DOOR_MAX; i++) {
-				//角度を決める
-				theta_[i] = theta_[0] + (1.0f / 7.0f * float(M_PI)) * i;
-				theta_[0] = (float(M_PI));
-				//移動
-				rotateLength_[i] = rotateVect(length_, sinf(theta_[i]), cosf(theta_[i]));
-				//円形に配置
-				CPos_[i] = getVectAdd(rotateLength_[i], originPos_);
-				//４頂点を求める
-				VectorVertexS(vertex_[i], CPos_[i], size_.x, size_.y);
-			}
-
-			//*-------------------------------選択範囲の座標-------------------------------------*//
-			selectPos_ = CPos_[0];//CPos_[0]が決定したのでここでselectPos_に代入
+	//ドア本体の変数
+	for (int i = 0; i < DOOR_MAX; i++) {
+		CPos_[i] = { 0 };
+		size_ = { 50,100 };
+		Drawsize_ = { 0 };
+		theta_[i] = { 0 };
+		isDraw_[i] = true;
+		rotateLength_[i] = { 0 };
+		for (int j = 0; j < 4; j++) {
+			vertex_[i][j] = { 0 };
 		}
 	}
+	color_ = 0x000000FF;
+	lightColor_ = 0xFFFFFFFF;
+	//GH_ = Novice::LoadTexture("./images/Door.png");
+	//円周上に並んでいるドアの原点
+	originPos_ = { 240,512 };
+	length_ = { 215,0 };
+
+	//選択範囲の変数
+	selectNum_ = 0;
+	selectPos_ = { 0 };
+	selectColor_ = 0xFF0000FF;
+	isSelectDraw_ = false;
+	isEaseS_ = false;
+	DrawTimerMax_ = 45;
+	DrawTimer_ = DrawTimerMax_;
+	easeTimerS_ = 2.0f;
+	selectT_ = 0.0f;
+	selectAddT_ = 0.0f;
+	selectMinPos_ = CPos_[0];
+	selectMaxPos_ = CPos_[0];
+	//床の円
+	EllSize_ = { 260,276 };
+	EllPos_ = { 240,615 };
+
+
+	//*-------------------------------各ドアの座標を求める----------------------------------*//
+	for (int i = 0; i < DOOR_MAX; i++) {
+		//角度を決める
+		theta_[i] = theta_[0] + (1.0f / 7.0f * float(M_PI)) * i;
+		theta_[0] = (float(M_PI));
+		//移動
+		rotateLength_[i] = rotateVect(length_, sinf(theta_[i]), cosf(theta_[i]));
+		//円形に配置
+		CPos_[i] = getVectAdd(rotateLength_[i], originPos_);
+		//４頂点を求める
+		VectorVertexS(vertex_[i], CPos_[i], size_.x, size_.y);
+	}
+
+	//*-------------------------------選択範囲の座標-------------------------------------*//
+	selectPos_ = CPos_[0];//CPos_[0]が決定したのでここでselectPos_に代入
+
+
+
 #pragma endregion
 
 

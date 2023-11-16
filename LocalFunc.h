@@ -6,9 +6,14 @@
 Vec2 getVectAdd(Vec2 a, Vec2 b);
 Vec2 rotateVect(Vec2 a, float aSin, float aCos);
 void VectorVertexS(Vec2 vertex[4], Vec2 CPos, float Wradius, float Hradius);
+void VectorVertexTL(Vec2 vertex[3],Vec2 Cpos, float Width, float Height);
+
+void VectorVertexTR(Vec2 vertex[3], Vec2 Cpos, float Width, float Height);
 
 
-void CalcAddress(Vector2<int>*address, Vec2 pos, Vec2 size, float radius);
+void DrawCat(Vec2 CPos, float Width, float Height, unsigned int color);
+
+void CalcAddress(Vector2<int>* address, Vec2 pos, Vec2 size, float radius);
 
 /// <summary>
 /// マップチップの押し戻しを行う関数(当たった面も取得できるよ)
