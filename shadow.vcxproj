@@ -109,6 +109,7 @@
     <ClCompile Include="C:\KamataEngine\Adapter\Novice.cpp" />
     <ClCompile Include="ChangeScene.cpp" />
     <ClCompile Include="Easing.cpp" />
+    <ClCompile Include="stageClearEffect.cpp" />
     <ClCompile Include="global.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="LocalFunc.cpp" />
@@ -124,6 +125,7 @@
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="selectDoor.cpp" />
     <ClCompile Include="Shadow.cpp" />
+    <ClCompile Include="stageClear.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="C:\KamataEngine\DirectXGame\3d\CircleShadow.h" />
@@ -150,6 +152,7 @@
     <ClInclude Include="C:\KamataEngine\Adapter\Novice.h" />
     <ClInclude Include="ChangeScene.h" />
     <ClInclude Include="Easing.h" />
+    <ClInclude Include="stageClearEffect.h" />
     <ClInclude Include="global.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="LocalFunc.h" />
@@ -163,6 +166,7 @@
     <ClInclude Include="Screen.h" />
     <ClInclude Include="selectDoor.h" />
     <ClInclude Include="Shadow.h" />
+    <ClInclude Include="stageClear.h" />
     <ClInclude Include="VectorN.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,32 +1,7 @@
 ﻿#include"selectDoor.h"
 
-void DOOR::Init() {
-#pragma region"初期化"
-	//*-------------------------------各ドアの座標を求める----------------------------------*//
-	for (int i = 0; i < DOOR_MAX; i++) {
-		//角度を決める
-		theta_[i] = theta_[0] + (1.0f / 7.0f * float(M_PI)) * i;
-		theta_[0] = (float(M_PI));
-		//移動
-		rotateLength_[i] = rotateVect(length_, sinf(theta_[i]), cosf(theta_[i]));
-		//円形に配置
-		CPos_[i] = getVectAdd(rotateLength_[i], originPos_);
-		//４頂点を求める
-		VectorVertexS(vertex_[i], CPos_[i], size_.x, size_.y);
-	}
 
-	
-
-
-
-
-	//*-------------------------------選択範囲の座標-------------------------------------*//
-	selectPos_ = CPos_[0];//CPos_[0]が決定したのでここでselectPos_に代入
-#pragma endregion
-}
-
-
-void DOOR::Draw() {
+void SelectDoor::Draw() {
 	switch (Scene::sceneNum_) {
 		//====================================================================================
 	case TITLE://							   タイトル画面
@@ -42,8 +17,20 @@ void DOOR::Draw() {
 		Drawsize_.x = size_.x / 100;
 		Drawsize_.y = size_.y / 200;
 
+		/*ステージクリアの文字*/
+		Novice::DrawBox(int(selectFontCPos_.x - selectFontSize_.x / 2), int(selectFontCPos_.y - selectFontSize_.y / 2), int(selectFontSize_.x), int(selectFontSize_.y), 0.0f, FColor_, kFillModeWireFrame);
+
+
 		//床の円
 		Novice::DrawEllipse(static_cast<int>(EllPos_.x), static_cast<int>(EllPos_.y), static_cast<int>(EllSize_.x), static_cast<int>(EllSize_.y), 0.0f, 0x000000FF, kFillModeWireFrame);
+
+		for (int i = 0; i < 3; i++) {
+			Novice::DrawEllipse(static_cast<int>(NumlightEllCPos_.x), static_cast<int>(NumlightEllCPos_.y),
+				static_cast<int>(NumlightEllSize_.x + (i * 5)), static_cast<int>(NumlightEllSize_.y + (i * 5)), 0.0f, DLColor_, kFillModeSolid);
+		}
+		Novice::DrawQuad(static_cast<int>(NumVertex_[0].x), static_cast<int>(NumVertex_[0].y), static_cast<int>(NumVertex_[1].x), static_cast<int>(NumVertex_[1].y),
+			static_cast<int>(NumVertex_[2].x), static_cast<int>(NumVertex_[2].y), static_cast<int>(NumVertex_[3].x), static_cast<int>(NumVertex_[3].y), (GHSize_*(selectNum_+1)), 0, GHSize_, GHSize_, NumGH_, NumColor_);
+
 
 		/*------------------------------選択する扉の描画------------------------------*/
 		//扉の描画
@@ -124,7 +111,7 @@ void DOOR::Draw() {
 
 
 
-void DOOR::SelectDoor(char* keys, char* preKeys) {
+void SelectDoor::Update(char* keys, char* preKeys) {
 
 	switch (Scene::sceneNum_) {
 		//====================================================================================
@@ -176,6 +163,7 @@ void DOOR::SelectDoor(char* keys, char* preKeys) {
 		//現地点と指定されたドアの位置を保存
 		selectMinPos_ = selectPos_;
 		selectMaxPos_ = CPos_[selectNum_];
+		Map::stageNum_ = selectNum_;
 
 		//選択範囲の移動
 		if (isEaseS_) {
@@ -194,12 +182,47 @@ void DOOR::SelectDoor(char* keys, char* preKeys) {
 #pragma endregion
 
 #pragma region"シーン遷移開始させる"
+		/*
 		if (keys[DIK_SPACE] && !preKeys[DIK_SPACE] &&
 			!isChangeScene_) {
 			//何か条件を追加しないと連打でバグるかも
-			Map::stageNum_ = selectNum_;
 			isChangeScene_ = true;
 		}
+		*/
+#pragma endregion
+
+#pragma region"ステージ番号表示用のライトの点滅イージング"
+		//足す透明度をイージング
+
+		DLT_ += (1.0f / DLEaseTimer_) * DLEaseDir_;
+		DLAddT_ = EaseInOutBounce(DLT_);
+		addDLColor_ = (1 - DLAddT_) * minDLColor_ + DLAddT_ * maxDLColor_;
+
+		if (DLT_ >= 1.0f) {
+			DLT_ = 1.0f;
+			DLWaitTimer_ -= 1;
+			if (DLWaitTimer_ == 0) {
+				DLEaseDir_ *= -1;
+				DLWaitTimer_ = DLWaitTimerMax_;
+			}
+		}
+
+		if (DLT_ <= 0.0f) {
+			DLT_ = 0.0f;
+			DLEaseDir_ *= -1;
+
+		}
+
+		if (addDLColor_ >= maxDLColor_) {
+			addDLColor_ = maxDLColor_;//バウンドで色がオーバーフローしないように上限で無理やり止める
+		}
+		if (addDLColor_ <= minDLColor_) {
+			addDLColor_ = minDLColor_;//バウンドで色がオーバーフローしないように上限で無理やり止める
+		}
+		//Novice::ScreenPrintf(0, 150, "SCColor=%x", SCColor_);
+		DLColor_ = 0xFFFFFF00 + int(addDLColor_);//で透明度を足す
+		NumColor_ = 0x44444400 + int(addDLColor_+55);//文字も色変更
+
 #pragma endregion
 
 		break;
@@ -438,7 +461,7 @@ void DOOR::Debug(char* keys, char* preKeys) {
 #pragma endregion
 
 
-void DOOR::Reset() {
+void SelectDoor::Reset() {
 
 #pragma region"リセット"
 
@@ -495,9 +518,11 @@ void DOOR::Reset() {
 		VectorVertexS(vertex_[i], CPos_[i], size_.x, size_.y);
 	}
 
+	VectorVertexS(NumVertex_, NumlightEllCPos_, NumlightEllSize_.x, NumlightEllSize_.y);
+
+
 	//*-------------------------------選択範囲の座標-------------------------------------*//
 	selectPos_ = CPos_[0];//CPos_[0]が決定したのでここでselectPos_に代入
-
 
 
 #pragma endregion

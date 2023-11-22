@@ -7,10 +7,10 @@
 class ChangeScene {
 
 	/*-------------------------------セレクトからゲーム画面への状態遷移変数----------------------------------*/
+#pragma region"セレクトからゲームで使う変数の宣言"
 	/*セレクト画面のシーン遷移フラグ*/
 	//bool isChangeSelect_;
-	bool isStartChange_;
-	bool isEndChange_;
+
 
 	//状態遷移イージング用
 	//SCはSceneChangeの略
@@ -53,12 +53,77 @@ class ChangeScene {
 	bool isChangeColor_;
 	unsigned int BCColor_;
 
+	int BCWaitTimer_;
+	int BCWaitMaxTimer_;
+#pragma endregion
+
+#pragma region""
+
+	//ゲーム
+	// 
+	//EndScene以外の時
+	Vec2 GCVertex_[4];//状態遷移用の扉の４頂点
+	float GCT_;//SceneChangeのｔ
+	float GCAddT_;//SceneChangeのaddT
+	unsigned int  GCColor_;//欄間から見える光の色
+
+	//扉を開けるイージング用
+	float GopenT_;
+	float GopenAddT_;
+	int easeDirGO_;
+	Vec2 minVertexGO_[2];
+	Vec2 maxVertexGO_[2];
+	bool isEaseGO_;
+
+	const int kMaxWall = 4;
+	const int kMaxStairs = 5;
+	int changeTime_ = 0;
+	int timeCount_ = 0;
+
+	/*迫ってくる壁*/
+	Vec2 wallPos_[4];
+	float wallWidth_;
+	float wallHeight_;
+	Vec2 wallStartPos_[4];
+	Vec2 wallEndPos_[4];
+	float wallT_;
+	int wallMoveTime_;
+
+	/*階段*/
+	Vec2 stairsPos_[5];
+	float stairsWidth_;
+	float stairsHeight_;
+	Vec2 stairsStartPos_[5];
+	Vec2 stairsEndPos_[5];
+	float stairsT_[5];
+	static const int stairsMoveTime_ = 120;
+	//暗幕変数(blackoutCurtainと呼称	WS)
+	float WST_;
+	float WSAddT_;
+	float WSEaseTimer_;
+	float WSEaseDir_;
+	float maxWSColor_;
+	float minWSColor_;
+	float addWSColor_;
+
+
+	unsigned int  WallStairsColor_;//状態遷移色
+
+
+	///------------------
+#pragma endregion
+
 	/*----------------------------------セレクトからゲーム画面ここまで--------------------------------*/
 public:
-	ChangeScene(){
+	bool isStartChange_;
+	bool isEndChange_;
+
+	ChangeScene() {
+
+#pragma region"セレクトからゲームで使う変数の初期化"
 		//isChangeSelect_ = false;
-		isStartChange_=false;
-		isEndChange_=false;
+		isStartChange_ = false;
+		isEndChange_ = false;
 		//状態遷移イージング用
 		SCCPos_ = { -200,-100 };
 		SCSize_ = { 50,100 };
@@ -97,10 +162,79 @@ public:
 		addBCColor_ = 0x0;
 		isChangeColor_ = false;
 		BCColor_ = 0xFFFFFF00;
+
+
+
+		BCWaitMaxTimer_ = 120;
+		BCWaitTimer_ = BCWaitMaxTimer_;
+#pragma endregion
+
+#pragma region"ゲームからクリアまでの処理"
+
+		//EndScene以外の時
+		for (int i = 0; i < 4; i++) {
+			GCVertex_[i] = { 0 };//状態遷移用の扉の４頂点
+		}
+		GCT_ = 0;//SceneChangeのｔ
+		GCAddT_ = 0;//SceneChangeのaddT
+		GCColor_ = 0xFFFFFFFF;//欄間から見える光の色
+
+		//扉を開けるイージング用
+		GopenT_ = 0;
+		GopenAddT_ = 0;
+		easeDirGO_ = 1;
+		for (int j = 0; j < 2; j++) {
+			minVertexGO_[j] = { 0 };
+			maxVertexGO_[j] = { 0 };
+		}
+		isEaseGO_ = false;
+
+		/*迫ってくる壁*/
+		
+		wallWidth_=float(Global::windowSize_.x);
+		wallHeight_ = float(Global::windowSize_.y);
+
+		//EndScene以外の時
+		for (int i = 0; i < 4; i++) {
+			wallPos_[i] = { 0 };
+			wallStartPos_[i] = { 0 };
+			wallEndPos_[i] = {0};
+		}
+		wallT_=0;
+		wallMoveTime_=120;
+
+		/*階段*/
+
+		stairsWidth_=41.2f;
+		stairsHeight_=18.5f;
+		for (int i = 0; i < 5; i++) {
+			stairsPos_[i] = { 0 };
+			stairsStartPos_[i] = { 0 };
+			stairsEndPos_[i] = { 0 };
+			stairsT_[i] = { 0 };
+		}
+		//暗幕変数(blackoutCurtainと呼称	WS)
+		WST_ = 0;
+		WSAddT_ = 0;
+		WSEaseTimer_ = 60;
+		WSEaseDir_ = 1;
+		maxWSColor_ = 0x0;
+		minWSColor_ = 0xFF;
+		addWSColor_ = 0x0;
+		isChangeColor_ = false;
+
+		WallStairsColor_ = 0x000000FF;
+
+
+#pragma endregion
+
+
 	}
 
-	void UpDate(bool&isChangeScene,Vec2 CPos[],int selectNum);
-	void Draw(int GH, unsigned int DoorColor);
-	void Reset(bool& isChangeScene);
+	void UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CPos[], int selectNum, bool& CanCS, Vec2 goalPos, Vec2 goalSize);
+	void Draw(int GH, unsigned int DoorColor, Vec2 goalPos, Vec2 goalSize);
+	void Reset();
+	//bool GetStartFrag() { return isStartChange_; };
+	//bool GetEndFrag() { return isEndChange_; };
 };
 

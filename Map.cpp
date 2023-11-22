@@ -200,7 +200,7 @@ void Map::Init(int sceneNum) {
 
 
 //====================================================アップデート=============================================================
-void Map::Update(char* keys, const Resources& rs) {
+void Map::Update(char* keys, const Resources& rs,const ChangeScene cs ) {
 
 	switch (Scene::sceneNum_) {
 		//====================================================================================
@@ -210,6 +210,7 @@ void Map::Update(char* keys, const Resources& rs) {
 		//====================================================================================
 	case SELECT://							   ステージ選択
 		//====================================================================================
+
 		break;
 		//====================================================================================
 	case GAME://								ゲーム本編
@@ -224,7 +225,7 @@ void Map::Update(char* keys, const Resources& rs) {
 		break;
 	}
 
-	if (keys[DIK_RETURN]) {
+	if (cs.isStartChange_||keys[DIK_RETURN]) {
 		
 		//要素を消去
 		pos_.clear();

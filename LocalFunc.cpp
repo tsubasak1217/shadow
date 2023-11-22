@@ -1,5 +1,31 @@
 ﻿#include "LocalFunc.h"
+void NormalizeMikami(Vec2& vec2) {
+	float length = sqrtf(vec2.x * vec2.x + vec2.y * vec2.y);
+	if (length != 0.0f) {
+		vec2.x /= length;
+		vec2.y /= length;
+	}
+};
+Vec2 TransformMikami(Vec2 vector, Matrix3x3 matrix) {
+	Vec2 result;//w=1がデカルト座標系であるので(x,y,1)のベクトルとしてmatrixの積をとる
+	result.x = vector.x * matrix.m[0][0] + vector.y * matrix.m[1][0] + 1.0f * matrix.m[2][0];
+	result.y = vector.x * matrix.m[0][1] + vector.y * matrix.m[1][1] + 1.0f * matrix.m[2][1];
+	float w = vector.x * matrix.m[0][2] + vector.y * matrix.m[1][2] + 1.0f * matrix.m[2][2];
+	assert(w != 0.0f);//bベクトルに対して基本的な操作を行う秒列ではｗ＝０にならない
+	result.x /= w;
+	result.y /= w;
 
+	return result;
+
+};
+
+void MatrixVertex(Vec2 Vertex[4], float size) {
+	Vertex[0] = { (-size / 2),(-size / 2) };
+	Vertex[1] = { (size / 2),(-size / 2) };
+	Vertex[2] = { (-size / 2), (size / 2) };
+	Vertex[3] = { (size / 2),(size / 2) };
+
+};
 
 void VectorVertexS(Vec2 vertex[4], Vec2 CPos, float Wradius, float Hradius) {
 	vertex[0].x = CPos.x - Wradius / 2;

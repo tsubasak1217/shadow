@@ -77,6 +77,12 @@
     <ClCompile Include="selectDoor.cpp">
       <Filter>KamataEngine</Filter>
     </ClCompile>
+    <ClCompile Include="stageClear.cpp">
+      <Filter>KamataEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="stageClearEffect.cpp">
+      <Filter>KamataEngine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="C:\KamataEngine\DirectXGame\audio\Audio.h">
@@ -159,5 +165,7 @@
     <ClInclude Include="Shadow.h" />
     <ClInclude Include="PlayerShadow.h" />
     <ClInclude Include="selectDoor.h" />
+    <ClInclude Include="stageClear.h" />
+    <ClInclude Include="stageClearEffect.h" />
   </ItemGroup>
 </Project>

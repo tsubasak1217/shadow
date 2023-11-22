@@ -27,7 +27,7 @@ public:
 	void Init(int sceneNum);
 
 	//
-	void Update(char* keys, const Resources& rs);
+	void Update(char* keys, const Resources& rs, const  ChangeScene cs);
 
 	//
 	void Draw(const Resources& rs);

@@ -2,7 +2,7 @@
 #include"Map.h"
 
 const int DOOR_MAX = 8;
-class DOOR {
+class SelectDoor {
 
 public:
 	//ドア本体の変数
@@ -52,8 +52,38 @@ public:
 
 	int debugNum = 0;
 
+	/*ステージ番号表示のライト*/
+	/*表示の円（描画で三段階）*/
+	Vec2 NumlightEllCPos_;
+	Vec2 NumlightEllSize_;
+	bool isDrawNL_;
+	/*イージングDrawLight*/
+	float DLT_;
+	float DLAddT_;
+	/*イージングの時間*/
+	float DLEaseTimer_;
+	/*方向*/
+	float DLEaseDir_;
 
-	DOOR() {
+	float maxDLColor_;
+	float minDLColor_;
+	float addDLColor_;
+	/*表示され続ける時間*/
+	float DLWaitTimer_;
+	float DLWaitTimerMax_;
+	/*色*/
+	unsigned int DLColor_;
+
+	Vec2 NumVertex_[4];
+	int NumGH_;
+	int GHSize_;
+	unsigned int NumColor_;
+	/*セレクトの文字*/
+	Vec2 	selectFontCPos_;
+	Vec2 	selectFontSize_;
+	unsigned int FColor_;
+
+	SelectDoor() {
 		//ドア本体の変数
 		for (int i = 0; i < DOOR_MAX; i++) {
 			CPos_[i] = { 0 };
@@ -90,14 +120,41 @@ public:
 		EllSize_ = { 260,276 };
 		EllPos_ = { 240,615 };
 
+		NumlightEllCPos_ = { 240,535 };
+		NumlightEllSize_ = { 170,140 };
+		isDrawNL_=false;
+		/*イージングDrawLight*/
+		DLT_ = { 0 };
+		DLAddT_ = { 0 };
+		/*イージングの時間*/
+		DLEaseTimer_ = 60;
+		/*方向*/
+		DLEaseDir_ = 1;
 
-		isChangeScene_=false;
+		maxDLColor_ = 0x22;
+		minDLColor_ = 0x0;
+		addDLColor_ = 0x0;
+		/*表示され続ける時間*/
+		DLWaitTimerMax_ = 600;
+		DLWaitTimer_ = DLWaitTimerMax_;
+		/*色*/
+		DLColor_ = 0x00;
+		for (int j = 0; j < 4; j++) {
+			NumVertex_[j] = { 0 };
+		}
+		NumGH_ = Novice::LoadTexture("./Resources/images/number.png");
+		GHSize_ = 25;
+		NumColor_=0x444444FF;
+
+		selectFontCPos_ = { 240,145 };
+		selectFontSize_ = { 440,110 };
+		FColor_ = 0xFFFFFFFF;
+		isChangeScene_ = false;
 	};
 
-	void Init();
 	void Draw();
 
-	void SelectDoor(char* keys, char* preKeys);
+	void Update(char* keys, char* preKeys);
 	void Debug(char* keys, char* preKeys);
 	void Reset();
 };

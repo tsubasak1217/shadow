@@ -8,6 +8,7 @@ public:
 	std::string mapCsv_[8];
 	std::string screenCsv_[8];
 	int whiteGH_;
+	int doorGH_;
 
 	Resources();
 	~Resources();

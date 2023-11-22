@@ -1,8 +1,9 @@
 ﻿#pragma once
 #include "MyFunc.h"
 
-
-
+void NormalizeMikami(Vec2& vec2);
+Vec2 TransformMikami(Vec2 vector, Matrix3x3 matrix);
+void MatrixVertex(Vec2 Vertex[4], float size);
 Vec2 getVectAdd(Vec2 a, Vec2 b);
 Vec2 rotateVect(Vec2 a, float aSin, float aCos);
 void VectorVertexS(Vec2 vertex[4], Vec2 CPos, float Wradius, float Hradius);

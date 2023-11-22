@@ -1,16 +1,42 @@
 ﻿#include "ChangeScene.h"
 
-void ChangeScene::UpDate(bool& isChangeScene, Vec2 CPos[], int selectNum) {
+void ChangeScene::UpDate(char* keys, char* preKeys,bool& isChangeScene, Vec2 CPos[],
+	int selectNum, bool& CanCS, Vec2 goalPos, Vec2 goalSize) {
 	switch (Scene::sceneNum_) {
 		//====================================================================================
 	case TITLE://							   タイトル画面
 		//====================================================================================
+		Reset();
 		break;
-
 		//====================================================================================
 	case SELECT://							   ステージ選択
 		//====================================================================================
+		Reset();
 
+#pragma region"ステージ選択の開始処理（クリアからセレクト）"
+
+		//足す透明度をイージング
+		if (isStartChange_) {
+			BCT_ += (1.0f / BCEaseTimer_) * BCEaseDir_;
+			BCAddT_ = EaseInOutBounce(BCT_);
+			addBCColor_ = (1 - BCAddT_) * minBCColor_ + BCAddT_ * maxBCColor_;
+			if (BCT_ <= 0.0f) {
+				BCT_ = 0.0f;
+				isStartChange_ = false;//暗幕の透明度を変化させるフラグを下す
+			}
+
+			if (addBCColor_ >= 0xFF) {
+				addBCColor_ = 0xFF;//バウンドで色がオーバーフローしないように上限で無理やり止める
+			}
+			if (addBCColor_ <= 0x10) {
+				addBCColor_ = 0x00;//バウンドで色がオーバーフローしないように上限で無理やり止める
+			}
+			BCColor_ = 0x00000000 + int(addBCColor_);//ここで透明度を足す
+		}
+
+
+#pragma endregion
+		
 #pragma region"ステージ画面の終了処理(ステージからゲーム画面)"
 
 		/*-------------------------------シーンチェンジフラグが立つと開始--------------------------------*/
@@ -18,20 +44,21 @@ void ChangeScene::UpDate(bool& isChangeScene, Vec2 CPos[], int selectNum) {
 
 #pragma region"シーンチェンジで開始"
 
-
-		if (isChangeScene && !isStartChange_) {
-			isStartChange_ = true;
-			isSetSCPos_ = true;
-			isChangeColor_ = true;
+		if (keys[DIK_SPACE] && !preKeys[DIK_SPACE]) {
+			if (!isChangeScene && !isEndChange_ && !isStartChange_) {
+				isChangeScene = true;
+				isEndChange_ = true;
+				isSetSCPos_ = true;
+				isChangeColor_ = true;
+			}
 		}
 #pragma endregion
 
 
 		/*--------------------------------状態遷移用の扉を設置-----------------------------------------*/
 
-		if (isStartChange_ && !isEndChange_) {
+		if (isEndChange_) {
 #pragma region"設置"
-
 
 			//選択した扉の位置を状態遷移用の扉の座標に代入する
 			if (isSetSCPos_) {
@@ -153,8 +180,8 @@ void ChangeScene::UpDate(bool& isChangeScene, Vec2 CPos[], int selectNum) {
 					openT_ = 1.0f;
 					easeDirO_ = 0;
 					isChangeColor_ = true;
-					isStartChange_ = false;
-					isEndChange_ = true;
+					isEndChange_ = false;
+					isStartChange_ = true;
 					Scene::sceneNum_ = GAME;
 				}
 				//左上頂点
@@ -174,13 +201,13 @@ void ChangeScene::UpDate(bool& isChangeScene, Vec2 CPos[], int selectNum) {
 		//====================================================================================
 	case GAME://								ゲーム本編
 		//====================================================================================
-
+		Reset();
 #pragma region"ゲーム本編の開始処理（ステージからゲーム画面）"
 
 
 #pragma region"暗幕を上げる"
 
-		if (isEndChange_ && !isStartChange_) {
+		if (!isEndChange_ && isStartChange_) {
 			//足す透明度をイージング
 			if (isChangeColor_) {
 				BCT_ += (1.0f / BCEaseTimer_) * BCEaseDir_;
@@ -207,7 +234,7 @@ void ChangeScene::UpDate(bool& isChangeScene, Vec2 CPos[], int selectNum) {
 					BCT_ = 0.0f;
 					isChangeColor_ = false;//暗幕の透明度を変化させるフラグを下す
 					isChangeScene = false;
-					isEndChange_ = false;
+					isStartChange_ = false;
 					isEaseO_ = false;
 					BCEaseDir_ *= -1;
 				}
@@ -230,10 +257,204 @@ void ChangeScene::UpDate(bool& isChangeScene, Vec2 CPos[], int selectNum) {
 
 #pragma endregion
 
+
+#pragma region"ゲーム本編!(開始&&終了)"
+		if (!isStartChange_ &&!isEndChange_) {
+			VectorVertexS(GCVertex_, goalPos, goalSize.x, goalSize.y);
+			minVertexGO_[0] = GCVertex_[0];
+			minVertexGO_[1] = GCVertex_[2];
+			maxVertexGO_[0] = { GCVertex_[1].x + goalSize.x / 4,GCVertex_[0].y + goalSize.y / 4 };
+			maxVertexGO_[1] = { GCVertex_[3].x + goalSize.x / 4,GCVertex_[3].y + goalSize.y / 4 };
+
+			for (int i = 0; i < kMaxWall; i++) {
+				switch (i) {
+					///左側の壁--------------------------------------------------
+				case 0:
+					wallStartPos_[i].x = -(wallWidth_);
+					wallStartPos_[i].y = 0;
+
+					wallEndPos_[i].x = GCVertex_[0].x - wallWidth_;
+					wallEndPos_[i].y = wallStartPos_[i].y;
+					wallPos_[i] = wallStartPos_[i];
+					break;
+					///右側の壁--------------------------------------------------
+				case 1:
+					wallStartPos_[i].x = wallWidth_;
+					wallStartPos_[i].y = 0;
+
+					wallEndPos_[i].x = GCVertex_[1].x;
+					wallEndPos_[i].y = wallStartPos_[i].y;
+					wallPos_[i] = wallStartPos_[i];
+					break;
+					///上側の壁--------------------------------------------------
+				case 2:
+					wallStartPos_[i].x = 0;
+					wallStartPos_[i].y = -(wallHeight_);
+
+					wallEndPos_[i].x = wallStartPos_[i].x;
+					wallEndPos_[i].y = GCVertex_[0].y - wallHeight_;
+					wallPos_[i] = wallStartPos_[i];
+					break;
+					///下側の壁--------------------------------------------------
+				case 3:
+					wallStartPos_[i].x = 0;
+					wallStartPos_[i].y = wallHeight_;
+
+					wallEndPos_[i].x = wallStartPos_[i].x;
+					wallEndPos_[i].y = GCVertex_[3].y;
+					wallPos_[i] = wallStartPos_[i];
+					break;
+				}
+			}
+
+			for (int i = 0; i < kMaxStairs; i++) {
+				stairsStartPos_[i].x = GCVertex_[0].x - stairsWidth_;
+				stairsStartPos_[i].y = GCVertex_[0].y + (82 / kMaxStairs * i);
+
+				stairsEndPos_[i].x = GCVertex_[0].x;
+				stairsEndPos_[i].y = GCVertex_[0].y + (82 / kMaxStairs * i);
+
+				stairsPos_[i] = stairsStartPos_[i];
+				stairsT_[i] = 0;
+			}
+		}
+
+
+
+
+#pragma endregion
+
+
+#pragma region"ゲーム本編の終了処理"
+		if (!isStartChange_&&isEndChange_) {
+			changeTime_ += 1;
+			if (changeTime_ >= 100) {
+				for (int i = 0; i < kMaxWall; i++) {
+					//wall[i].Update();
+					if (wallT_ < 1.0f) {
+						wallT_ += (1.0f / wallMoveTime_);
+					} else {
+						wallT_ = 1.0f;
+					}
+					wallPos_[i].x = (1 - wallT_) * wallStartPos_[i].x + wallT_ * wallEndPos_[i].x;
+					wallPos_[i].y = (1 - wallT_) * wallStartPos_[i].y + wallT_ * wallEndPos_[i].y;
+
+
+				}
+			}
+		}
+		if (changeTime_ >= 160) {
+			//goal.UpDate();
+			GopenT_ += (1.0f / 120) * easeDirGO_;
+			if (easeDirGO_ > 0) {
+				GopenAddT_ = EaseInOutCubic(GopenT_);
+			}
+			if (GopenT_ >= 1.0f) {
+				GopenT_ = 1.0f;
+				easeDirGO_ = 0;
+
+			}
+			//左上頂点
+			GCVertex_[0].x = (1 - GopenAddT_) * minVertexGO_[0].x + GopenAddT_ * maxVertexGO_[0].x;
+			GCVertex_[0].y = (1 - GopenAddT_) * minVertexGO_[0].y + GopenAddT_ * maxVertexGO_[0].y;
+			//左下頂点
+			GCVertex_[2].x = (1 - GopenAddT_) * minVertexGO_[1].x + GopenAddT_ * maxVertexGO_[1].x;
+			GCVertex_[2].y = (1 - GopenAddT_) * minVertexGO_[1].y + GopenAddT_ * maxVertexGO_[1].y;
+
+
+		}
+
+		if (changeTime_ >= 250) {
+			for (int i = 0; i < kMaxStairs; i++) {
+				timeCount_ += 1;
+				if (timeCount_ > (stairsMoveTime_ / kMaxStairs) * i) {
+					//stairs[i].Update();
+					if (stairsT_[i] < 1.0f) {
+						stairsT_[i] += (1.0f / 24.0f);
+					} else {
+						stairsT_[i] = 1.0f;
+					}
+
+					stairsPos_[i].x = (1 - stairsT_[i]) * stairsStartPos_[i].x + stairsT_[i] * stairsEndPos_[i].x;
+				}
+
+			}
+		}
+
+		if (changeTime_ >= 360) {
+			isEndChange_ = false;
+			isStartChange_ = true;
+			Scene::sceneNum_ = CLEAR;
+		}
+
+#pragma endregion
 		break;
 		//====================================================================================
 	case CLEAR://								クリア画面
 		//====================================================================================
+		Reset();
+
+#pragma region"クリア画面の開始処理（ゲームからクリア）"
+		if (isStartChange_) {
+			if (BCWaitTimer_ > 0) {
+				BCWaitTimer_-=2;
+			} else {
+				WST_ += (1.0f / WSEaseTimer_) * WSEaseDir_;
+				WSAddT_ = EaseInOutBounce(WST_);
+				addWSColor_ = (1 - WSAddT_) * minWSColor_ + WSAddT_ * maxWSColor_;
+				if (WST_ >= 1.0f) {
+					WST_ = 1.0f;
+					isStartChange_ = false;
+					BCWaitTimer_ = BCWaitMaxTimer_;
+				}
+
+
+				if (addWSColor_ >= 0xFF) {
+					addWSColor_ = 0xFF;//バウンドで色がオーバーフローしないように上限で無理やり止める
+				}
+				if (addWSColor_ <= 0x10) {
+					addWSColor_ = 0x00;//バウンドで色がオーバーフローしないように上限で無理やり止める
+				}
+
+				WallStairsColor_ = 0x00000000 + int(addWSColor_);//ここで透明度を足す
+
+			}
+		}
+#pragma endregion
+
+#pragma region"クリア画面の終了処理（クリアからセレクト）"
+
+		if (keys[DIK_SPACE] && !preKeys[DIK_SPACE]) {
+			if (CanCS && !isStartChange_ && !isEndChange_) {//クリア画面で全ての処理が終わったとき
+				isEndChange_ = true;
+			}
+		}
+
+		//足す透明度をイージング
+		if (isEndChange_) {
+			BCT_ += (1.0f / (BCEaseTimer_ / 1.5f)) * BCEaseDir_;
+			BCAddT_ = EaseInCubic(BCT_);
+			addBCColor_ = (1 - BCAddT_) * minBCColor_ + BCAddT_ * maxBCColor_;
+			if (BCT_ >= 1.0f) {
+				BCT_ = 1.0f;
+				BCWaitTimer_ -= 1;
+				if (BCWaitTimer_ == 0) {
+					isEndChange_ = false;//暗幕の透明度を変化させるフラグを下す
+					isStartChange_ = true;//暗幕の透明度を変化させるフラグを下す
+					BCEaseDir_ *= -1;
+					Scene::sceneNum_ = SELECT;
+				}
+			}
+			if (addBCColor_ >= 0xFF) {
+				addBCColor_ = 0xFF;//バウンドで色がオーバーフローしないように上限で無理やり止める
+			}
+			BCColor_ = 0x00000000 + int(addBCColor_);//ここで透明度を足す
+
+		}
+
+
+#pragma endregion
+
 		break;
 
 	default:
@@ -242,11 +463,13 @@ void ChangeScene::UpDate(bool& isChangeScene, Vec2 CPos[], int selectNum) {
 	}
 }
 
-void  ChangeScene::Draw(int GH, unsigned int DoorColor) {
+void  ChangeScene::Draw(int GH, unsigned int DoorColor, Vec2 goalPos, Vec2 goalSize) {
 	switch (Scene::sceneNum_) {
 		//====================================================================================
 	case TITLE://							   タイトル画面
 		//====================================================================================
+
+
 		break;
 
 		//====================================================================================
@@ -256,7 +479,7 @@ void  ChangeScene::Draw(int GH, unsigned int DoorColor) {
 #pragma region"ステージ選択の描画"
 
 
-				/*------------------------------状態遷移時の暗幕----------------------------------------*/
+		/*------------------------------状態遷移時の暗幕----------------------------------------*/
 		Novice::DrawBox(0, 0, 480, 720, 0.0f, BCColor_, kFillModeSolid);
 
 
@@ -278,15 +501,11 @@ void  ChangeScene::Draw(int GH, unsigned int DoorColor) {
 		//====================================================================================
 	case GAME://								ゲーム本編
 		//====================================================================================
-
 #pragma region"ゲーム本編の描画"
 
 
 		/*------------------------------状態遷移時の暗幕----------------------------------------*/
 		Novice::DrawBox(0, 0, 480, 720, 0.0f, BCColor_, kFillModeSolid);
-
-
-
 		/*------------------------------状態遷移用の扉----------------------------------------*/
 
 		//扉の欄間から見える光
@@ -297,13 +516,91 @@ void  ChangeScene::Draw(int GH, unsigned int DoorColor) {
 		Novice::DrawQuad(static_cast<int>(SCVertex_[0].x), static_cast<int>(SCVertex_[0].y), static_cast<int>(SCVertex_[1].x), static_cast<int>(SCVertex_[1].y),
 			static_cast<int>(SCVertex_[2].x), static_cast<int>(SCVertex_[2].y), static_cast<int>(SCVertex_[3].x), static_cast<int>(SCVertex_[3].y),
 			0, 0, 100, 200, GH, DoorColor);
+
+
+
+
+		/*---------------------------------ゲ－ムからクリア---------------------------------*/
+		if (isEndChange_) {
+			Novice::DrawBox(0, 0, 480, 720, 0.0f, 0x000000ee, kFillModeSolid);
+
+			//扉の欄間から見える光
+
+			Novice::DrawBox(int(goalPos.x - goalSize.x / 2), int(goalPos.y - goalSize.y / 2), int(goalSize.x), int(goalSize.y),
+				0.0f, 0xFFFFFFFF, kFillModeSolid);
+
+			//扉の外枠
+			Novice::DrawBox(int(goalPos.x - goalSize.x / 2), int(goalPos.y - goalSize.y / 2), int(goalSize.x), int(goalSize.y),
+				0.0f, 0x00000000, kFillModeWireFrame);
+			//ドア本体
+			Novice::DrawQuad(static_cast<int>(GCVertex_[0].x), static_cast<int>(GCVertex_[0].y), static_cast<int>(GCVertex_[1].x), static_cast<int>(GCVertex_[1].y),
+				static_cast<int>(GCVertex_[2].x), static_cast<int>(GCVertex_[2].y), static_cast<int>(GCVertex_[3].x), static_cast<int>(GCVertex_[3].y), 0, 0, 100, 200, GH, 0xFFFFFFFF);
+
+			/*迫ってくる壁の描画*/
+			for (int i = 0; i < kMaxWall; i++) {
+				Novice::DrawBox(
+					int(wallPos_[i].x),
+					int(wallPos_[i].y),
+					int(wallWidth_),
+					int(wallHeight_),
+					0.0f,
+					WallStairsColor_,
+					kFillModeSolid);
+			}
+
+			if (changeTime_ >= 200) {
+			/*階段状の壁*/
+				for (int i = 0; i < kMaxStairs; i++) {
+					Novice::DrawBox(
+						int(stairsPos_[i].x),
+						int(stairsPos_[i].y),
+						int(stairsWidth_),
+						int(stairsHeight_),
+						0.0f,
+						WallStairsColor_,
+						kFillModeSolid);
+				}
+			}
+
+
+		}
 #pragma endregion
 
 		break;
 		//====================================================================================
 	case CLEAR://								クリア画面
 		//====================================================================================
+
+
+#pragma region"クリアの描画"
+
+
+#pragma region"ゲームからクリア"
+		if (isStartChange_) {
+			Novice::DrawBox(
+				0,
+				0,
+				int(Global::windowSize_.x),
+				int(Global::windowSize_.y),
+				0.0f,
+				WallStairsColor_,
+				kFillModeSolid);
+		}
+#pragma endregion
+
+
+
+
+#pragma region"クリアからステージ選択まで"
+		/*------------------------------状態遷移時の暗幕----------------------------------------*/
+		if (isEndChange_) {
+			Novice::DrawBox(0, 0, 480, 720, 0.0f, BCColor_, kFillModeSolid);
+		}
+#pragma endregion
+
 		break;
+
+#pragma endregion
 
 	default:
 		break;
@@ -312,10 +609,12 @@ void  ChangeScene::Draw(int GH, unsigned int DoorColor) {
 
 
 
-void ChangeScene::Reset(bool& isChangeScene) {
+void ChangeScene::Reset() {
 #pragma region"リセット"
-	if (!isChangeScene) {
 
+	if (!isStartChange_ && !isEndChange_) {
+		isStartChange_ = false;
+		isEndChange_ = false;
 		//isChangeSelect_ = false;
 
 		//状態遷移イージング用
@@ -356,6 +655,74 @@ void ChangeScene::Reset(bool& isChangeScene) {
 		addBCColor_ = 0x0;
 		isChangeColor_ = false;
 		BCColor_ = 0xFFFFFF00;
+
+
+		BCWaitMaxTimer_ = 60;
+		BCWaitTimer_ = BCWaitMaxTimer_;
+
+
+
+		//EndScene以外の時
+		for (int i = 0; i < 4; i++) {
+			GCVertex_[i] = { 0 };//状態遷移用の扉の４頂点
+		}
+		GCT_ = 0;//SceneChangeのｔ
+		GCAddT_ = 0;//SceneChangeのaddT
+		GCColor_ = 0xFFFFFFFF;//欄間から見える光の色
+
+		//扉を開けるイージング用
+		GopenT_ = 0;
+		GopenAddT_ = 0;
+		easeDirGO_ = 1;
+		for (int j = 0; j < 2; j++) {
+			minVertexGO_[j] = { 0 };
+			maxVertexGO_[j] = { 0 };
+		}
+		isEaseGO_ = false;
+
+		/*迫ってくる壁*/
+
+		wallWidth_ = float(Global::windowSize_.x);
+		wallHeight_ = float(Global::windowSize_.y);
+
+		//EndScene以外の時
+		for (int i = 0; i < 4; i++) {
+			wallPos_[i] = { 0 };
+			wallStartPos_[i] = { 0 };
+			wallEndPos_[i] = { 0 };
+		}
+		wallT_ = 0;
+		wallMoveTime_ = 120;
+
+		/*階段*/
+
+		stairsWidth_ = 41.2f;
+		stairsHeight_ = 18.5f;
+		for (int i = 0; i < 5; i++) {
+			stairsPos_[i] = { 0 };
+			stairsStartPos_[i] = { 0 };
+			stairsEndPos_[i] = { 0 };
+			stairsT_[i] = { 0 };
+		}
+		//暗幕変数(blackoutCurtainと呼称	WS)
+		WST_ = 0;
+		WSAddT_ = 0;
+		WSEaseTimer_ = 51;
+		WSEaseDir_ = 1;
+		maxWSColor_ = 0x0;
+		minWSColor_ = 0xFF;
+		addWSColor_ = 0x0;
+		isChangeColor_ = false;
+
+		WallStairsColor_ = 0x000000FF;
+
+		changeTime_ = 0;
+		timeCount_ = 0;
+
+
+
+
+
 	}
 #pragma endregion
 }

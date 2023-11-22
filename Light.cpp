@@ -85,7 +85,7 @@ void Light::Update(char* keys, Map map, float rangeTheta) {
 
 
 //====================================================描画=============================================================
-void Light::Draw(Map map) {
+void Light::Draw(Map map,ChangeScene CS) {
 
 	switch (Scene::sceneNum_) {
 		//====================================================================================
@@ -99,18 +99,18 @@ void Light::Draw(Map map) {
 		//====================================================================================
 	case GAME://								ゲーム本編
 		//====================================================================================
-
-		Novice::DrawTriangle(
-			int(emitPos_.x),
-			int(emitPos_.y),
-			int(leftVec_.x),
-			int(leftVec_.y),
-			int(rightVec_.x),
-			int(rightVec_.y),
-			0xffffff22,
-			kFillModeSolid
-		);
-
+		if (!CS.isEndChange_) {//ゴールにたどり着いたとき、光を消す
+			Novice::DrawTriangle(
+				int(emitPos_.x),
+				int(emitPos_.y),
+				int(leftVec_.x),
+				int(leftVec_.y),
+				int(rightVec_.x),
+				int(rightVec_.y),
+				0xffffff22,
+				kFillModeSolid
+			);
+		}
 		Novice::DrawEllipse(
 			int(emitPos_.x),
 			int(emitPos_.y),
