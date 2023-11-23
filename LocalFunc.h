@@ -13,7 +13,7 @@ void VectorVertexTR(Vec2 vertex[3], Vec2 Cpos, float Width, float Height);
 
 void DrawCat(Vec2 CPos, float Width, float Height, unsigned int color);
 
-void CalcAddress(Vector2<int>*address, Vec2 pos, Vec2 size, float radius);
+void CalcAddress(Vector2<int>* address, Vec2 pos, Vec2 size, float radius, int rowIndex, int colIndex);
 
 /// <summary>
 /// マップチップの押し戻しを行う関数(当たった面も取得できるよ)

@@ -208,7 +208,7 @@ void Map::Init(int sceneNum) {
 
 
 //====================================================アップデート=============================================================
-void Map::Update(char* keys, const Resources& rs,const ChangeScene cs ) {
+void Map::Update(char* keys, const Resources& rs, const ChangeScene cs) {
 
 	switch (Scene::sceneNum_) {
 		//====================================================================================
@@ -237,7 +237,9 @@ void Map::Update(char* keys, const Resources& rs,const ChangeScene cs ) {
 		break;
 	}
 
-	if (cs.isStartChange_||keys[DIK_RETURN]) {
+	if (cs.isStartChange_){
+}
+	if (keys[DIK_RETURN]) {
 		
 		//要素を消去
 		pos_.clear();

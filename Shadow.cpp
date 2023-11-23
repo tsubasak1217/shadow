@@ -20,9 +20,6 @@ Shadow::Shadow(const Resources& rs, Screen screen) {
 	goalSize_ = { float(size_.x*0.8f),float(size_.y*1.6f) };
 
 
-
-
-
 	//読み込んだマップチップの情報決定
 	for (int i = 0; i < mapChip_.size(); i++) {
 
@@ -75,21 +72,12 @@ Shadow::Shadow(const Resources& rs, Screen screen) {
 			pos_[i][j].x += screen.GetScreenLeftTop().x;
 			pos_[i][j].y += screen.GetScreenLeftTop().y;
 
-			VectorVertexS(goalVertex_, goalPos_, goalSize_.x, goalSize_.y);
 		}
 	}
+
+	VectorVertexS(goalVertex_, goalPos_, goalSize_.x, goalSize_.y);
 }
 
-		break;
-		//====================================================================================
-	case CLEAR://								クリア画面
-		//====================================================================================
-		break;
-
-	default:
-		break;
-	}
-}
 
 
 void Shadow::Update(Map map) {
@@ -225,5 +213,15 @@ void Shadow::Draw(const Resources& rs) {
 			}
 		}
 	}
+	/*CLEARのドア*/
+/*欄間から見える光*/
+	Novice::DrawBox(int(goalPos_.x - goalSize_.x / 2), int(goalPos_.y - goalSize_.y / 2), int(goalSize_.x), int(goalSize_.y),
+		0.0f, 0xFFFFFFFF, kFillModeSolid);
+
+	//ドア本体
+	Novice::DrawQuad(static_cast<int>(goalVertex_[0].x), static_cast<int>(goalVertex_[0].y), static_cast<int>(goalVertex_[1].x), static_cast<int>(goalVertex_[1].y),
+		static_cast<int>(goalVertex_[2].x), static_cast<int>(goalVertex_[2].y), static_cast<int>(goalVertex_[3].x), static_cast<int>(goalVertex_[3].y), 0, 0, 100, 200, rs.doorGH_, 0xFFFFFFFF);
+	/*ドアここまで*/
+
 }
 
