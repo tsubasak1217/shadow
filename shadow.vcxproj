@@ -109,6 +109,7 @@
     <ClCompile Include="C:\KamataEngine\Adapter\Novice.cpp" />
     <ClCompile Include="ChangeScene.cpp" />
     <ClCompile Include="Easing.cpp" />
+    <ClCompile Include="Pause.cpp" />
     <ClCompile Include="stageClearEffect.cpp" />
     <ClCompile Include="global.cpp" />
     <ClCompile Include="Light.cpp" />
@@ -152,6 +153,7 @@
     <ClInclude Include="C:\KamataEngine\Adapter\Novice.h" />
     <ClInclude Include="ChangeScene.h" />
     <ClInclude Include="Easing.h" />
+    <ClInclude Include="Pause.h" />
     <ClInclude Include="stageClearEffect.h" />
     <ClInclude Include="global.h" />
     <ClInclude Include="Light.h" />

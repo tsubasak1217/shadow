@@ -3,6 +3,7 @@
 #include "selectDoor.h"
 #include"stageClearEffect.h"
 #include"stageClear.h"
+#include"Pause.h"
 #include "ImGuiManager.h"
 
 //======================================================
@@ -51,7 +52,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	SelectDoor door;//セレクト画面
 	StageClear stageClear;//ステージクリア
 	SCE SCE;//ステージクリアのパーティクル
-
+	Pause pause;
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -80,6 +81,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		stageClear.Update(cs.isStartChange_);
 		SCE.Update(stageClear.GetFT());
 		playerShadow.Update(keys, screen, shadow, player);
+		pause.Update(cs,keys,preKeys);
 
 		//DOOR.Reset(keys,preKeys);
 		if (keys[DIK_1]) {
@@ -123,6 +125,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			}
 		}
 
+		pause.Draw();
 		/*シーンチェンジ一番前*/
 		cs.Draw(door.GH_, door.color_, shadow.GetGoalPos(), shadow.GetGoalSize());
 
@@ -160,9 +163,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Novice::EndFrame();
 
 		// ESCキーが押されたらループを抜ける
-		if (preKeys[DIK_ESCAPE] == 0 && keys[DIK_ESCAPE] != 0) {
-			break;
-		}
+		//if (preKeys[DIK_ESCAPE] == 0 && keys[DIK_ESCAPE] != 0) {
+			//break;
+		//}
 	}
 
 	// ライブラリの終了

@@ -83,6 +83,9 @@
     <ClCompile Include="stageClearEffect.cpp">
       <Filter>KamataEngine</Filter>
     </ClCompile>
+    <ClCompile Include="Pause.cpp">
+      <Filter>KamataEngine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="C:\KamataEngine\DirectXGame\audio\Audio.h">
@@ -167,5 +170,6 @@
     <ClInclude Include="selectDoor.h" />
     <ClInclude Include="stageClear.h" />
     <ClInclude Include="stageClearEffect.h" />
+    <ClInclude Include="Pause.h" />
   </ItemGroup>
 </Project>
