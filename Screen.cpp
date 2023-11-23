@@ -1,6 +1,89 @@
 ﻿#include "Screen.h"
 
-void Screen::Update(Map map, Light light) {
+void Screen::Init(int sceneNum, Map map, Light light) {
+
+	switch (sceneNum) {
+		//====================================================================================
+	case TITLE://							   タイトル画面
+		//====================================================================================
+		break;
+		//====================================================================================
+	case SELECT://							   ステージ選択
+		//====================================================================================
+		break;
+		//====================================================================================
+	case GAME://								ゲーム本編
+		//====================================================================================
+
+		size_ = {
+		map.GetPuzzleMapSize().x,
+		map.GetPuzzleMapSize().y * 2.0f
+		};
+
+		centerPos_ = {
+		map.GetPuzzleLeftTop().x + (map.GetPuzzleMapSize().x * 0.5f),
+		map.GetPuzzleLeftTop().y - (map.GetPuzzleMapSize().y * 0.5f)
+		};
+
+
+		LRTB_ = {
+			map.GetPuzzleLeftTop().x,//left
+			map.GetPuzzleLeftTop().x + size_.x,//right
+			map.GetPuzzleLeftTop().y - size_.y,//top
+			map.GetPuzzleLeftTop().y//bottom
+		};
+
+		leftTop_ = { LRTB_.x,LRTB_.z };
+
+
+		for (int i = 0; i < map.GetVertex().size(); i++) {
+			std::vector<Vec2>objVertex;
+			for (int j = 0; j < map.GetVertex()[i].size(); j++) {
+
+				//手前 → 奥
+				//LT,RT,LB,RB の順番
+
+				//光源から見て手前-------------------------------
+				objVertex.push_back(
+					{//左上
+					CrossPos(
+						light.GetEmitPos(),
+						{
+							map.GetVertex(i,j).x,
+							map.GetVertex(i,j).y
+						},
+						map.GetPuzzleLeftTop(),
+						{
+							map.GetPuzzleLeftTop().x + 16,
+							map.GetPuzzleLeftTop().y
+						}
+					).x,
+					map.GetPuzzleLeftTop().y
+					- (map.GetVertex(i,j).z * (((map.GetVertex(i,j).y - map.GetPuzzleLeftTop().y) / map.GetPuzzleMapSize().y) * 4.0f))
+					}
+				);
+			}
+
+			boxPos_.push_back(objVertex);
+		}
+		break;
+		//====================================================================================
+	case CLEAR://								クリア画面
+		//====================================================================================
+		break;
+
+	default:
+		break;
+	}
+
+}
+
+void Screen::Update(char* keys,const ChangeScene& cs,Map map, Light light) {
+
+	//シーン遷移の始まった瞬間にシーンに合わせて初期化
+	if (cs.isStartChange_ && cs.preIsEndChange_) {
+		Init(Scene::sceneNum_,map,light);
+	}
 
 	switch (Scene::sceneNum_) {
 		//====================================================================================
@@ -14,6 +97,11 @@ void Screen::Update(Map map, Light light) {
 		//====================================================================================
 	case GAME://								ゲーム本編
 		//====================================================================================
+
+		//Rで初期化
+		if (keys[DIK_R]) {
+			Init(Scene::sceneNum_, map, light);
+		}
 
 		preBoxPos_ = boxPos_;
 

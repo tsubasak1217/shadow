@@ -67,7 +67,9 @@ public:
 		}
 	};
 
-	void Update(Map map, Light light);
+	void Init(int sceneNum, Map map, Light light);
+
+	void Update(char* keys, const ChangeScene& cs, Map map, Light light);
 
 	void Draw(Map map, const Resources& rs, Light light);
 

@@ -181,7 +181,7 @@ Map::Map(const Resources& rs) {
 
 
 //=========================================================初期化関数==============================================================
-void Map::Init(int sceneNum) {
+void Map::Init(const Resources& rs,int sceneNum) {
 
 	switch (sceneNum) {
 		//====================================================================================
@@ -195,52 +195,7 @@ void Map::Init(int sceneNum) {
 		//====================================================================================
 	case GAME://								ゲーム本編
 		//====================================================================================
-		break;
-		//====================================================================================
-	case CLEAR://								クリア画面
-		//====================================================================================
-		break;
 
-	default:
-		break;
-	}
-}
-
-
-//====================================================アップデート=============================================================
-void Map::Update(char* keys, const Resources& rs, const ChangeScene cs) {
-
-	switch (Scene::sceneNum_) {
-		//====================================================================================
-	case TITLE://							   タイトル画面
-		//====================================================================================
-		break;
-		//====================================================================================
-	case SELECT://							   ステージ選択
-		//====================================================================================
-
-		break;
-		//====================================================================================
-	case GAME://								ゲーム本編
-		//====================================================================================
-
-		//falseで初期化
-		isPressSwitch_ = false;
-
-		break;
-		//====================================================================================
-	case CLEAR://								クリア画面
-		//====================================================================================
-		break;
-
-	default:
-		break;
-	}
-
-	if (cs.isStartChange_){
-}
-	if (keys[DIK_RETURN]) {
-		
 		//要素を消去
 		pos_.clear();
 		posCopy_.clear();
@@ -393,6 +348,7 @@ void Map::Update(char* keys, const Resources& rs, const ChangeScene cs) {
 
 				pos_[i][j].x += puzzleLeftTop_.x;
 				pos_[i][j].y += puzzleLeftTop_.y;
+
 			}
 		}
 
@@ -401,126 +357,180 @@ void Map::Update(char* keys, const Resources& rs, const ChangeScene cs) {
 
 				vertex_[i][j].x += puzzleLeftTop_.x;
 				vertex_[i][j].y += puzzleLeftTop_.y;
+
 			}
 		}
+
+		//スイッチが押されたかのフラグ
+		isPressSwitch_ = false;
 
 		mapChipCopy_ = mapChip_;
 		posCopy_ = pos_;
+
+		break;
+		//====================================================================================
+	case CLEAR://								クリア画面
+		//====================================================================================
+		break;
+
+	default:
+		break;
+	}
+}
+
+
+//====================================================アップデート=============================================================
+void Map::Update(char* keys, const Resources& rs, const ChangeScene cs) {
+
+	//シーン遷移の始まった瞬間にシーンに合わせて初期化
+	if (cs.isStartChange_ && cs.preIsEndChange_) {
+		Init(rs,Scene::sceneNum_);
 	}
 
+	switch (Scene::sceneNum_) {
+		//====================================================================================
+	case TITLE://							   タイトル画面
+		//====================================================================================
+		break;
+		//====================================================================================
+	case SELECT://							   ステージ選択
+		//====================================================================================
 
+		break;
+		//====================================================================================
+	case GAME://								ゲーム本編
+		//====================================================================================
 
-	//要素を消去	
-	touchable_.clear();
-	vertex_.clear();
-
-	//マップチップの情報更新
-	for (int i = 0; i < mapChip_.size(); i++) {
-
-		std::vector<Vec2>rowPos;
-		std::vector<bool>rowTouchable;
-
-		for (int j = 0; j < mapChip_[0].size(); j++) {
-
-			//座標決定
-			rowPos.push_back(pos_[i][j]);
-
-			//存在フラグ決定
-			if (mapChip_[i][j] == -1) {
-				firstPlayerPos_ = {
-			size_.x + (j * size_.x) - (size_.x * 0.5f),
-			size_.y + (i * size_.y) - (size_.y * 0.5f)
-				};
-			}
-
-			if (mapChip_[i][j] > 0) {
-				rowTouchable.push_back(true);
-
-			} else {
-				rowTouchable.push_back(false);
-			}
-
-			//各頂点の座標計算(3d)------------------------------------------------
-			if (mapChip_[i][j] == 1 or mapChip_[i][j] == 2) {
-				std::vector<Vec3>objVertex;
-				float zRate = (5.0f / 3.0f);
-
-				//手前 → 奥
-				//LT,RT,LB,RB の順番
-
-				//光源から見て手前-------------------------------
-				objVertex.push_back(
-					{//手前左上
-						rowPos[j].x - (size_.x * 0.5f),
-						rowPos[j].y + (size_.y * 0.5f),
-						size_.z * (1 + ((mapChip_[i][j] - 1) * (zRate - 1)))
-					}
-				);
-
-				objVertex.push_back(
-					{//手前右上
-						rowPos[j].x + (size_.x * 0.5f),
-						rowPos[j].y + (size_.y * 0.5f),
-						size_.z * (1 + ((mapChip_[i][j] - 1) * (zRate - 1)))
-					}
-				);
-
-				objVertex.push_back(
-					{//手前左下
-						rowPos[j].x - (size_.x * 0.5f),
-						rowPos[j].y + (size_.y * 0.5f),
-						0
-					}
-				);
-
-				objVertex.push_back(
-					{//手前右下
-						rowPos[j].x + (size_.x * 0.5f),
-						rowPos[j].y + (size_.y * 0.5f),
-						0
-					}
-				);
-
-				//光源から見て奥-------------------------------
-				objVertex.push_back(
-					{//奥左上
-						rowPos[j].x - (size_.x * 0.5f),
-						rowPos[j].y - (size_.y * 0.5f),
-						size_.z * (1 + ((mapChip_[i][j] - 1) * (zRate - 1)))
-					}
-				);
-
-				objVertex.push_back(
-					{//奥右上
-						rowPos[j].x + (size_.x * 0.5f),
-						rowPos[j].y - (size_.y * 0.5f),
-						size_.z * (1 + ((mapChip_[i][j] - 1) * (zRate - 1)))
-					}
-				);
-
-				objVertex.push_back(
-					{//奥左下
-						rowPos[j].x - (size_.x * 0.5f),
-						rowPos[j].y - (size_.y * 0.5f),
-						0
-					}
-				);
-
-				objVertex.push_back(
-					{//奥右下
-						rowPos[j].x + (size_.x * 0.5f),
-						rowPos[j].y - (size_.y * 0.5f),
-						0
-					}
-				);
-
-				//ひとつのブロックの頂点情報を格納
-				vertex_.push_back(objVertex);
-			}
+		//Rで初期化
+		if (keys[DIK_R]) {
+			Init(rs, Scene::sceneNum_);
 		}
 
-		touchable_.push_back(rowTouchable);
+		//falseで初期化
+		isPressSwitch_ = false;
+
+		//要素を消去	
+		touchable_.clear();
+		vertex_.clear();
+
+		//マップチップの情報更新
+		for (int i = 0; i < mapChip_.size(); i++) {
+
+			std::vector<Vec2>rowPos;
+			std::vector<bool>rowTouchable;
+
+			for (int j = 0; j < mapChip_[0].size(); j++) {
+
+				//座標決定
+				rowPos.push_back(pos_[i][j]);
+
+				//存在フラグ決定
+				if (mapChip_[i][j] == -1) {
+					firstPlayerPos_ = {
+				size_.x + (j * size_.x) - (size_.x * 0.5f),
+				size_.y + (i * size_.y) - (size_.y * 0.5f)
+					};
+				}
+
+				if (mapChip_[i][j] > 0) {
+					rowTouchable.push_back(true);
+
+				} else {
+					rowTouchable.push_back(false);
+				}
+
+				//各頂点の座標計算(3d)------------------------------------------------
+				if (mapChip_[i][j] == 1 or mapChip_[i][j] == 2) {
+					std::vector<Vec3>objVertex;
+					float zRate = (5.0f / 3.0f);
+
+					//手前 → 奥
+					//LT,RT,LB,RB の順番
+
+					//光源から見て手前-------------------------------
+					objVertex.push_back(
+						{//手前左上
+							rowPos[j].x - (size_.x * 0.5f),
+							rowPos[j].y + (size_.y * 0.5f),
+							size_.z * (1 + ((mapChip_[i][j] - 1) * (zRate - 1)))
+						}
+					);
+
+					objVertex.push_back(
+						{//手前右上
+							rowPos[j].x + (size_.x * 0.5f),
+							rowPos[j].y + (size_.y * 0.5f),
+							size_.z * (1 + ((mapChip_[i][j] - 1) * (zRate - 1)))
+						}
+					);
+
+					objVertex.push_back(
+						{//手前左下
+							rowPos[j].x - (size_.x * 0.5f),
+							rowPos[j].y + (size_.y * 0.5f),
+							0
+						}
+					);
+
+					objVertex.push_back(
+						{//手前右下
+							rowPos[j].x + (size_.x * 0.5f),
+							rowPos[j].y + (size_.y * 0.5f),
+							0
+						}
+					);
+
+					//光源から見て奥-------------------------------
+					objVertex.push_back(
+						{//奥左上
+							rowPos[j].x - (size_.x * 0.5f),
+							rowPos[j].y - (size_.y * 0.5f),
+							size_.z * (1 + ((mapChip_[i][j] - 1) * (zRate - 1)))
+						}
+					);
+
+					objVertex.push_back(
+						{//奥右上
+							rowPos[j].x + (size_.x * 0.5f),
+							rowPos[j].y - (size_.y * 0.5f),
+							size_.z * (1 + ((mapChip_[i][j] - 1) * (zRate - 1)))
+						}
+					);
+
+					objVertex.push_back(
+						{//奥左下
+							rowPos[j].x - (size_.x * 0.5f),
+							rowPos[j].y - (size_.y * 0.5f),
+							0
+						}
+					);
+
+					objVertex.push_back(
+						{//奥右下
+							rowPos[j].x + (size_.x * 0.5f),
+							rowPos[j].y - (size_.y * 0.5f),
+							0
+						}
+					);
+
+					//ひとつのブロックの頂点情報を格納
+					vertex_.push_back(objVertex);
+				}
+			}
+
+			touchable_.push_back(rowTouchable);
+		}
+
+		break;
+		//====================================================================================
+	case CLEAR://								クリア画面
+		//====================================================================================
+		break;
+
+	default:
+		break;
 	}
+	
 };
 
 

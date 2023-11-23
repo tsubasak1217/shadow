@@ -28,7 +28,7 @@ public:
 	//コンストラクタ
 	Map(const Resources& rs);
 
-	void Init(int sceneNum);
+	void Init(const Resources& rs,int sceneNum);
 
 	//
 	void Update(char* keys, const Resources& rs, const  ChangeScene cs);

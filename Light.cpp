@@ -1,7 +1,7 @@
 ﻿#include "Light.h"
 
 //=========================================================初期化関数==============================================================
-void Light::Init(int sceneNum) {
+void Light::Init(int sceneNum,Map map) {
 	switch (sceneNum) {
 		//====================================================================================
 	case TITLE://							   タイトル画面
@@ -14,6 +14,27 @@ void Light::Init(int sceneNum) {
 		//====================================================================================
 	case GAME://								ゲーム本編
 		//====================================================================================
+
+		//ステージごとのライトの初期座標
+		firstEmitPos_[0] = { Global::windowSize_.x * 0.5f,Global::windowSize_.y - map.GetSize().y * 0.2f };
+		firstEmitPos_[1] = { Global::windowSize_.x * 0.5f,Global::windowSize_.y - map.GetSize().y * 0.2f };
+		firstEmitPos_[2] = { Global::windowSize_.x * 0.5f,Global::windowSize_.y - map.GetSize().y * 0.2f };
+		firstEmitPos_[3] = { Global::windowSize_.x * 0.5f,Global::windowSize_.y - map.GetSize().y * 0.2f };
+		firstEmitPos_[4] = { Global::windowSize_.x * 0.5f,Global::windowSize_.y - map.GetSize().y * 0.2f };
+		firstEmitPos_[5] = { Global::windowSize_.x * 0.5f,Global::windowSize_.y - map.GetSize().y * 0.2f };
+		firstEmitPos_[6] = { Global::windowSize_.x * 0.5f,Global::windowSize_.y - map.GetSize().y * 0.2f };
+		firstEmitPos_[7] = { Global::windowSize_.x * 0.5f,Global::windowSize_.y - map.GetSize().y * 0.2f };
+
+		emitPos_ = {
+		Global::windowSize_.x * 0.5f,
+		Global::windowSize_.y - map.GetSize().y * 0.2f
+		};
+		aimPos_ = { -100.0f,-100.0f };
+		lightHitSpot_.clear();
+		rangeTheta_ = 0.0f;
+		leftVec_ = { 0.0f,0.0f };
+		rightVec_ = { 0.0f,0.0f };
+
 		break;
 		//====================================================================================
 	case CLEAR://								クリア画面
@@ -27,7 +48,12 @@ void Light::Init(int sceneNum) {
 }
 
 //====================================================アップデート=============================================================
-void Light::Update(char* keys, Map map, float rangeTheta) {
+void Light::Update(char* keys, const ChangeScene& cs, Map map, float rangeTheta) {
+
+	//シーン遷移の始まった瞬間にシーンに合わせて初期化
+	if (cs.isStartChange_ && cs.preIsEndChange_) {
+		Init(Scene::sceneNum_,map);
+	}
 
 	switch (Scene::sceneNum_) {
 		//====================================================================================
@@ -41,6 +67,11 @@ void Light::Update(char* keys, Map map, float rangeTheta) {
 		//====================================================================================
 	case GAME://								ゲーム本編
 		//====================================================================================
+
+		//Rで初期化
+		if(keys[DIK_R]) {
+			Init(Scene::sceneNum_, map);
+		}
 
 		lightHitSpot_.clear();
 

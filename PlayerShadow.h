@@ -84,9 +84,9 @@ public:
 		starGetCount_ = 0;
 	}
 
-	void Init(int sceneNum);
+	void Init(int sceneNum, Screen screen, Shadow shadow);
 
-	void Update(char* keys,Screen screen, Shadow& shadow,Player& player);
+	void Update(char* keys, const ChangeScene& cs, Screen screen, Shadow& shadow,Player& player);
 
 	void Draw(Screen screen);
 

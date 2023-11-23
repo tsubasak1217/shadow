@@ -22,10 +22,10 @@ public:
 	//コンストラクタ
 	Shadow(const Resources& rs, Screen screen);
 
-	void Init(const Resources& rs, int sceneNum);
+	void Init(const Resources& rs,Screen screen, int sceneNum);
 
 	//
-	void Update(Map map);
+	void Update(char* keys, const ChangeScene& cs, const Resources& rs, const Screen& screen, Map map);
 
 	//
 	void Draw(const Resources& rs);

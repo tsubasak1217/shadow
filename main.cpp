@@ -71,15 +71,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		map.Update(keys, rs, cs);
 		player.Update(keys, map);
-		light.Update(keys, map, ((3.0f / 4.0f) * float(M_PI)));
-		shadow.Update(map);
-		screen.Update(map, light);
+		light.Update(keys,cs, map, ((3.0f / 4.0f) * float(M_PI)));
+		shadow.Update(keys,cs,rs,screen,map);
+		screen.Update(keys,cs,map, light);
 
 		door.Update(keys, preKeys);
 		cs.UpDate(keys, preKeys, door.isChangeScene_, door.CPos_, door.selectNum_, SCE.canSceneChange, shadow.GetGoalPos(), shadow.GetGoalSize());
 		stageClear.Update(cs.isStartChange_);
 		SCE.Update(stageClear.GetFT());
-		playerShadow.Update(keys, screen, shadow, player);
+		playerShadow.Update(keys,cs, screen, shadow, player);
 
 		//DOOR.Reset(keys,preKeys);
 		if (keys[DIK_1]) {
