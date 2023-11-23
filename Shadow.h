@@ -33,6 +33,10 @@ public:
 	Vec2 GetSize() { return size_; }
 	Vec2 GetGoalPos() { return goalPos_; }
 	Vec2 GetGoalSize() { return goalSize_; }
+	Vec2 GetGoalLT() { return goalVertex_[0]; }
+	Vec2 GetGoalRT() { return goalVertex_[1]; }
+	Vec2 GetGoalLB() { return goalVertex_[2]; }
+	Vec2 GetGoalRB() { return goalVertex_[3]; }
 	std::vector<std::vector<int>>GetMapChip() { return mapChip_; }
 	std::vector<std::vector<Vec2>>GetPos() { return pos_; }
 };

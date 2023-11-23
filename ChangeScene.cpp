@@ -2,6 +2,8 @@
 
 void ChangeScene::UpDate(char* keys, char* preKeys,bool& isChangeScene, Vec2 CPos[],
 	int selectNum, bool& CanCS, Vec2 goalPos, Vec2 goalSize) {
+
+
 	switch (Scene::sceneNum_) {
 		//====================================================================================
 	case TITLE://							   タイトル画面
@@ -201,7 +203,25 @@ void ChangeScene::UpDate(char* keys, char* preKeys,bool& isChangeScene, Vec2 CPo
 		//====================================================================================
 	case GAME://								ゲーム本編
 		//====================================================================================
+
 		Reset();
+#pragma region"ゲーム本編!(開始&&終了)"
+		if (!isStartChange_ &&!isEndChange_) {
+
+			//ゴールのドアの位置
+			VectorVertexS(GCVertex_, goalPos, goalSize.x, goalSize.y);
+			minVertexGO_[0] = GCVertex_[0];
+			minVertexGO_[1] = GCVertex_[2];
+			maxVertexGO_[0] = { GCVertex_[1].x + goalSize.x / 4,GCVertex_[0].y + goalSize.y / 4 };
+			maxVertexGO_[1] = { GCVertex_[3].x + goalSize.x / 4,GCVertex_[3].y + goalSize.y / 4 };
+
+			
+		}
+
+
+
+
+#pragma endregion
 #pragma region"ゲーム本編の開始処理（ステージからゲーム画面）"
 
 
@@ -258,71 +278,7 @@ void ChangeScene::UpDate(char* keys, char* preKeys,bool& isChangeScene, Vec2 CPo
 #pragma endregion
 
 
-#pragma region"ゲーム本編!(開始&&終了)"
-		if (!isStartChange_ &&!isEndChange_) {
-			VectorVertexS(GCVertex_, goalPos, goalSize.x, goalSize.y);
-			minVertexGO_[0] = GCVertex_[0];
-			minVertexGO_[1] = GCVertex_[2];
-			maxVertexGO_[0] = { GCVertex_[1].x + goalSize.x / 4,GCVertex_[0].y + goalSize.y / 4 };
-			maxVertexGO_[1] = { GCVertex_[3].x + goalSize.x / 4,GCVertex_[3].y + goalSize.y / 4 };
 
-			for (int i = 0; i < kMaxWall; i++) {
-				switch (i) {
-					///左側の壁--------------------------------------------------
-				case 0:
-					wallStartPos_[i].x = -(wallWidth_);
-					wallStartPos_[i].y = 0;
-
-					wallEndPos_[i].x = GCVertex_[0].x - wallWidth_;
-					wallEndPos_[i].y = wallStartPos_[i].y;
-					wallPos_[i] = wallStartPos_[i];
-					break;
-					///右側の壁--------------------------------------------------
-				case 1:
-					wallStartPos_[i].x = wallWidth_;
-					wallStartPos_[i].y = 0;
-
-					wallEndPos_[i].x = GCVertex_[1].x;
-					wallEndPos_[i].y = wallStartPos_[i].y;
-					wallPos_[i] = wallStartPos_[i];
-					break;
-					///上側の壁--------------------------------------------------
-				case 2:
-					wallStartPos_[i].x = 0;
-					wallStartPos_[i].y = -(wallHeight_);
-
-					wallEndPos_[i].x = wallStartPos_[i].x;
-					wallEndPos_[i].y = GCVertex_[0].y - wallHeight_;
-					wallPos_[i] = wallStartPos_[i];
-					break;
-					///下側の壁--------------------------------------------------
-				case 3:
-					wallStartPos_[i].x = 0;
-					wallStartPos_[i].y = wallHeight_;
-
-					wallEndPos_[i].x = wallStartPos_[i].x;
-					wallEndPos_[i].y = GCVertex_[3].y;
-					wallPos_[i] = wallStartPos_[i];
-					break;
-				}
-			}
-
-			for (int i = 0; i < kMaxStairs; i++) {
-				stairsStartPos_[i].x = GCVertex_[0].x - stairsWidth_;
-				stairsStartPos_[i].y = GCVertex_[0].y + (82 / kMaxStairs * i);
-
-				stairsEndPos_[i].x = GCVertex_[0].x;
-				stairsEndPos_[i].y = GCVertex_[0].y + (82 / kMaxStairs * i);
-
-				stairsPos_[i] = stairsStartPos_[i];
-				stairsT_[i] = 0;
-			}
-		}
-
-
-
-
-#pragma endregion
 
 
 #pragma region"ゲーム本編の終了処理"
@@ -663,9 +619,11 @@ void ChangeScene::Reset() {
 
 
 		//EndScene以外の時
+		/*
 		for (int i = 0; i < 4; i++) {
 			GCVertex_[i] = { 0 };//状態遷移用の扉の４頂点
 		}
+		*/
 		GCT_ = 0;//SceneChangeのｔ
 		GCAddT_ = 0;//SceneChangeのaddT
 		GCColor_ = 0xFFFFFFFF;//欄間から見える光の色
@@ -719,7 +677,57 @@ void ChangeScene::Reset() {
 		changeTime_ = 0;
 		timeCount_ = 0;
 
+		for (int i = 0; i < kMaxWall; i++) {
+			switch (i) {
+				///左側の壁--------------------------------------------------
+			case 0:
+				wallStartPos_[i].x = -(wallWidth_);
+				wallStartPos_[i].y = 0;
 
+				wallEndPos_[i].x = GCVertex_[0].x - wallWidth_;
+				wallEndPos_[i].y = wallStartPos_[i].y;
+				wallPos_[i] = wallStartPos_[i];
+				break;
+				///右側の壁--------------------------------------------------
+			case 1:
+				wallStartPos_[i].x = wallWidth_;
+				wallStartPos_[i].y = 0;
+
+				wallEndPos_[i].x = GCVertex_[1].x;
+				wallEndPos_[i].y = wallStartPos_[i].y;
+				wallPos_[i] = wallStartPos_[i];
+				break;
+				///上側の壁--------------------------------------------------
+			case 2:
+				wallStartPos_[i].x = 0;
+				wallStartPos_[i].y = -(wallHeight_);
+
+				wallEndPos_[i].x = wallStartPos_[i].x;
+				wallEndPos_[i].y = GCVertex_[0].y - wallHeight_;
+				wallPos_[i] = wallStartPos_[i];
+				break;
+				///下側の壁--------------------------------------------------
+			case 3:
+				wallStartPos_[i].x = 0;
+				wallStartPos_[i].y = wallHeight_;
+
+				wallEndPos_[i].x = wallStartPos_[i].x;
+				wallEndPos_[i].y = GCVertex_[3].y;
+				wallPos_[i] = wallStartPos_[i];
+				break;
+			}
+		}
+
+		for (int i = 0; i < kMaxStairs; i++) {
+			stairsStartPos_[i].x = GCVertex_[0].x - stairsWidth_;
+			stairsStartPos_[i].y = GCVertex_[0].y + (82 / kMaxStairs * i);
+
+			stairsEndPos_[i].x = GCVertex_[0].x;
+			stairsEndPos_[i].y = GCVertex_[0].y + (82 / kMaxStairs * i);
+
+			stairsPos_[i] = stairsStartPos_[i];
+			stairsT_[i] = 0;
+		}
 
 
 

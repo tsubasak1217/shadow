@@ -78,8 +78,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 
 		door.Update(keys, preKeys);
-		cs.UpDate(keys,preKeys,door.isChangeScene_, door.CPos_, door.selectNum_,SCE.canSceneChange,
-			shadow.GetGoalPos(),shadow.GetGoalSize());
+		cs.UpDate(keys,preKeys,door.isChangeScene_, door.CPos_, door.selectNum_,SCE.canSceneChange,shadow.GetGoalPos(),shadow.GetGoalSize());
 		stageClear.Update(cs.isStartChange_);
 		SCE.Update(stageClear.GetFT());
 
