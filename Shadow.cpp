@@ -16,6 +16,12 @@ Shadow::Shadow(const Resources& rs, Screen screen) {
 		((float(Global::windowSize_.x) / 4.0f) * 3.0f) / mapChip_[0].size()
 	};
 
+	/*ゴール関係*/
+	goalSize_ = { float(size_.x*0.8f),float(size_.y*1.6f) };
+
+
+
+
 
 	//読み込んだマップチップの情報決定
 	for (int i = 0; i < mapChip_.size(); i++) {
@@ -40,6 +46,14 @@ Shadow::Shadow(const Resources& rs, Screen screen) {
 			size_.y + (i * size_.y) - (size_.y * 0.5f)
 				};
 			}
+			//存在フラグ決定
+			if (mapChip_[i][j] == -2) {
+				goalPos_ = {
+			size_.x + (j * size_.x) + (size_.x * 0.7f),
+			size_.y + (i * size_.y) - (size_.y * 0.4f)
+				};
+
+			}
 
 			if (mapChip_[i][j] > 0 && mapChip_[i][j] <= 10) {
 				rowTouchable.push_back(true);
@@ -61,9 +75,22 @@ Shadow::Shadow(const Resources& rs, Screen screen) {
 			pos_[i][j].x += screen.GetScreenLeftTop().x;
 			pos_[i][j].y += screen.GetScreenLeftTop().y;
 
+			VectorVertexS(goalVertex_, goalPos_, goalSize_.x, goalSize_.y);
 		}
 	}
 }
+
+		break;
+		//====================================================================================
+	case CLEAR://								クリア画面
+		//====================================================================================
+		break;
+
+	default:
+		break;
+	}
+}
+
 
 void Shadow::Update(Map map) {
 
@@ -107,6 +134,10 @@ void Shadow::Update(Map map) {
 		break;
 	}
 }
+
+
+
+
 
 void Shadow::Draw(const Resources& rs) {
 
@@ -195,3 +226,4 @@ void Shadow::Draw(const Resources& rs) {
 		}
 	}
 }
+

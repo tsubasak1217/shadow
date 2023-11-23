@@ -3,6 +3,7 @@
 Resources::Resources() {
 
 	whiteGH_ = Novice::LoadTexture("white1x1.png");
+	doorGH_ = Novice::LoadTexture("./Resources/images/Door.png");
 
 	mapCsv_[0] = "./Resources/csv/stage1/mapChip.csv";
 	mapCsv_[1] = "./Resources/csv/stage2/mapChip.csv";

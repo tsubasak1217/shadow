@@ -1,5 +1,8 @@
 #include "PlayerShadow.h"
 #include "Player.h"
+#include "selectDoor.h"
+#include"stageClearEffect.h"
+#include"stageClear.h"
 #include "ImGuiManager.h"
 
 //======================================================
@@ -26,6 +29,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// ライブラリの初期化
 	Novice::Initialize(kWindowTitle, global.windowSize_.x, global.windowSize_.y);
 
+
+
 	// キー入力結果を受け取る箱
 	char keys[256] = { 0 };
 	char preKeys[256] = { 0 };
@@ -34,14 +39,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Resources rs;
 
 	Scene scene;
-	//ChangeScene cs;
+	ChangeScene cs;
 
 	Map map(rs);
 	Player player(map);
 	Light light(map);
 	Screen screen(map, light);
-	Shadow shadow(rs,screen);
+	Shadow shadow(rs, screen);
 	PlayerShadow playerShadow(screen, shadow);
+
+	SelectDoor door;//セレクト画面
+	StageClear stageClear;//ステージクリア
+	SCE SCE;//ステージクリアのパーティクル
+
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -55,14 +65,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		/// ↓更新処理ここから
 		///
+		Novice::ScreenPrintf(0, 0, "StageNum=%d", Map::stageNum_);
+		SCE.Init();
 
-		map.Update(keys, rs);
-		player.Update(keys,map);
+
+		map.Update(keys, rs, cs);
+		player.Update(keys, map);
 		light.Update(keys, map, ((3.0f / 4.0f) * float(M_PI)));
 		shadow.Update(map);
 		screen.Update(map, light);
-		playerShadow.Update(keys,screen,shadow,player);
 
+		door.Update(keys, preKeys);
+		cs.UpDate(keys, preKeys, door.isChangeScene_, door.CPos_, door.selectNum_, SCE.canSceneChange, shadow.GetGoalPos(), shadow.GetGoalSize());
+		stageClear.Update(cs.isStartChange_);
+		SCE.Update(stageClear.GetFT());
+		playerShadow.Update(keys, screen, shadow, player);
+
+		//DOOR.Reset(keys,preKeys);
 		if (keys[DIK_1]) {
 			Scene::sceneNum_ = TITLE;
 		} else if (keys[DIK_2]) {
@@ -86,10 +105,29 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		shadow.Draw(rs);
 		playerShadow.Draw(screen);
 
-		light.Draw(map);
+		light.Draw(map,cs);
 		map.Draw(rs);
 		player.Draw(rs);
 
+
+		door.Draw();
+		stageClear.Draw();
+
+		SCE.Draw();
+
+		if (keys[DIK_H]&&!preKeys[DIK_H]) {
+			if (cs.isEndChange_) {
+				cs.isEndChange_ = false;
+			} else {
+				cs.isEndChange_ = true;
+			}
+		}
+
+		/*シーンチェンジ一番前*/
+		cs.Draw(door.GH_, door.color_, shadow.GetGoalPos(), shadow.GetGoalSize());
+
+
+		
 		//デバッグ
 		switch (Scene::sceneNum_) {
 
@@ -110,7 +148,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			break;
 		}
 
-		
+
 		//ImGui::Begin("window");
 		//ImGui::End();
 
