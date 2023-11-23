@@ -168,9 +168,10 @@ void Pause::Update(ChangeScene cs, char* keys, char* preKeys) {
 				switch (selectNum_)
 				{
 				case 0://セレクト画面へ戻る
-					break;
-				case 1://ステージヲリセット
 					cs.isEndChange_;
+					break;
+				case 1://ステージをリセット
+
 					break;
 
 				case 2://ゲーム画面へ戻る
