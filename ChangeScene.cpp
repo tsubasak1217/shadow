@@ -3,6 +3,8 @@
 void ChangeScene::UpDate(char* keys, char* preKeys,bool& isChangeScene, Vec2 CPos[],
 	int selectNum, bool& CanCS, Vec2 goalPos, Vec2 goalSize) {
 
+	preIsStartChange_ = isStartChange_;
+	preIsEndChange_ = isEndChange_;
 
 	switch (Scene::sceneNum_) {
 		//====================================================================================
@@ -14,6 +16,7 @@ void ChangeScene::UpDate(char* keys, char* preKeys,bool& isChangeScene, Vec2 CPo
 	case SELECT://							   ステージ選択
 		//====================================================================================
 		Reset();
+
 
 #pragma region"ステージ選択の開始処理（クリアからセレクト）"
 

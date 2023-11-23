@@ -1,7 +1,80 @@
 ﻿#include "PlayerShadow.h"
 
-void PlayerShadow::Update(char* keys, Screen screen, Shadow& shadow,Player& player) {
+void PlayerShadow::Init(int sceneNum, Screen screen, Shadow shadow) {
 
+	switch (sceneNum) {
+		//====================================================================================
+	case TITLE://							   タイトル画面
+		//====================================================================================
+		break;
+		//====================================================================================
+	case SELECT://							   ステージ選択
+		//====================================================================================
+		break;
+		//====================================================================================
+	case GAME://								ゲーム本編
+		//====================================================================================
+
+		pos_ = {
+		shadow.firstPlayerPos_.x + screen.GetScreenLeftTop().x,
+		shadow.firstPlayerPos_.y + screen.GetScreenLeftTop().y,
+		};
+		prePos_ = pos_;
+		prePosCopy_ = prePos_;
+
+		size_ = { 32.0f,32.0f };
+		direction_ = { 0.0f,0.0f };
+		velocity_ = { 0.0f,0.0f };
+		speed_ = 4.0f;
+		for (int i = 0; i < 4; i++) {
+			address_[i] = { 0,0 };
+			preAddress_[i] = address_[i];
+		}
+
+		pos_.y += (shadow.GetSize().y * 0.5f);
+		pos_.y += -(size_.y * 0.5f);
+
+		isJump_ = false;
+		isDrop_ = false;
+		jumpSpeed_ = 0.0f;
+		dropSpeed_ = 0.0f;
+		gravity_ = 0.4f;
+		hitCount_ = 0;
+		isHitMapChip_ = false;
+		isHitRect_ = false;
+		blockCount = 0;
+
+		hitSurface_.clear();
+		hitSurface2_.clear();
+		preHitSurface_.clear();
+		preHitSurface2_.clear();
+
+		isInsideLightLB_ = false;
+		isInsideLightRB_ = false;
+		isInsideLightLT_ = false;
+		isInsideLightRT_ = false;
+		preIsInsideLightLB_ = false;
+		preIsInsideLightRB_ = false;
+		preIsInsideLightLT_ = false;
+		preIsInsideLightRT_ = false;
+
+		starGetCount_ = 0;
+		break;
+
+	case CLEAR:
+		break;
+
+	default:
+		break;
+	}
+}
+
+void PlayerShadow::Update(char* keys, const ChangeScene& cs, Screen screen, Shadow& shadow, Player& player) {
+
+	//シーン遷移の始まった瞬間にシーンに合わせて初期化
+	if (cs.isStartChange_ && cs.preIsEndChange_) {
+		Init(Scene::sceneNum_, screen, shadow);
+	}
 
 	switch (Scene::sceneNum_) {
 		//====================================================================================
@@ -15,6 +88,11 @@ void PlayerShadow::Update(char* keys, Screen screen, Shadow& shadow,Player& play
 		//====================================================================================
 	case GAME://								ゲーム本編
 		//====================================================================================
+
+		//Rで初期化
+		if (keys[DIK_R]) {
+			Init(Scene::sceneNum_, screen, shadow);
+		}
 
 		//配列数の決定
 		if (hitSurface_.size() != screen.GetPos().size()) {

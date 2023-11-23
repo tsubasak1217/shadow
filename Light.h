@@ -37,9 +37,9 @@ public:
 		rightVec_ = { 0.0f,0.0f };
 	}
 
-	void Init(int stageNum);
+	void Init(int stageNum,Map map);
 
-	void Update(char* keys,Map map, float rangeTheta);
+	void Update(char* keys,const ChangeScene& cs,Map map, float rangeTheta);
 
 	void Draw(Map map, ChangeScene CS);
 

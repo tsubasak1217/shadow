@@ -117,6 +117,8 @@ class ChangeScene {
 public:
 	bool isStartChange_;
 	bool isEndChange_;
+	bool preIsStartChange_;
+	bool preIsEndChange_;
 
 	ChangeScene() {
 
@@ -124,6 +126,9 @@ public:
 		//isChangeSelect_ = false;
 		isStartChange_ = false;
 		isEndChange_ = false;
+		preIsStartChange_ = false;
+		preIsEndChange_ = false;
+
 		//状態遷移イージング用
 		SCCPos_ = { -200,-100 };
 		SCSize_ = { 50,100 };
@@ -234,7 +239,7 @@ public:
 	void UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CPos[], int selectNum, bool& CanCS, Vec2 goalPos, Vec2 goalSize);
 	void Draw(int GH, unsigned int DoorColor, Vec2 goalPos, Vec2 goalSize);
 	void Reset();
-	//bool GetStartFrag() { return isStartChange_; };
-	//bool GetEndFrag() { return isEndChange_; };
+	//bool GetIsStart() { return isStartChange_; }
+	//bool GetIsEnd() { return isEndChange_; }
 };
 
