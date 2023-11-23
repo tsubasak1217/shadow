@@ -213,6 +213,7 @@ Vec2 ShiftLine(Vec2 pos1, Vec2 pos2, float distance) {
 	-normalizedX * distance
 	};
 }
+
 void ShiftLineCtrl(Vec2 pos1, Vec2 pos2, float distance) {
 
 	float dx = pos2.x - pos1.x;
@@ -225,6 +226,12 @@ void ShiftLineCtrl(Vec2 pos1, Vec2 pos2, float distance) {
 	normalizedY * distance,
 	-normalizedX * distance
 	};
+}
+
+
+//ベクトルの垂直ベクトルを求める関数
+Vec2 VerticleVec(Vec2 pos1, Vec2 pos2) {
+	return { pos2.y - pos1.y,-(pos2.x - pos1.x) };
 }
 
 

@@ -9,6 +9,7 @@ class Screen {
 	Vec2 centerPos_;
 
 	std::vector<std::vector<Vec2>>boxPos_;
+	std::vector<std::vector<Vec2>>preBoxPos_;
 
 public:
 	Screen(Map map, Light light) {
@@ -72,7 +73,9 @@ public:
 
 	Vec2 GetScreenLeftTop() { return leftTop_; }
 	Vec2 GetSize() { return size_; }
+
 	std::vector<std::vector<Vec2>>GetPos() { return boxPos_; }
 	Vec2 GetPos(int boxNumber,int vertex) { return boxPos_[boxNumber][vertex]; }
+	Vec2 GetPrePos(int boxNumber, int vertex) { return preBoxPos_[boxNumber][vertex]; }
 };
 

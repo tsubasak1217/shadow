@@ -15,6 +15,8 @@ void Screen::Update(Map map, Light light) {
 	case GAME://								ゲーム本編
 		//====================================================================================
 
+		preBoxPos_ = boxPos_;
+
 		boxPos_.clear();
 
 		//描画する座標決定
@@ -44,64 +46,6 @@ void Screen::Update(Map map, Light light) {
 					- (map.GetVertex(i,j).z * (((map.GetVertex(i,j).y-map.GetPuzzleLeftTop().y) / map.GetPuzzleMapSize().y) * 4.0f))
 					}
 				);
-
-				//左にスクリーンアウトした時の処理
-				if (j == 1) {
-					if (objVertex[1].x < LRTB_.x) {
-						objVertex[1] = CrossPos(
-							{ map.GetVertex(i,7).x,
-							 map.GetVertex(i,7).y },
-							light.GetEmitPos(),
-							{ map.GetPuzzleLeftTop().x,map.GetPuzzleLeftTop().y },
-							{ map.GetPuzzleLeftTop().x,map.GetPuzzleLeftTop().y + 8 }
-						);
-
-						//objVertex[3].x = objVertex[1].x;
-					}
-				}
-
-
-				//右にスクリーンアウトした時の処理
-				/*if (j == 4) {
-					if (objVertex[0].x > LRTB_.y) {
-						objVertex[0] = CrossPos(
-							objVertex[0],
-							objVertex[4],
-							{ LRTB_.y,LRTB_.z },
-							{ LRTB_.y,LRTB_.w }
-						);
-
-						objVertex[2].x = objVertex[0].x;
-					}
-				}*/
-				if (j == 0) {
-					if (objVertex[0].x > LRTB_.y) {
-						objVertex[0] = CrossPos(
-							{map.GetVertex(i,6).x,
-							 map.GetVertex(i,6).y },
-							light.GetEmitPos(),
-							{ LRTB_.y,map.GetPuzzleLeftTop().y },
-							{ LRTB_.y,map.GetPuzzleLeftTop().y + 8 }
-						);
-
-						//objVertex[3].x = objVertex[1].x;
-					}
-				}
-
-
-			}
-
-			for (int j = 0; j < map.GetVertex()[i].size(); j++) {
-
-				if (objVertex[j].x < LRTB_.x) {
-					objVertex[j].x = LRTB_.x;
-					objVertex[0].y = objVertex[1].y;
-				}
-
-				if (objVertex[j].x > LRTB_.y) {
-					objVertex[j].x = LRTB_.y;
-					objVertex[1].y = objVertex[0].y;
-				}
 			}
 
 			boxPos_.push_back(objVertex);

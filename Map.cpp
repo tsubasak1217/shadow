@@ -9,7 +9,9 @@ Map::Map(const Resources& rs) {
 
 	//要素を消去
 	pos_.clear();
+	posCopy_.clear();
 	mapChip_.clear();
+	mapChipCopy_.clear();
 	touchable_.clear();
 	vertex_.clear();
 
@@ -169,6 +171,12 @@ Map::Map(const Resources& rs) {
 
 		}
 	}
+
+	//スイッチが押されたかのフラグ
+	isPressSwitch_ = false;
+
+	mapChipCopy_ = mapChip_;
+	posCopy_ = pos_;
 }
 
 
@@ -214,6 +222,10 @@ void Map::Update(char* keys, const Resources& rs) {
 		//====================================================================================
 	case GAME://								ゲーム本編
 		//====================================================================================
+
+		//falseで初期化
+		isPressSwitch_ = false;
+
 		break;
 		//====================================================================================
 	case CLEAR://								クリア画面
@@ -228,7 +240,9 @@ void Map::Update(char* keys, const Resources& rs) {
 		
 		//要素を消去
 		pos_.clear();
+		posCopy_.clear();
 		mapChip_.clear();
+		mapChipCopy_.clear();
 		touchable_.clear();
 		vertex_.clear();
 
@@ -386,6 +400,9 @@ void Map::Update(char* keys, const Resources& rs) {
 				vertex_[i][j].y += puzzleLeftTop_.y;
 			}
 		}
+
+		mapChipCopy_ = mapChip_;
+		posCopy_ = pos_;
 	}
 
 
@@ -571,6 +588,25 @@ void Map::Draw(const Resources &rs) {
 		for (int row = 0; row < mapChip_.size(); row++) {
 			for (int col = 0; col < mapChip_[0].size(); col++) {
 
+				if (mapChipCopy_[row][col] == -2) {
+
+					//スイッチ
+					Novice::DrawQuad(
+						int(posCopy_[row][col].x - size_.x * 0.5f),
+						int(posCopy_[row][col].y + size_.y * 0.5f),
+						int(posCopy_[row][col].x + size_.x * 0.5f),
+						int(posCopy_[row][col].y + size_.y * 0.5f),
+						int(posCopy_[row][col].x - size_.x * 0.5f),
+						int(posCopy_[row][col].y - size_.y * 0.5f),
+						int(posCopy_[row][col].x + size_.x * 0.5f),
+						int(posCopy_[row][col].y - size_.y * 0.5f),
+						0, 0,
+						1, 1,
+						rs.whiteGH_,
+						0xff3399ff
+					);
+				}
+
 				if (mapChip_[row][col] == 1) {
 
 					Novice::DrawQuad(
@@ -622,7 +658,9 @@ void Map::Draw(const Resources &rs) {
 						rs.whiteGH_,
 						0x000000ff
 					);
-				}
+
+				} 
+				
 			}
 		}
 

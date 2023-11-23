@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "MyFunc.h"
 
-void CalcAddress(Vector2<int>*address, Vec2 pos, Vec2 size, float radius);
+void CalcAddress(Vector2<int>*address, Vec2 pos, Vec2 size, float radius,int rowIndex, int colIndex);
 
 /// <summary>
 /// マップチップの押し戻しを行う関数(当たった面も取得できるよ)
@@ -44,9 +44,18 @@ enum HitDirection {
 
 
 //矩形と円の押し戻し関数
-void PushBackBox_Ball(
+//void PushBackBox_Ball(char* keys,
+//	Vec2 leftTop, Vec2 rightTop, Vec2 leftBottom, Vec2 rightBottom,
+//	Vec2 preLeftTop, Vec2 preRightTop, Vec2 preLeftBottom, Vec2 preRightBottom,
+//	Vec2& ballPos, Vec2 preBallPos, float ballRadius,
+//	bool& isDrop, bool& isJump, float& dropSpeed, float& jumpSpeed,
+//	int& hitCount
+//);
+
+void PushBackBox_Ball(char* keys,
 	Vec2 leftTop, Vec2 rightTop, Vec2 leftBottom, Vec2 rightBottom,
+	Vec2 preLeftTop, Vec2 preRightTop, Vec2 preLeftBottom, Vec2 preRightBottom,
 	Vec2& ballPos, Vec2 preBallPos, float ballRadius,
 	bool& isDrop, bool& isJump, float& dropSpeed, float& jumpSpeed,
-	int& hitCount
+	int& hitCount, int& hitSurfase,int preHitSurface
 );

@@ -20,6 +20,9 @@ class Player{
 	Vec2 moveStartPos_;
 	Vec2 savedPlayerPos_;
 
+	//スイッチを押せるかどうか
+	bool isSwitchPushable_;
+
 	//当たった回数
 	bool isHitMapChip_;
 
@@ -51,6 +54,7 @@ public:
 
 		isHitMapChip_ = 0;
 
+		isSwitchPushable_ = true;
 	}
 
 	void Init(int sceneNum);
@@ -61,5 +65,6 @@ public:
 
 	//アクセッサ
 	Vec2 GetPos() { return pos_; }
+	void SetSwitchPushable(bool flag) { isSwitchPushable_ = flag; }
 };
 

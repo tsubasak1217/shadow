@@ -1,6 +1,6 @@
 ﻿#include "LocalFunc.h"
 /*===============================プレイヤーとブロックの当たり判定===================================*/
-void CalcAddress(Vector2<int>* address, Vec2 pos, Vec2 size, float radius) {
+void CalcAddress(Vector2<int>* address, Vec2 pos, Vec2 size, float radius, int rowIndex, int colIndex) {
 
 	address[LeftTop].x = int(int(pos.x - radius + 1) / size.x);
 	address[LeftTop].y = int(int(pos.y - radius + 1) / size.y);
@@ -13,6 +13,22 @@ void CalcAddress(Vector2<int>* address, Vec2 pos, Vec2 size, float radius) {
 
 	address[RightBottom].x = int(int(pos.x + radius - 1) / size.x);
 	address[RightBottom].y = int(int(pos.y + radius - 1) / size.y);
+
+	for (int i = 0; i < 4; i++) {
+		if (address[i].x >= colIndex) {
+			address[i].x = colIndex - 1;
+
+		} else if (address[i].x < 0) {
+			address[i].x = 0;
+		}
+
+		if (address[i].y >= rowIndex) {
+			address[i].y = rowIndex - 1;
+
+		} else if (address[i].x < 0) {
+			address[i].y = 0;
+		}
+	}
 }
 
 int PushBackMapChip(
@@ -44,7 +60,9 @@ int PushBackMapChip(
 
 		if (playerAddress[i].x >= 0 && playerAddress[i].x < colMAX) {
 			if (playerAddress[i].y >= 0 && playerAddress[i].y < rowMAX) {
-				if (blockType[playerAddress[i].y][playerAddress[i].x] != 0 && blockType[playerAddress[i].y][playerAddress[i].x] != 9) {
+				if (blockType[playerAddress[i].y][playerAddress[i].x] != 0 && 
+					blockType[playerAddress[i].y][playerAddress[i].x] != 3 && 
+					blockType[playerAddress[i].y][playerAddress[i].x] != 9) {
 					/*------------------前フレームとX座標の番地のみが違う場合--------------------*/
 
 					if (playerAddress[i].x != playerPreAddress[i].x &&
@@ -610,16 +628,25 @@ int PushBackMapChip(
 }
 
 //矩形と円の押し戻し関数
-void PushBackBox_Ball(
+void PushBackBox_Ball(char* keys,
 	Vec2 leftTop, Vec2 rightTop, Vec2 leftBottom, Vec2 rightBottom,
+	Vec2 preLeftTop, Vec2 preRightTop, Vec2 preLeftBottom, Vec2 preRightBottom,
 	Vec2& ballPos, Vec2 preBallPos, float ballRadius,
 	bool& isDrop, bool& isJump, float& dropSpeed, float& jumpSpeed,
-	int& hitCount
+	int& hitCount, int& hitSurface,int preHitSurface
 ) {
 
 	//矩形と円が当たっているかの判定=========================================
 	float cross[4] = { 0.0f };
 	int crossInCount = 0;
+
+	keys[DIK_A];
+	preBallPos;
+	jumpSpeed;
+	isJump;
+	isDrop;
+	dropSpeed;
+
 
 	cross[0] = Cross(leftTop, rightTop, ballPos);
 	cross[1] = Cross(rightTop, rightBottom, ballPos);
@@ -630,7 +657,6 @@ void PushBackBox_Ball(
 		if (cross[i] > -ballRadius) {
 			crossInCount++;
 		}
-
 	}
 
 	//円が矩形に完全に含まれていればtrue
@@ -641,154 +667,203 @@ void PushBackBox_Ball(
 		//前座標の外積を求める
 		float preCross[4];
 
-		if (preBallPos.x != ballPos.x or preBallPos.y != ballPos.y) {
-			preCross[0] = Cross(leftTop, rightTop, preBallPos);
-			preCross[1] = Cross(rightTop, rightBottom, preBallPos);
-			preCross[2] = Cross(rightBottom, leftBottom, preBallPos);
-			preCross[3] = Cross(leftBottom, leftTop, preBallPos);
+		if (crossInCount >= 4) {
+
+			Vec2 newCrossPos;
+			Vec2 NormalizedVec;
+
+			preCross[0] = Cross(preLeftTop, preRightTop, preBallPos);
+			preCross[1] = Cross(preRightTop, preRightBottom, preBallPos);
+			preCross[2] = Cross(preRightBottom, preLeftBottom, preBallPos);
+			preCross[3] = Cross(preLeftBottom, preLeftTop, preBallPos);
+
+			hitCount++;
+
+			for (int i = 0; i < 4; i++) {
+				if (preCross[i] <= -ballRadius) {
+					hitSurface = i + 1;
+				}
+			}
+
+			//当たった面に応じた処理
+			
+			if (hitSurface > 0) {
+				switch (hitSurface) {
+
+
+				case Top:
+
+					newCrossPos = CrossPos(
+						leftTop,
+						rightTop,
+						ballPos,
+						{
+						ballPos.x + VerticleVec(preLeftTop, preRightTop).x,
+						ballPos.y + VerticleVec(preLeftTop, preRightTop).y
+						}
+					);
+
+					NormalizedVec = Normalize({ 0.0f,0.0f }, VerticleVec(leftTop, rightTop));
+					ballPos = newCrossPos.operator+(NormalizedVec.operator*({ -ballRadius,-ballRadius }));
+
+					isDrop = false;
+					isJump = false;
+					dropSpeed = 0.0f;
+					jumpSpeed = 0.0f;
+
+					break;
+
+				case Right:
+
+					newCrossPos = CrossPos(
+						rightTop,
+						rightBottom,
+						ballPos,
+						{
+							ballPos.x + VerticleVec(preRightTop, preRightBottom).x,
+							ballPos.y + VerticleVec(preRightTop, preRightBottom).y
+						}
+					);
+
+					NormalizedVec = Normalize({ 0.0f,0.0f }, VerticleVec(rightTop, rightBottom));
+					ballPos = newCrossPos.operator+(NormalizedVec.operator*({ -ballRadius - 1,-ballRadius -1}));
+
+
+					break;
+
+				case Bottom:
+
+					newCrossPos = CrossPos(
+						rightBottom,
+						leftBottom,
+						ballPos,
+						{
+							ballPos.x + VerticleVec(preRightBottom, preLeftBottom).x,
+							ballPos.y + VerticleVec(preRightBottom, preLeftBottom).y
+						}
+
+					);
+
+					NormalizedVec = Normalize({ 0.0f,0.0f }, VerticleVec(rightBottom, leftBottom));
+					ballPos = newCrossPos.operator+(NormalizedVec.operator*({ -ballRadius,-ballRadius }));
+
+
+					break;
+
+				case Left:
+
+					newCrossPos = CrossPos(
+						leftBottom,
+						leftTop,
+						ballPos,
+						{
+							ballPos.x + VerticleVec(preLeftBottom, preLeftTop).x,
+							ballPos.y + VerticleVec(preLeftBottom, preLeftTop).y
+						}
+					);
+
+					NormalizedVec = Normalize({ 0.0f,0.0f }, VerticleVec(leftBottom, leftTop));
+					ballPos = newCrossPos.operator+(NormalizedVec.operator*({ -ballRadius - 1,-ballRadius -1}));
+
+
+					break;
+
+				default:
+					break;
+				}
+			
+			} else {
+
+				switch (preHitSurface) {
+
+
+				case Top:
+
+					newCrossPos = CrossPos(
+						leftTop,
+						rightTop,
+						ballPos,
+						{
+						ballPos.x + VerticleVec(preLeftTop, preRightTop).x,
+						ballPos.y + VerticleVec(preLeftTop, preRightTop).y
+						}
+					);
+
+					NormalizedVec = Normalize({ 0.0f,0.0f, }, VerticleVec(leftTop, rightTop));
+					ballPos = newCrossPos.operator+(NormalizedVec.operator*({ -ballRadius,-ballRadius }));
+
+					isDrop = false;
+					isJump = false;
+					dropSpeed = 0.0f;
+					jumpSpeed = 0.0f;
+
+					break;
+
+				case Right:
+
+					newCrossPos = CrossPos(
+						rightTop,
+						rightBottom,
+						ballPos,
+						{
+							ballPos.x + VerticleVec(preRightTop, preRightBottom).x,
+							ballPos.y + VerticleVec(preRightTop, preRightBottom).y
+						}
+					);
+
+					NormalizedVec = Normalize({ 0.0f,0.0f, }, VerticleVec(rightTop, rightBottom));
+					ballPos = newCrossPos.operator+(NormalizedVec.operator*({ -ballRadius - 1,-ballRadius - 1}));
+
+
+					break;
+
+				case Bottom:
+
+					newCrossPos = CrossPos(
+						rightBottom,
+						leftBottom,
+						ballPos,
+						{
+							ballPos.x + VerticleVec(preRightBottom, preLeftBottom).x,
+							ballPos.y + VerticleVec(preRightBottom, preLeftBottom).y
+						}
+
+					);
+
+					NormalizedVec = Normalize({ 0.0f,0.0f, }, VerticleVec(rightBottom, leftBottom));
+					ballPos = newCrossPos.operator+(NormalizedVec.operator*({ -ballRadius,-ballRadius }));
+
+
+					break;
+
+				case Left:
+
+					newCrossPos = CrossPos(
+						leftBottom,
+						leftTop,
+						ballPos,
+						{
+							ballPos.x + VerticleVec(preLeftBottom, preLeftTop).x,
+							ballPos.y + VerticleVec(preLeftBottom, preLeftTop).y
+						}
+					);
+
+					NormalizedVec = Normalize({ 0.0f,0.0f, }, VerticleVec(leftBottom, leftTop));
+					ballPos = newCrossPos.operator+(NormalizedVec.operator*({ -ballRadius - 1,-ballRadius - 1}));
+
+
+					break;
+
+				default:
+					break;
+				}
+				
+			}
+
+
 
 		} else {
-
-			preCross[0] = Cross(leftTop, rightTop, { preBallPos.x + 1.0f,preBallPos.y + 1.0f });
-			preCross[1] = Cross(rightTop, rightBottom, { preBallPos.x + 1.0f,preBallPos.y + 1.0f });
-			preCross[2] = Cross(rightBottom, leftBottom, { preBallPos.x + 10.0f,preBallPos.y + 1.0f });
-			preCross[3] = Cross(leftBottom, leftTop, { preBallPos.x + 1.0f,preBallPos.y + 1.0f });
-
+			hitSurface = 0;
 		}
-
-		//当たった面を保存していく関数
-		std::vector<int>hitSurface;
-
-		for (int i = 0; i < 4; i++) {
-
-			//当たった面を保存
-			if (preCross[i] < -ballRadius) {
-				hitCount++;
-				hitSurface.push_back(i);
-			}
-		}
-
-		//一面のみに当たっていた場合
-		if (hitSurface.size() == 1) {
-
-
-
-			Vec2 verticalVec;
-
-			switch (hitSurface[0]) {
-
-			case 0://上面
-
-				verticalVec = ShiftLine(leftTop, rightTop, ballRadius + 1);
-
-				ballPos = CrossPos(
-					leftTop + verticalVec,
-					rightTop + verticalVec,
-					ballPos + verticalVec,
-					ballPos
-				);
-
-				//着地の判定
-				if (leftTop.x < rightTop.x) {
-					float xLength = fabs(rightTop.x - leftTop.x);
-					float yLength = fabs(rightTop.y - leftTop.y);
-
-					if (yLength / xLength <= 0.25f) {
-						isDrop = false;
-						isJump = false;
-
-						dropSpeed = 0.0f;
-						jumpSpeed = 0.0f;
-					}
-				}
-
-				break;
-
-			case 1://右面
-
-				verticalVec = ShiftLine(rightTop, rightBottom, ballRadius + 1);
-
-				ballPos = CrossPos(
-					rightTop + verticalVec,
-					rightBottom + verticalVec,
-					ballPos + verticalVec,
-					ballPos
-				);
-
-				//着地の判定
-				if (rightTop.x < rightBottom.x) {
-					float xLength = fabs(rightBottom.x - rightTop.x);
-					float yLength = fabs(rightBottom.y - rightTop.y);
-
-					if (yLength / xLength <= 0.25f) {
-						isDrop = false;
-						isJump = false;
-
-						dropSpeed = 0.0f;
-						jumpSpeed = 0.0f;
-					}
-				}
-
-				break;
-
-			case 2://下面
-
-				verticalVec = ShiftLine(rightBottom, leftBottom, ballRadius + 1);
-
-				ballPos = CrossPos(
-					rightBottom + verticalVec,
-					leftBottom + verticalVec,
-					ballPos + verticalVec,
-					ballPos
-				);
-
-				//着地の判定
-				if (rightBottom.x < leftBottom.x) {
-					float xLength = fabs(leftBottom.x - rightBottom.x);
-					float yLength = fabs(leftBottom.y - rightBottom.y);
-
-					if (yLength / xLength <= 0.25f) {
-						isDrop = false;
-						isJump = false;
-
-						dropSpeed = 0.0f;
-						jumpSpeed = 0.0f;
-					}
-				}
-
-				break;
-
-			case 3://左面
-
-				verticalVec = ShiftLine(leftBottom, leftTop, ballRadius + 1);
-
-				ballPos = CrossPos(
-					leftBottom + verticalVec,
-					leftTop + verticalVec,
-					ballPos + verticalVec,
-					ballPos
-				);
-
-				//着地の判定
-				if (leftBottom.x < leftTop.x) {
-					float xLength = fabs(leftTop.x - leftBottom.x);
-					float yLength = fabs(leftTop.y - leftBottom.y);
-
-					if (yLength / xLength <= 0.25f) {
-						isDrop = false;
-						isJump = false;
-
-						dropSpeed = 0.0f;
-						jumpSpeed = 0.0f;
-					}
-				}
-
-				break;
-
-			default:
-				break;
-			}
-
-		}
-	};
+	}
 };

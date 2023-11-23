@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Screen.h"
-#include "Map.h"
+#include "Player.h"
 
 class Shadow {
 
@@ -22,13 +22,15 @@ public:
 	void Init(const Resources& rs,int sceneNum);
 
 	//
-	void Update(char* keys);
+	void Update(Map map);
 
 	//
 	void Draw(const Resources& rs);
 
 	Vec2 GetSize() { return size_; }
 	std::vector<std::vector<int>>GetMapChip() { return mapChip_; }
+	void SetMapChip(int row,int col,int mapchip) { mapChip_[row][col] = mapchip; }
 	std::vector<std::vector<Vec2>>GetPos() { return pos_; }
+	std::vector<std::vector<bool>>GetTouchable() { return touchable_; }
 };
 

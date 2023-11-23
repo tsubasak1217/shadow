@@ -59,8 +59,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		map.Update(keys, rs);
 		player.Update(keys,map);
 		light.Update(keys, map, ((3.0f / 4.0f) * float(M_PI)));
+		shadow.Update(map);
 		screen.Update(map, light);
-		playerShadow.Update(keys,screen,shadow);
+		playerShadow.Update(keys,screen,shadow,player);
 
 		if (keys[DIK_1]) {
 			Scene::sceneNum_ = TITLE;
@@ -83,7 +84,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		map.DrawBG();
 		screen.Draw(map, rs, light);
 		shadow.Draw(rs);
-		playerShadow.Draw();
+		playerShadow.Draw(screen);
 
 		light.Draw(map);
 		map.Draw(rs);

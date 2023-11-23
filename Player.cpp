@@ -799,6 +799,7 @@ void Player::Update(char* keys, Map& map) {
 			}
 		}
 
+
 		/*map.SetPos(
 			3, 4,
 			{ 0.0f,0.0f }
@@ -845,7 +846,8 @@ void Player::Update(char* keys, Map& map) {
 					address_,
 					{ pos_.x - map.GetPuzzleLeftTop().x + 1,pos_.y - map.GetPuzzleLeftTop().y + 1 },
 					{ map.GetSize().x,map.GetSize().y },
-					size_.x * 0.5f
+					size_.x * 0.5f,
+					int(map.GetPos().size()), int(map.GetPos()[0].size())
 				);
 
 
@@ -863,26 +865,43 @@ void Player::Update(char* keys, Map& map) {
 					isHitMapChip_
 				);
 
-				Novice::ScreenPrintf(0, 200, "%d", PushBackMapChip(
-					int(map.GetMapChip().size()), int(map.GetMapChip()[0].size()),
-					&pos_,
-					address_, preAddress_,
-					size_,
-					velocity_,
-					map.GetPos(),
-					map.GetMapChip(),
-					{ map.GetSize().x,map.GetSize().y },
-					isHitMapChip_
-				));
 
 				//プレイヤーの番地を再計算
 				CalcAddress(
 					address_,
 					{ pos_.x - map.GetPuzzleLeftTop().x + 1,pos_.y - map.GetPuzzleLeftTop().y + 1 },
 					{ map.GetSize().x,map.GetSize().y },
-					size_.x * 0.5f
+					size_.x * 0.5f,
+					int(map.GetPos().size()), int(map.GetPos()[0].size())
 				);
 
+			}
+		}
+
+		//プレイヤーがスイッチを踏んだかどうか判定-------------------------------------------------
+		for (int i = 0; i < 4; i++) {
+			//プレイヤーが直接踏んで起動させる場合
+			if (map.GetMapChipCopy()[address_[i].y][address_[i].x] == -2) {
+
+				if (isSwitchPushable_) {
+					map.SetIsPressSwitch(true);
+				}
+				break;
+			}
+		}
+
+		for (int i = 0; i < map.GetMapChip().size(); i++) {
+			for (int j = 0; j < map.GetMapChip()[0].size(); j++) {
+				//ブロックを置いて起動させる場合
+				if (map.GetMapChip()[i][j] == 1 or map.GetMapChip()[i][j] == 2) {
+					if (map.GetMapChipCopy()[i][j] == -2) {
+
+						if (isSwitchPushable_) {
+							map.SetIsPressSwitch(true);
+						}
+						break;
+					}
+				}
 			}
 		}
 
@@ -929,6 +948,7 @@ void Player::Draw(const Resources& rs) {
 			rs.whiteGH_,
 			0xff0000ff
 		);
+		break;
 
 		//====================================================================================
 	case CLEAR://								クリア画面

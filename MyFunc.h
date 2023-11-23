@@ -76,6 +76,9 @@ Vec2 CrossPos(
 Vec2 ShiftLine(Vec2 pos1, Vec2 pos2, float distance);
 void ShiftLineCtrl(Vec2 pos1, Vec2 pos2, float distance);
 
+//ベクトルの垂直ベクトルを求める関数
+Vec2 VerticleVec(Vec2 pos1, Vec2 pos2);
+
 //================================================================
 //                      行列の計算関数
 //================================================================

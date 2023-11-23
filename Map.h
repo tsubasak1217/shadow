@@ -5,7 +5,9 @@ class Map
 {
 	//マップチップ
 	std::vector<std::vector<Vec2>>pos_;//座標
+	std::vector<std::vector<Vec2>>posCopy_;//座標のコピー
 	std::vector<std::vector<int>>mapChip_;//マップチップ番号
+	std::vector<std::vector<int>>mapChipCopy_;//マップチップ番号のコピー
 	std::vector<std::vector<bool>>touchable_;//存在フラグ
 
 	std::vector<std::vector<Vec3>>vertex_;//マップのブロックの各頂点座標(疑似的な三次元)
@@ -13,6 +15,8 @@ class Map
 	Vec3 size_;//ブロックの縦横奥ゆき
 	Vec2 puzzleLeftTop_;//パズル(画面下半分ののマップチップ)の左上座標
 	Vec2 puzzleMapSize_;//パズル画面の縦横幅
+
+	bool isPressSwitch_;//スイッチが押されたかのフラグ
 
 public:
 
@@ -36,6 +40,7 @@ public:
 	//アクセッサ
 	std::vector<std::vector<int>>GetMapChip() { return mapChip_; }
 	void SetMapChip(int row, int col, int value) { mapChip_[row][col] = value; }
+	std::vector<std::vector<int>>GetMapChipCopy() { return mapChipCopy_; }
 
 	Vec3 GetSize() { return size_; }
 	Vec2 GetPuzzleLeftTop() { return puzzleLeftTop_; }
@@ -50,6 +55,10 @@ public:
 	Vec3 GetVertex(int BlockNum, int vertexNum) { return vertex_[BlockNum][vertexNum]; }
 
 	int GetStageNum(){return stageNum_;}
+
+	//スイッチが押されたかどうかのアクセッサ
+	void SetIsPressSwitch(bool flag) { isPressSwitch_ = flag; }
+	bool GetIsPressSwitch() { return isPressSwitch_; }
 };
 
 enum BlockType {
