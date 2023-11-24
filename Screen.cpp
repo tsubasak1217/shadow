@@ -15,6 +15,9 @@ void Screen::Init(int sceneNum, Map map, Light light) {
 	case GAME://								ゲーム本編
 		//====================================================================================
 
+		boxPos_.clear();
+		preBoxPos_.clear();
+
 		size_ = {
 		map.GetPuzzleMapSize().x,
 		map.GetPuzzleMapSize().y * 2.0f
@@ -66,6 +69,9 @@ void Screen::Init(int sceneNum, Map map, Light light) {
 
 			boxPos_.push_back(objVertex);
 		}
+
+		preBoxPos_ = boxPos_;
+
 		break;
 		//====================================================================================
 	case CLEAR://								クリア画面

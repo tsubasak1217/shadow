@@ -1,7 +1,7 @@
 ﻿#include "Player.h"
 
 //====================================================初期化関数=============================================================
-void Player::Init(int sceneNum) {
+void Player::Init(int sceneNum,Map map) {
 
 	switch (sceneNum) {
 		//====================================================================================
@@ -15,6 +15,35 @@ void Player::Init(int sceneNum) {
 		//====================================================================================
 	case GAME://								ゲーム本編
 		//====================================================================================
+
+		pos_ = {
+			map.firstPlayerPos_.x + map.GetPuzzleLeftTop().x,
+			map.firstPlayerPos_.y + map.GetPuzzleLeftTop().y,
+		};
+		prePos_ = pos_;
+
+		size_ = { 24.0f,24.0f };
+		direction_ = { 0.0f,0.0f };
+		velocity_ = { 0.0f,0.0f };
+		speed_ = 4.0f;
+		for (int i = 0; i < 4; i++) {
+			address_[i] = { 0,0 };
+			preAddress_[i] = address_[i];
+		}
+		centerAddress_ = { 0,0 };
+
+		isMoveBlock_ = false;
+		blockMoveT_ = 0.0f;
+		moveTime_ = 32;
+		moveDirection_ = 0;
+		moveBlockAddress_ = { 0,0 };
+		moveStartPos_ = { 0.0f,0.0f };
+		savedPlayerPos_ = { 0.0f,0.0f };
+
+		isHitMapChip_ = 0;
+
+		isSwitchPushable_ = true;
+
 		break;
 		//====================================================================================
 	case CLEAR://								クリア画面
@@ -27,7 +56,12 @@ void Player::Init(int sceneNum) {
 }
 
 //====================================================アップデート=============================================================
-void Player::Update(char* keys, Map& map) {
+void Player::Update(char* keys, const ChangeScene& cs, Map& map) {
+
+	//シーン遷移の始まった瞬間にシーンに合わせて初期化
+	if (cs.isStartChange_ && cs.preIsEndChange_) {
+		Init(Scene::sceneNum_, map);
+	}
 
 	switch (Scene::sceneNum_) {
 		//====================================================================================
@@ -728,6 +762,10 @@ void Player::Update(char* keys, Map& map) {
 						0
 					);
 
+					if (centerAddress_.y < moveBlockAddress_.y) {
+						pos_.y = map.GetPos()[moveBlockAddress_.y - 1][moveBlockAddress_.x].y - ((map.GetSize().y*0.5f )+ (size_.y * 0.5f)) - 1;
+					}
+
 					break;
 
 				case Right:
@@ -796,9 +834,20 @@ void Player::Update(char* keys, Map& map) {
 				default:
 					break;
 				}
+
+				//プレイヤーの番地計算
+				CalcAddress(
+					address_,
+					{ pos_.x - map.GetPuzzleLeftTop().x + 1,pos_.y - map.GetPuzzleLeftTop().y + 1 },
+					{ map.GetSize().x,map.GetSize().y },
+					size_.x * 0.5f,
+					int(map.GetPos().size()), int(map.GetPos()[0].size())
+				);
+
 			}
 		}
 
+		Novice::ScreenPrintf(0, 100, "%d", centerAddress_.y);
 
 		/*map.SetPos(
 			3, 4,
@@ -850,7 +899,8 @@ void Player::Update(char* keys, Map& map) {
 					int(map.GetPos().size()), int(map.GetPos()[0].size())
 				);
 
-
+				centerAddress_.x = int((pos_.x - map.GetPuzzleLeftTop().x) / map.GetSize().x);
+				centerAddress_.y = int((pos_.y - map.GetPuzzleLeftTop().y) / map.GetSize().y);
 
 				//マップチップの当たり判定
 				PushBackMapChip(
@@ -875,6 +925,8 @@ void Player::Update(char* keys, Map& map) {
 					int(map.GetPos().size()), int(map.GetPos()[0].size())
 				);
 
+				centerAddress_.x = int((pos_.x - map.GetPuzzleLeftTop().x) / map.GetSize().x);
+				centerAddress_.y = int((pos_.y - map.GetPuzzleLeftTop().y) / map.GetSize().y);
 			}
 		}
 

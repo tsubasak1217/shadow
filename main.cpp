@@ -1,5 +1,4 @@
-#include "PlayerShadow.h"
-#include "Player.h"
+#include "Particle.h"
 #include "selectDoor.h"
 #include"stageClearEffect.h"
 #include"stageClear.h"
@@ -29,7 +28,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// ライブラリの初期化
 	Novice::Initialize(kWindowTitle, global.windowSize_.x, global.windowSize_.y);
 
-
+	unsigned int currentTime = unsigned int(time(nullptr));
+	srand(currentTime);
 
 	// キー入力結果を受け取る箱
 	char keys[256] = { 0 };
@@ -47,6 +47,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Screen screen(map, light);
 	Shadow shadow(rs, screen);
 	PlayerShadow playerShadow(screen, shadow);
+
+	Emitter emitter;
+	Particle particle[120];
 
 	SelectDoor door;//セレクト画面
 	StageClear stageClear;//ステージクリア
@@ -70,7 +73,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 
 		map.Update(keys, rs, cs);
-		player.Update(keys, map);
+		player.Update(keys,cs, map);
 		light.Update(keys,cs, map, ((3.0f / 4.0f) * float(M_PI)));
 		shadow.Update(keys,cs,rs,screen,map);
 		screen.Update(keys,cs,map, light);
@@ -79,7 +82,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		cs.UpDate(keys, preKeys, door.isChangeScene_, door.CPos_, door.selectNum_, SCE.canSceneChange, shadow.GetGoalPos(), shadow.GetGoalSize());
 		stageClear.Update(cs.isStartChange_);
 		SCE.Update(stageClear.GetFT());
-		playerShadow.Update(keys,cs, screen, shadow, player);
+		playerShadow.Update(keys,rs,cs, screen, shadow, player,map,light);
+
+		for (int i = 0; i < 120; i++) {
+			particle[i].Update(emitter, playerShadow,shadow,screen);
+		}
 
 		//DOOR.Reset(keys,preKeys);
 		if (keys[DIK_1]) {
@@ -104,6 +111,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		screen.Draw(map, rs, light);
 		shadow.Draw(rs);
 		playerShadow.Draw(screen);
+		for (int i = 0; i < 120; i++) {
+			particle[i].Draw();
+		}
 
 		light.Draw(map,cs);
 		map.Draw(rs);
@@ -114,6 +124,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		stageClear.Draw();
 
 		SCE.Draw();
+
 
 		if (keys[DIK_H]&&!preKeys[DIK_H]) {
 			if (cs.isEndChange_) {

@@ -31,6 +31,12 @@ void PlayerShadow::Init(int sceneNum, Screen screen, Shadow shadow) {
 			preAddress_[i] = address_[i];
 		}
 
+		isAlive_ = true;
+		preIsAlive_ = isAlive_;
+		isBackToRespawnPos_ = false;
+		preIsBackToRespawnPos_ = isBackToRespawnPos_;
+		respawnTimeCount_ = 200;
+
 		pos_.y += (shadow.GetSize().y * 0.5f);
 		pos_.y += -(size_.y * 0.5f);
 
@@ -69,7 +75,7 @@ void PlayerShadow::Init(int sceneNum, Screen screen, Shadow shadow) {
 	}
 }
 
-void PlayerShadow::Update(char* keys, const ChangeScene& cs, Screen screen, Shadow& shadow, Player& player) {
+void PlayerShadow::Update(char* keys,const Resources& rs, const ChangeScene& cs, Screen& screen, Shadow& shadow, Player& player,Map& map,Light& light) {
 
 	//シーン遷移の始まった瞬間にシーンに合わせて初期化
 	if (cs.isStartChange_ && cs.preIsEndChange_) {
@@ -94,6 +100,41 @@ void PlayerShadow::Update(char* keys, const ChangeScene& cs, Screen screen, Shad
 			Init(Scene::sceneNum_, screen, shadow);
 		}
 
+		//前のフレームの情報保存に関するもの
+		prePos_ = pos_;
+		prePosCopy_ = prePos_;
+		preIsAlive_ = isAlive_;
+		preIsBackToRespawnPos_ = isBackToRespawnPos_;
+
+		preIsInsideLightLB_ = isInsideLightLB_;
+		preIsInsideLightRB_ = isInsideLightRB_;
+		preIsInsideLightLT_ = isInsideLightLT_;
+		preIsInsideLightRT_ = isInsideLightRT_;
+
+		/*----------------------------死んだときの処理-----------------------------*/
+
+		if (!isAlive_) {
+			respawnTimeCount_--;
+
+			if (respawnTimeCount_ < 80) {
+
+				if (respawnTimeCount_ == 79) {
+
+					map.Init(rs, Scene::sceneNum_);
+					player.Init(Scene::sceneNum_,map);
+					light.Init(Scene::sceneNum_, map);
+					screen.Init(Scene::sceneNum_, map, light);
+					shadow.Init(rs, screen, Scene::sceneNum_);
+				}
+
+				isBackToRespawnPos_ = true;
+
+				if (respawnTimeCount_ <= 0) {
+					Init(Scene::sceneNum_, screen, shadow);
+				}
+			}
+		}
+
 		//配列数の決定
 		if (hitSurface_.size() != screen.GetPos().size()) {
 
@@ -115,16 +156,8 @@ void PlayerShadow::Update(char* keys, const ChangeScene& cs, Screen screen, Shad
 			}
 		}
 
-		//前のフレームの情報保存に関するもの
-		prePos_ = pos_;
-		prePosCopy_ = prePos_;
 		preHitSurface_ = hitSurface_;
 		preHitSurface2_ = hitSurface2_;
-
-		preIsInsideLightLB_ = isInsideLightLB_;
-		preIsInsideLightRB_ = isInsideLightRB_;
-		preIsInsideLightLT_ = isInsideLightLT_;
-		preIsInsideLightRT_ = isInsideLightRT_;
 
 		/*-------------------------------移動処理-------------------------------*/
 		velocity_ = { 0.0f,0.0f };
@@ -601,6 +634,9 @@ void PlayerShadow::Update(char* keys, const ChangeScene& cs, Screen screen, Shad
 			}
 		}
 
+
+		Novice::ScreenPrintf(0, 20, "%d,%d", hitSurface_[0], preHitSurface_[0]);
+
 		//マップチップの当たり判定
 		for (int i2 = 0; i2 < shadow.GetPos().size(); i2++) {
 			for (int j2 = 0; j2 < shadow.GetPos()[0].size(); j2++) {
@@ -635,6 +671,21 @@ void PlayerShadow::Update(char* keys, const ChangeScene& cs, Screen screen, Shad
 								isDrop_, isJump_, dropSpeed_, jumpSpeed_, hitCount_, hitSurface2_[blockCount - 1], preHitSurface2_[blockCount - 1]
 							);
 						}
+					}
+				} 
+				
+				if (shadow.GetMapChip()[i2][j2] == 2) {
+
+					if (ColisionBox_Ball(
+						{ shadow.GetPos()[i2][j2].x - shadow.GetSize().x * 0.5f,shadow.GetPos()[i2][j2].y - shadow.GetSize().y * 0.5f },
+						{ shadow.GetPos()[i2][j2].x + shadow.GetSize().x * 0.5f,shadow.GetPos()[i2][j2].y - shadow.GetSize().y * 0.5f },
+						{ shadow.GetPos()[i2][j2].x - shadow.GetSize().x * 0.5f,shadow.GetPos()[i2][j2].y + shadow.GetSize().y * 0.5f },
+						{ shadow.GetPos()[i2][j2].x + shadow.GetSize().x * 0.5f,shadow.GetPos()[i2][j2].y + shadow.GetSize().y * 0.5f },
+						pos_,
+						size_.x * 0.4f
+					)) {
+
+						isAlive_ = false;
 					}
 				}
 			}
@@ -815,15 +866,17 @@ void PlayerShadow::Draw(Screen screen) {
 	case GAME://								ゲーム本編
 		//====================================================================================
 
-		Novice::DrawEllipse(
-			int(pos_.x),
-			int(pos_.y),
-			int(size_.x * 0.5f),
-			int(size_.y * 0.5f),
-			0.0f,
-			0x000000ff,
-			kFillModeSolid
-		);
+		if (isAlive_) {
+			Novice::DrawEllipse(
+				int(pos_.x),
+				int(pos_.y),
+				int(size_.x * 0.5f),
+				int(size_.y * 0.5f),
+				0.0f,
+				0x000000ff,
+				kFillModeSolid
+			);
+		}
 
 		break;
 

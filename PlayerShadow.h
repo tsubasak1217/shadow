@@ -13,6 +13,12 @@ class PlayerShadow {
 	Vector2<int>preAddress_[4];
 	float speed_;
 
+	bool isAlive_;
+	bool preIsAlive_;
+	bool isBackToRespawnPos_;
+	bool preIsBackToRespawnPos_;
+	int respawnTimeCount_;
+
 	bool isJump_;
 	bool  isDrop_;
 	float jumpSpeed_;
@@ -62,6 +68,12 @@ public:
 		pos_.y += (shadow.GetSize().y * 0.5f);
 		pos_.y += -(size_.y * 0.5f);
 
+		isAlive_ = true;
+		preIsAlive_ = isAlive_;
+		isBackToRespawnPos_ = false;
+		preIsBackToRespawnPos_ = isBackToRespawnPos_;
+		respawnTimeCount_ = 200;
+
 		isJump_ = false;
 		isDrop_ = false;
 		jumpSpeed_ = 0.0f;
@@ -86,11 +98,18 @@ public:
 
 	void Init(int sceneNum, Screen screen, Shadow shadow);
 
-	void Update(char* keys, const ChangeScene& cs, Screen screen, Shadow& shadow,Player& player);
+	void Update(char* keys, const Resources& rs, const ChangeScene& cs, Screen& screen, Shadow& shadow, Player& player, Map& map,Light& light);
 
 	void Draw(Screen screen);
 
 	//アクセッサ
 	Vec2 GetPos() { return pos_; }
+	Vec2 GetSize() { return size_; }
+
+	bool GetIsAlive() { return isAlive_; }
+	bool GetIsPreAlive() { return preIsAlive_; }
+
+	bool GetIsBackToResPawnPos() { return isBackToRespawnPos_; }
+	bool GetPreIsBackToResPawnPos() { return preIsBackToRespawnPos_; }
 };
 

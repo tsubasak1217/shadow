@@ -9,6 +9,7 @@ class Player{
 	Vec2 velocity_;
 	Vector2<int>address_[4];
 	Vector2<int>preAddress_[4];
+	Vector2<int>centerAddress_;
 	float speed_;
 
 	//ブロックの移動中かどうか
@@ -43,6 +44,7 @@ public:
 			address_[i] = {0,0};
 			preAddress_[i] = address_[i];
 		}
+		centerAddress_ = { 0,0 };
 
 		isMoveBlock_ = false;
 		blockMoveT_ = 0.0f;
@@ -57,9 +59,9 @@ public:
 		isSwitchPushable_ = true;
 	}
 
-	void Init(int sceneNum);
+	void Init(int sceneNum,Map map);
 
-	void Update(char* keys,Map& map);
+	void Update(char* keys, const ChangeScene& cs, Map& map);
 
 	void Draw(const Resources& rs);
 
