@@ -191,7 +191,7 @@ void PlayerShadow::Update(char* keys, const Resources& rs, const ChangeScene& cs
 			if (pos_.y < (screen.GetScreenLeftTop().y + screen.GetSize().y) - size_.y * 0.5f) {
 
 				if (!isInsideLightLB_ && !isInsideLightRB_) {
-					//isDrop_ = true;
+					isDrop_ = true;
 				}
 			}
 
@@ -214,10 +214,13 @@ void PlayerShadow::Update(char* keys, const Resources& rs, const ChangeScene& cs
 										pos_.y >= shadow.GetPos()[address_[RightBottom].y + 1][address_[RightBottom].x].y - (size_.y * 0.5f) - (shadow.GetSize().y * 0.5f) - 2.0f)
 									) {
 
-									isJump_ = false;
-									isDrop_ = false;
-									dropSpeed_ = 0.0f;
-									jumpSpeed_ = 0.0f;
+									if (shadow.GetTouchable()[address_[RightBottom].y + 1][address_[RightBottom].x] or
+										shadow.GetTouchable()[address_[LeftBottom].y + 1][address_[LeftBottom].x]) {
+										isJump_ = false;
+										isDrop_ = false;
+										dropSpeed_ = 0.0f;
+										jumpSpeed_ = 0.0f;
+									}
 
 								} else {
 									if (!isInsideLightLB_ && !isInsideLightRB_) {
@@ -300,6 +303,7 @@ void PlayerShadow::Update(char* keys, const Resources& rs, const ChangeScene& cs
 			}
 
 			preBoadingVecRatio_ = boadingVecRatio_;
+
 			for (int i = 0; i < screen.GetPos().size(); i++) {
 
 				hitSurface_[i] = 0;
@@ -316,6 +320,7 @@ void PlayerShadow::Update(char* keys, const Resources& rs, const ChangeScene& cs
 						screen.GetPos(boardingBlock_, 0), screen.GetPos(boardingBlock_, 1),
 						pos_
 					);
+					
 
 					if (boadingVecRatio_ >= 0.0f &&
 						boadingVecRatio_ <= CheckLength(screen.GetPos(boardingBlock_, 0), screen.GetPos(boardingBlock_, 1))) {
@@ -325,6 +330,8 @@ void PlayerShadow::Update(char* keys, const Resources& rs, const ChangeScene& cs
 							pos_.y = screen.GetPos(boardingBlock_, 0).y +
 								Normalize(screen.GetPos(boardingBlock_, 1), screen.GetPos(boardingBlock_, 0)).y * preBoadingVecRatio_
 								- (size_.y * 0.5f);
+
+							isDrop_ = false;
 						}
 
 						Novice::ScreenPrintf(0, 100, "%f",boadingVecRatio_);
@@ -335,6 +342,9 @@ void PlayerShadow::Update(char* keys, const Resources& rs, const ChangeScene& cs
 				}
 			}
 
+			if (!Global::isMoveShadow_) {
+				boardingBlock_ = -1;
+			}
 
 			/*-------------------------------押し戻し-------------------------------*/
 
@@ -680,6 +690,10 @@ void PlayerShadow::Update(char* keys, const Resources& rs, const ChangeScene& cs
 							isDrop_, isJump_, dropSpeed_, jumpSpeed_, hitCount_, hitSurface_[i], preHitSurface_[i]
 						) == Top) {
 						boardingBlock_ = i;
+						boadingVecRatio_ = Dot(
+							screen.GetPos(boardingBlock_, 0), screen.GetPos(boardingBlock_, 1),
+							pos_
+						);
 					}
 
 				} else if (screen.GetPos(i, 7).x <= screen.GetPos(i, 3).x && screen.GetPos(i, 6).x <= screen.GetPos(i, 2).x) {
@@ -692,6 +706,10 @@ void PlayerShadow::Update(char* keys, const Resources& rs, const ChangeScene& cs
 							isDrop_, isJump_, dropSpeed_, jumpSpeed_, hitCount_, hitSurface_[i], preHitSurface_[i]
 						) == Top) {
 						boardingBlock_ = i;
+						boadingVecRatio_ = Dot(
+							screen.GetPos(boardingBlock_, 0), screen.GetPos(boardingBlock_, 1),
+							pos_
+						);
 					}
 
 				} else if (screen.GetPos(i, 6).x >= screen.GetPos(i, 2).x && screen.GetPos(i, 7).x <= screen.GetPos(i, 3).x) {
@@ -704,6 +722,10 @@ void PlayerShadow::Update(char* keys, const Resources& rs, const ChangeScene& cs
 							isDrop_, isJump_, dropSpeed_, jumpSpeed_, hitCount_, hitSurface_[i], preHitSurface_[i]
 						) == Top) {
 						boardingBlock_ = i;
+						boadingVecRatio_ = Dot(
+							screen.GetPos(boardingBlock_, 0), screen.GetPos(boardingBlock_, 1),
+							pos_
+						);
 					}
 				}
 			}
@@ -839,6 +861,10 @@ void PlayerShadow::Update(char* keys, const Resources& rs, const ChangeScene& cs
 									isDrop_, isJump_, dropSpeed_, jumpSpeed_, hitCount_, hitSurface_[i], preHitSurface_[i]
 								) == Top) {
 								boardingBlock_ = i;
+								boadingVecRatio_ = Dot(
+									screen.GetPos(boardingBlock_, 0), screen.GetPos(boardingBlock_, 1),
+									pos_
+								);
 							}
 
 						} else if (screen.GetPos(i, 7).x <= screen.GetPos(i, 3).x && screen.GetPos(i, 6).x <= screen.GetPos(i, 2).x) {
@@ -851,6 +877,10 @@ void PlayerShadow::Update(char* keys, const Resources& rs, const ChangeScene& cs
 									isDrop_, isJump_, dropSpeed_, jumpSpeed_, hitCount_, hitSurface_[i], preHitSurface_[i]
 								) == Top) {
 								boardingBlock_ = i;
+								boadingVecRatio_ = Dot(
+									screen.GetPos(boardingBlock_, 0), screen.GetPos(boardingBlock_, 1),
+									pos_
+								);
 							}
 
 						} else if (screen.GetPos(i, 6).x >= screen.GetPos(i, 2).x && screen.GetPos(i, 7).x <= screen.GetPos(i, 3).x) {
@@ -863,6 +893,10 @@ void PlayerShadow::Update(char* keys, const Resources& rs, const ChangeScene& cs
 									isDrop_, isJump_, dropSpeed_, jumpSpeed_, hitCount_, hitSurface_[i], preHitSurface_[i]
 								) == Top) {
 								boardingBlock_ = i;
+								boadingVecRatio_ = Dot(
+									screen.GetPos(boardingBlock_, 0), screen.GetPos(boardingBlock_, 1),
+									pos_
+								);
 							}
 						}
 					}
@@ -891,14 +925,12 @@ void PlayerShadow::Update(char* keys, const Resources& rs, const ChangeScene& cs
 					//右に出た時
 					if (pos_.x > (screen.GetScreenLeftTop().x + screen.GetSize().x) - size_.x * 0.5f) {
 						pos_.x = (screen.GetScreenLeftTop().x + screen.GetSize().x) - size_.x * 0.5f;
-						pos_.y--;
 
 						hitCount_++;
 
 						//左に出た時
 					} else if (pos_.x < screen.GetScreenLeftTop().x + size_.x * 0.5f) {
 						pos_.x = screen.GetScreenLeftTop().x + size_.x * 0.5f;
-						pos_.y--;
 
 						hitCount_++;
 					}
