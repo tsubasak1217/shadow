@@ -6,6 +6,8 @@ Resources::Resources() {
 	doorGH_ = Novice::LoadTexture("./Resources/images/Door.png");
 	titleFontGH_= Novice::LoadTexture("./Resources/images/title.png");
 	pressSpaceFontGH_= Novice::LoadTexture("./Resources/images/space.png");
+	rengaGH_= Novice::LoadTexture("./Resources/images/BGpng.png");
+	titleBGGH_= Novice::LoadTexture("./Resources/images/titleBG.png");
 
 	mapCsv_[0] = "./Resources/csv/stage1/mapChip.csv";
 	mapCsv_[1] = "./Resources/csv/stage2/mapChip.csv";

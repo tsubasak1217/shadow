@@ -10,8 +10,11 @@ class ChangeScene {
 #pragma region"セレクトからゲームで使う変数の宣言"
 	/*セレクト画面のシーン遷移フラグ*/
 	//bool isChangeSelect_;
+	
+	//escapeでタイトルに戻るフラグ
+	bool isPushEscape_;
 
-
+	 
 	//状態遷移イージング用
 	//SCはSceneChangeの略
 	Vec2 SCCPos_;//状態遷移の扉の中心座標
@@ -124,6 +127,7 @@ public:
 
 #pragma region"セレクトからゲームで使う変数の初期化"
 		//isChangeSelect_ = false;
+		isPushEscape_ = false;
 		isStartChange_ = false;
 		isEndChange_ = false;
 		preIsStartChange_ = false;
@@ -237,7 +241,7 @@ public:
 	}
 
 	void UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CPos[],
-		int selectNum, bool& CanCS, Vec2 goalPos, Vec2 goalSize, bool& isPauseSelect);
+		int selectNum, bool& CanCS, Vec2 goalPos, Vec2 goalSize, bool& isPauseSelect,bool& isTitlePush);
 	void Draw(int GH, unsigned int DoorColor, Vec2 goalPos, Vec2 goalSize, bool& isPauseSelect);
 	void Reset();
 	//bool GetIsStart() { return isStartChange_; }

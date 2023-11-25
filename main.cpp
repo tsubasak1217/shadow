@@ -79,7 +79,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		
 		title.Update(keys,preKeys);
 		door.Update(keys, preKeys);
-		cs.UpDate(keys, preKeys, door.isChangeScene_, door.CPos_, door.selectNum_, SCE.canSceneChange, shadow.GetGoalPos(), shadow.GetGoalSize(),pause.isSelect_);
+		cs.UpDate(keys, preKeys, door.isChangeScene_, door.CPos_, door.selectNum_, SCE.canSceneChange, shadow.GetGoalPos(), shadow.GetGoalSize(),pause.isSelect_,title.isPush_);
 		stageClear.Update(cs.isStartChange_);
 		SCE.Update(stageClear.GetFT());
 		playerShadow.Update(keys, cs, screen, shadow, player, pause.isPause_);
@@ -116,7 +116,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		title.Draw(rs);
 		door.Draw();
-		stageClear.Draw(playerShadow.GetstarCount());
+		stageClear.Draw(playerShadow.GetstarCount(),rs);
 
 		SCE.Draw();
 

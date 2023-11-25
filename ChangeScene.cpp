@@ -1,7 +1,7 @@
 ﻿#include "ChangeScene.h"
 
 void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CPos[],
-	int selectNum, bool& CanCS, Vec2 goalPos, Vec2 goalSize, bool& isPauseSelect) {
+	int selectNum, bool& CanCS, Vec2 goalPos, Vec2 goalSize, bool& isPauseSelect, bool& isTitlePush) {
 
 	preIsStartChange_ = isStartChange_;
 	preIsEndChange_ = isEndChange_;
@@ -11,6 +11,64 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 	case TITLE://							   タイトル画面
 		//====================================================================================
 		Reset();
+
+
+		//足す透明度をイージング
+		if (isStartChange_) {
+			BCT_ += (1.0f / BCEaseTimer_) * BCEaseDir_;
+			BCAddT_ = EaseInOutBounce(BCT_);
+			addBCColor_ = (1 - BCAddT_) * minBCColor_ + BCAddT_ * maxBCColor_;
+			if (BCT_ <= 0.0f) {
+				BCT_ = 0.0f;
+				isStartChange_ = false;//暗幕の透明度を変化させるフラグを下す
+				isChangeScene = false;
+			}
+
+			if (addBCColor_ >= 0xFF) {
+				addBCColor_ = 0xFF;//バウンドで色がオーバーフローしないように上限で無理やり止める
+			}
+			if (addBCColor_ <= 0x10) {
+				addBCColor_ = 0x00;//バウンドで色がオーバーフローしないように上限で無理やり止める
+			}
+			BCColor_ = 0x00000000 + int(addBCColor_);//ここで透明度を足す
+		}
+
+
+
+
+
+
+
+#pragma region"タイトルからセレクトへの状態遷移"
+
+
+		if (isTitlePush) {
+			isEndChange_ = true;
+		}
+		//足す透明度をイージング
+		if (!isStartChange_ && isEndChange_) {
+			BCT_ += (1.0f / (BCEaseTimer_ / 1.0f)) * BCEaseDir_;
+			BCAddT_ = EaseInCubic(BCT_);
+			addBCColor_ = (1 - BCAddT_) * minBCColor_ + BCAddT_ * maxBCColor_;
+			if (BCT_ >= 1.0f) {
+				BCT_ = 1.0f;
+				BCWaitTimer_ -= 1;
+				if (BCWaitTimer_ == 0) {
+					isEndChange_ = false;//暗幕の透明度を変化させるフラグを下す
+					isStartChange_ = true;//暗幕の透明度を変化させるフラグを下す
+					isTitlePush = false;
+					BCEaseDir_ *= -1;
+					Scene::sceneNum_ = SELECT;
+				}
+			}
+			if (addBCColor_ >= 0xFF) {
+				addBCColor_ = 0xFF;//バウンドで色がオーバーフローしないように上限で無理やり止める
+			}
+			BCColor_ = 0x00000000 + int(addBCColor_);//ここで透明度を足す
+
+		}
+
+#pragma endregion
 
 
 		break;
@@ -50,155 +108,199 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 #pragma region"シーンチェンジで開始"
 
 		if (keys[DIK_SPACE] && !preKeys[DIK_SPACE]) {
-			if (!isChangeScene && !isEndChange_ && !isStartChange_) {
-				isChangeScene = true;
-				isEndChange_ = true;
-				isSetSCPos_ = true;
-				isChangeColor_ = true;
+			if (!isPushEscape_) {//ESCAPE押されていないとき
+				if (!isChangeScene && !isEndChange_ && !isStartChange_) {
+					isChangeScene = true;
+					isEndChange_ = true;
+					isSetSCPos_ = true;
+					isChangeColor_ = true;
+				}
 			}
 		}
+
+		if (keys[DIK_ESCAPE] && !preKeys[DIK_ESCAPE]) {
+			if (!isPushEscape_) {//ESCAPE押されていないとき
+				if (!isChangeScene && !isEndChange_ && !isStartChange_) {
+					isChangeScene = true;
+					isEndChange_ = true;
+					isPushEscape_ = true;
+				}
+			}
+		}
+
+
+
+
 #pragma endregion
-
-
-		/*--------------------------------状態遷移用の扉を設置-----------------------------------------*/
-
 		if (isEndChange_) {
+
+			if (isPushEscape_) {
+				//足す透明度をイージング
+				if (!isStartChange_ && isEndChange_) {
+					BCT_ += (1.0f / (BCEaseTimer_ / 1.0f)) * BCEaseDir_;
+					BCAddT_ = EaseInCubic(BCT_);
+					addBCColor_ = (1 - BCAddT_) * minBCColor_ + BCAddT_ * maxBCColor_;
+					if (BCT_ >= 1.0f) {
+						BCT_ = 1.0f;
+						BCWaitTimer_ -= 1;
+						if (BCWaitTimer_ == 0) {
+							isEndChange_ = false;//暗幕の透明度を変化させるフラグを下す
+							isStartChange_ = true;//暗幕の透明度を変化させるフラグを下す
+							BCEaseDir_ *= -1;
+							isPushEscape_ = false;
+							Scene::sceneNum_ = TITLE;
+						}
+					}
+					if (addBCColor_ >= 0xFF) {
+						addBCColor_ = 0xFF;//バウンドで色がオーバーフローしないように上限で無理やり止める
+					}
+					BCColor_ = 0x00000000 + int(addBCColor_);//ここで透明度を足す
+
+				}
+
+
+
+
+			} else {//ESCAPE押されていないとき
+
+				/*--------------------------------状態遷移用の扉を設置-----------------------------------------*/
+
 #pragma region"設置"
 
-			//選択した扉の位置を状態遷移用の扉の座標に代入する
-			if (isSetSCPos_) {
-				SCCPos_ = CPos[selectNum];
-				minSCSize_ = SCSize_;
-				maxSCSize_ = { 480,960 };//元300,600//画面全体覆うサイズに変更
-				minSCCPos_ = SCCPos_;
-				maxSCCPos_ = { 240,360 };
-				isSetSCPos_ = false;
-			}
+				//選択した扉の位置を状態遷移用の扉の座標に代入する
+				if (isSetSCPos_) {
+					SCCPos_ = CPos[selectNum];
+					minSCSize_ = SCSize_;
+					maxSCSize_ = { 480,960 };//元300,600//画面全体覆うサイズに変更
+					minSCCPos_ = SCCPos_;
+					maxSCCPos_ = { 240,360 };
+					isSetSCPos_ = false;
+				}
 #pragma endregion
 
 
-			/*-------------------------------------暗幕のイージング----------------------------------------*/
+				/*-------------------------------------暗幕のイージング----------------------------------------*/
 
 
 #pragma region"暗幕を下げる"
 
 
 	//足す透明度をイージング
-			if (isChangeColor_) {
-				BCT_ += (1.0f / BCEaseTimer_) * BCEaseDir_;
-				BCAddT_ = EaseInOutBounce(BCT_);
-				addBCColor_ = (1 - BCAddT_) * minBCColor_ + BCAddT_ * maxBCColor_;
-				if (BCT_ >= 1.0f) {
-					BCT_ = 1.0f;
-					isEaseSC_ = true;//状態遷移用の扉を中心へもっていくフラグを立てる（sceneChange）
-					if (!isEaseO_) {
-						isChangeColor_ = false;//暗幕の透明度を変化させるフラグを下す
+				if (isChangeColor_) {
+					BCT_ += (1.0f / BCEaseTimer_) * BCEaseDir_;
+					BCAddT_ = EaseInOutBounce(BCT_);
+					addBCColor_ = (1 - BCAddT_) * minBCColor_ + BCAddT_ * maxBCColor_;
+					if (BCT_ >= 1.0f) {
+						BCT_ = 1.0f;
+						isEaseSC_ = true;//状態遷移用の扉を中心へもっていくフラグを立てる（sceneChange）
+						if (!isEaseO_) {
+							isChangeColor_ = false;//暗幕の透明度を変化させるフラグを下す
+						}
+						BCEaseDir_ *= -1;
+						//for (int i = 0; i < 8; i++) {
+						//	isDraw_[i] = false;//描画されている他の扉を消す//扉の上のレイヤーに暗幕を下すので必要ないかも
+						//}
 					}
-					BCEaseDir_ *= -1;
-					//for (int i = 0; i < 8; i++) {
-					//	isDraw_[i] = false;//描画されている他の扉を消す//扉の上のレイヤーに暗幕を下すので必要ないかも
-					//}
-				}
-				if (BCT_ <= 0.0f) {
-					BCT_ = 0.0f;
-					isChangeColor_ = false;//暗幕の透明度を変化させるフラグを下す
-					isEaseO_ = false;
-					BCEaseDir_ *= -1;
-				}
+					if (BCT_ <= 0.0f) {
+						BCT_ = 0.0f;
+						isChangeColor_ = false;//暗幕の透明度を変化させるフラグを下す
+						isEaseO_ = false;
+						BCEaseDir_ *= -1;
+					}
 
 
-				if (addBCColor_ >= 0xFF) {
-					addBCColor_ = 0xFF;//バウンドで色がオーバーフローしないように上限で無理やり止める
-				}
-				if (addBCColor_ <= 0x10) {
-					addBCColor_ = 0x00;//バウンドで色がオーバーフローしないように上限で無理やり止める
-				}
+					if (addBCColor_ >= 0xFF) {
+						addBCColor_ = 0xFF;//バウンドで色がオーバーフローしないように上限で無理やり止める
+					}
+					if (addBCColor_ <= 0x10) {
+						addBCColor_ = 0x00;//バウンドで色がオーバーフローしないように上限で無理やり止める
+					}
 
-				BCColor_ = 0x00000000 + int(addBCColor_);//ここで透明度を足す
-				SCColor_ = 0xFFFFFF00 + int(addBCColor_);//ここで透明度を足す
-			}
+					BCColor_ = 0x00000000 + int(addBCColor_);//ここで透明度を足す
+					SCColor_ = 0xFFFFFF00 + int(addBCColor_);//ここで透明度を足す
+				}
 #pragma endregion
 
 
-			/*-------------------------態遷移用扉を中央に持っていくイージング--------------------------------*/
+				/*-------------------------態遷移用扉を中央に持っていくイージング--------------------------------*/
 
 
 #pragma region"扉を中央に持っていく"
 		//座標と大きさをイージング
-			if (isEaseSC_) {
-				SCT_ += (1 / SCEaseTimer_);
-				SCAddT_ = EaseInOutCubic(SCT_);
-				SCCPos_.x = (1 - SCAddT_) * minSCCPos_.x + SCAddT_ * maxSCCPos_.x;
-				SCCPos_.y = (1 - SCAddT_) * minSCCPos_.y + SCAddT_ * maxSCCPos_.y;
+				if (isEaseSC_) {
+					SCT_ += (1 / SCEaseTimer_);
+					SCAddT_ = EaseInOutCubic(SCT_);
+					SCCPos_.x = (1 - SCAddT_) * minSCCPos_.x + SCAddT_ * maxSCCPos_.x;
+					SCCPos_.y = (1 - SCAddT_) * minSCCPos_.y + SCAddT_ * maxSCCPos_.y;
 
-				SCSize_.x = (1 - SCAddT_) * minSCSize_.x + SCAddT_ * maxSCSize_.x;
-				SCSize_.y = (1 - SCAddT_) * minSCSize_.y + SCAddT_ * maxSCSize_.y;
+					SCSize_.x = (1 - SCAddT_) * minSCSize_.x + SCAddT_ * maxSCSize_.x;
+					SCSize_.y = (1 - SCAddT_) * minSCSize_.y + SCAddT_ * maxSCSize_.y;
 
 
-				if (SCT_ >= 0.3f) {
-					isSetVertexO_ = true;//扉を開けるイージングで使う変数の値を入れる
-					isEaseO_ = true;//扉を空けるフラグを立てる（Open）
+					if (SCT_ >= 0.3f) {
+						isSetVertexO_ = true;//扉を開けるイージングで使う変数の値を入れる
+						isEaseO_ = true;//扉を空けるフラグを立てる（Open）
+					}
+
+
+					if (SCT_ >= 1) {
+						SCT_ = 1;
+
+						isEaseSC_ = false;////状態遷移用の扉を中心へもっていくフラグを下す（SceneChange）
+						isSetVertexO_ = false;//フラグを下す
+					}
 				}
 
+				VectorVertexS(SCVertex_, SCCPos_, SCSize_.x, SCSize_.y);//ここで描画用の頂点を求める
 
-				if (SCT_ >= 1) {
-					SCT_ = 1;
+				//状態遷移用の扉を開く先の座標を指定する
+				if (isSetVertexO_) {
+					//posSet
+					minVertexO_[0] = SCVertex_[0];
+					minVertexO_[1] = SCVertex_[2];
+					maxVertexO_[0] = { SCVertex_[1].x + SCSize_.x / 4,SCVertex_[0].y + SCSize_.y / 4 };
+					maxVertexO_[1] = { SCVertex_[3].x + SCSize_.x / 4,SCVertex_[3].y + SCSize_.y / 4 };
 
-					isEaseSC_ = false;////状態遷移用の扉を中心へもっていくフラグを下す（SceneChange）
-					isSetVertexO_ = false;//フラグを下す
 				}
-			}
-
-			VectorVertexS(SCVertex_, SCCPos_, SCSize_.x, SCSize_.y);//ここで描画用の頂点を求める
-
-			//状態遷移用の扉を開く先の座標を指定する
-			if (isSetVertexO_) {
-				//posSet
-				minVertexO_[0] = SCVertex_[0];
-				minVertexO_[1] = SCVertex_[2];
-				maxVertexO_[0] = { SCVertex_[1].x + SCSize_.x / 4,SCVertex_[0].y + SCSize_.y / 4 };
-				maxVertexO_[1] = { SCVertex_[3].x + SCSize_.x / 4,SCVertex_[3].y + SCSize_.y / 4 };
-
-			}
 #pragma endregion
 
 
-			/*--------------------------------状態遷移用扉を開くイージング---------------------------------*/
+				/*--------------------------------状態遷移用扉を開くイージング---------------------------------*/
 
 
 #pragma region"各扉の開く演出"
-			if (isEaseO_) {
+				if (isEaseO_) {
 
-				openT_ += 0.01f * easeDirO_;
-				if (easeDirO_ > 0) {
-					openAddT_ = EaseInOutCubic(openT_);
-				} else {
-					openAddT_ = EaseInBounce(openT_);
-				}
+					openT_ += 0.01f * easeDirO_;
+					if (easeDirO_ > 0) {
+						openAddT_ = EaseInOutCubic(openT_);
+					} else {
+						openAddT_ = EaseInBounce(openT_);
+					}
 
 
-				if (openT_ <= 0) {
-					openT_ = 0.0f;
-					easeDirO_ *= -1;
+					if (openT_ <= 0) {
+						openT_ = 0.0f;
+						easeDirO_ *= -1;
+					}
+					if (openT_ >= 1.0f) {
+						openT_ = 1.0f;
+						easeDirO_ = 0;
+						isChangeColor_ = true;
+						isEndChange_ = false;
+						isStartChange_ = true;
+						Scene::sceneNum_ = GAME;
+					}
+					//左上頂点
+					SCVertex_[0].x = (1 - openAddT_) * minVertexO_[0].x + openAddT_ * maxVertexO_[0].x;
+					SCVertex_[0].y = (1 - openAddT_) * minVertexO_[0].y + openAddT_ * maxVertexO_[0].y;
+					//左下頂点
+					SCVertex_[2].x = (1 - openAddT_) * minVertexO_[1].x + openAddT_ * maxVertexO_[1].x;
+					SCVertex_[2].y = (1 - openAddT_) * minVertexO_[1].y + openAddT_ * maxVertexO_[1].y;
 				}
-				if (openT_ >= 1.0f) {
-					openT_ = 1.0f;
-					easeDirO_ = 0;
-					isChangeColor_ = true;
-					isEndChange_ = false;
-					isStartChange_ = true;
-					Scene::sceneNum_ = GAME;
-				}
-				//左上頂点
-				SCVertex_[0].x = (1 - openAddT_) * minVertexO_[0].x + openAddT_ * maxVertexO_[0].x;
-				SCVertex_[0].y = (1 - openAddT_) * minVertexO_[0].y + openAddT_ * maxVertexO_[0].y;
-				//左下頂点
-				SCVertex_[2].x = (1 - openAddT_) * minVertexO_[1].x + openAddT_ * maxVertexO_[1].x;
-				SCVertex_[2].y = (1 - openAddT_) * minVertexO_[1].y + openAddT_ * maxVertexO_[1].y;
-			}
 
 #pragma endregion
-
+			}
 		}
 #pragma endregion
 
@@ -460,7 +562,8 @@ void  ChangeScene::Draw(int GH, unsigned int DoorColor, Vec2 goalPos, Vec2 goalS
 		//====================================================================================
 	case TITLE://							   タイトル画面
 		//====================================================================================
-
+				/*------------------------------状態遷移時の暗幕----------------------------------------*/
+		Novice::DrawBox(0, 0, 480, 720, 0.0f, BCColor_, kFillModeSolid);
 
 		break;
 
@@ -613,7 +716,7 @@ void ChangeScene::Reset() {
 		isStartChange_ = false;
 		isEndChange_ = false;
 		//isChangeSelect_ = false;
-
+		isPushEscape_ = false;
 		//状態遷移イージング用
 		SCCPos_ = { -200,-100 };
 		SCSize_ = { 50,100 };

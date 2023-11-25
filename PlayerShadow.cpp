@@ -775,8 +775,10 @@ void PlayerShadow::Update(char* keys, ChangeScene& cs, Screen screen, Shadow& sh
 
 
 			//ゴールと当たったらクリアに移動
-			if (ColisionBox_Ball(shadow.GetGoalLT(), shadow.GetGoalRT(), shadow.GetGoalLB(), shadow.GetGoalRB(), pos_, (size_.x/10))) {
-				cs.isEndChange_ = true;
+			if (ColisionBox_Ball(shadow.GetGoalLT(), shadow.GetGoalRT(), shadow.GetGoalLB(), shadow.GetGoalRB(), pos_, (size_.x / 10))) {
+				if (keys[DIK_SPACE]) {
+					cs.isEndChange_ = true;
+				}
 			}
 
 
@@ -831,6 +833,8 @@ void PlayerShadow::Update(char* keys, ChangeScene& cs, Screen screen, Shadow& sh
 				0x000000ff,
 				kFillModeSolid
 			);
+			DrawCat(pos_, size_.x, size_.y, 0x000000ff);
+
 
 			break;
 

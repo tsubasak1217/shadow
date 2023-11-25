@@ -11,6 +11,8 @@ public:
 	int doorGH_;
 	int titleFontGH_;
 	int pressSpaceFontGH_;
+	int rengaGH_;
+	int titleBGGH_;
 
 	Resources();
 	~Resources();

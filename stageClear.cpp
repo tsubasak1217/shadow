@@ -145,7 +145,7 @@ void StageClear::Update(bool isStartScene) {
 
 
 
-void StageClear::Draw(int starGetCount_) {
+void StageClear::Draw(int starGetCount_,Resources rs) {
 	switch (Scene::sceneNum_) {
 		//====================================================================================
 	case TITLE://							   タイトル画面
@@ -196,8 +196,9 @@ void StageClear::Draw(int starGetCount_) {
 		DrawCat(CatCPos_, CatSize_.x, CatSize_.y, 0x000000FF);
 
 		/*押してくださいの文字*/
-		Novice::DrawBox(int(PressKeyFontCPos_.x - PressKeyFontSize_.x / 2), int(PressKeyFontCPos_.y - PressKeyFontSize_.y / 2), int(PressKeyFontSize_.x), int(PressKeyFontSize_.y), 0.0f, FColor_, kFillModeWireFrame);
-
+		//Novice::DrawBox(int(PressKeyFontCPos_.x - PressKeyFontSize_.x / 2), int(PressKeyFontCPos_.y - PressKeyFontSize_.y / 2), int(PressKeyFontSize_.x), int(PressKeyFontSize_.y),
+			//0.0f, FColor_, kFillModeWireFrame);
+		Novice::DrawSprite(int(PressKeyFontCPos_.x - PressKeyFontSize_.x / 2), int(PressKeyFontCPos_.y - PressKeyFontSize_.y / 2),rs.pressSpaceFontGH_, 1, 1, 0.0f, FColor_);
 
 
 		break;
@@ -328,7 +329,7 @@ void StageClear::Reset() {
 
 	/*キーを押してくださいの文字*/
 	PressKeyFontCPos_ = { 240,645 };
-	PressKeyFontSize_ = { 400,60 };
+	PressKeyFontSize_ = { 240,120 };
 
 	/*プレスキーの文字をふわふわさせる*/
 	PKT_ = 0;

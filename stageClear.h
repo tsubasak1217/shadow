@@ -114,7 +114,7 @@ public:
 
 		/*キーを押してくださいの文字*/
 		PressKeyFontCPos_ = { 240,645 };
-		PressKeyFontSize_ = { 400,60 };
+		PressKeyFontSize_ = { 240,120 };
 
 		/*プレスキーの文字をふわふわさせる*/
 		PKT_ = 0;
@@ -150,7 +150,7 @@ public:
 	}
 
 	void Update(bool isStartScene);
-	void Draw(int starGetCount_);
+	void Draw(int starGetCount_,Resources rs);
 	void Debug(char* keys, char* preKeys);
 	float GetFT() { return FT_; };
 	void Reset();
