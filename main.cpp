@@ -1,12 +1,12 @@
-#include "PlayerShadow.h"
-#include "Player.h"
+
+#include "Particle.h"
+#include"Title.h"
 #include "selectDoor.h"
+#include "selectLightParticle.h"
 #include"stageClearEffect.h"
 #include"stageClear.h"
 #include"Pause.h"
-#include"Title.h"
 #include "ImGuiManager.h"
-#include "selectLightParticle.h"
 
 
 //======================================================
@@ -33,7 +33,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// ライブラリの初期化
 	Novice::Initialize(kWindowTitle, global.windowSize_.x, global.windowSize_.y);
 
-
+	unsigned int currentTime = unsigned int(time(nullptr));
+	srand(currentTime);
 
 	// キー入力結果を受け取る箱
 	char keys[256] = { 0 };
@@ -44,6 +45,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	Scene scene;
 	ChangeScene cs;
+
+
+	Emitter emitter;
+	Particle particle[120];
 
 	Map map(rs);
 	Player player(map);
@@ -72,19 +77,26 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓更新処理ここから
 		///
 		Novice::ScreenPrintf(0, 0, "StageNum=%d", Map::stageNum_);
+		cs.UpDate(keys, preKeys, door.isChangeScene_, door.CPos_, door.selectNum_, SCE.canSceneChange, shadow.GetGoalPos(), shadow.GetGoalSize(), pause.isSelect_, title.isPush_);
+
+
 		map.Update(keys, rs, cs);
-		player.Update(keys, map, cs, pause.isPause_);
+		player.Update(keys, cs, map, pause.isPause_);
 		light.Update(keys, cs, map, ((3.0f / 4.0f) * float(M_PI)), pause.isPause_);
 
-		shadow.Update(keys, cs, rs, screen, map);
 		screen.Update(keys, cs, map, light);
+		shadow.Update(keys, cs, rs, screen, map);
+
+		SCE.Update(stageClear, playerShadow.GetstarCount());
+		playerShadow.Update(keys, rs, cs, screen, shadow, player, map, light, pause.isPause_);
+		for (int i = 0; i < 120; i++) {
+			particle[i].Update(emitter, playerShadow, shadow, screen);
+		}
 
 		title.Update(keys, preKeys);
 		door.Update(keys, preKeys);
-		cs.UpDate(keys, preKeys, door.isChangeScene_, door.CPos_, door.selectNum_, SCE.canSceneChange, shadow.GetGoalPos(), shadow.GetGoalSize(), pause.isSelect_, title.isPush_);
 		stageClear.Update(cs.isStartChange_, playerShadow.GetstarCount());
-		SCE.Update(stageClear, playerShadow.GetstarCount());
-		playerShadow.Update(keys, cs, screen, shadow, player, pause.isPause_);
+
 		pause.Update(cs, keys, preKeys);
 
 		for (int i = 0; i < 120; i++)
@@ -126,6 +138,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		shadow.Draw(rs);
 		playerShadow.Draw(screen);
 
+		for (int i = 0; i < 120; i++) {
+			particle[i].Draw();
+
+		}
+
 		light.Draw(map, cs);
 		map.Draw(rs);
 		player.Draw(rs);
@@ -133,21 +150,28 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		title.Draw(rs);
 		door.Draw(rs);
-		stageClear.Draw( rs);
-		
-		
+		stageClear.Draw(rs);
+
+
 		for (int i = 0; i < 120; i++)
 		{
 			SLParticle[i].Draw(keys);
 		}
-		
-		SCE.Draw( playerShadow.GetstarCount());
+
+		SCE.Draw(playerShadow.GetstarCount());
 
 		pause.Draw(rs);
 		/*シーンチェンジ一番前*/
 		cs.Draw(door.GH_, door.color_, shadow.GetGoalPos(), shadow.GetGoalSize(), pause.isSelect_);
 
+		if (keys[DIK_H] && !preKeys[DIK_H]) {
+			if (cs.isEndChange_) {
+				cs.isEndChange_ = false;
 
+			} else {
+				cs.isEndChange_ = true;
+			}
+		}
 
 		//デバッグ
 		switch (Scene::sceneNum_) {

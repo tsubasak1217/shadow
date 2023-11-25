@@ -1,7 +1,7 @@
 ﻿#include "Player.h"
 
 //====================================================初期化関数=============================================================
-void Player::Init(int sceneNum) {
+void Player::Init(int sceneNum, Map map) {
 
 	switch (sceneNum) {
 		//====================================================================================
@@ -15,6 +15,36 @@ void Player::Init(int sceneNum) {
 		//====================================================================================
 	case GAME://								ゲーム本編
 		//====================================================================================
+
+		pos_ = {
+			map.firstPlayerPos_.x + map.GetPuzzleLeftTop().x,
+			map.firstPlayerPos_.y + map.GetPuzzleLeftTop().y,
+		};
+		prePos_ = pos_;
+
+		size_ = { 24.0f,24.0f };
+		direction_ = { 0.0f,0.0f };
+		velocity_ = { 0.0f,0.0f };
+		speed_ = 4.0f;
+		for (int i = 0; i < 4; i++) {
+			address_[i] = { 0,0 };
+			preAddress_[i] = address_[i];
+		}
+		centerAddress_ = { 0,0 };
+
+		isMoveBlock_ = false;
+		blockMoveT_ = 0.0f;
+		moveTime_ = 32;
+		moveDirection_ = 0;
+		moveBlockAddress_ = { 0,0 };
+		moveStartPos_ = { 0.0f,0.0f };
+		savedPlayerPos_ = { 0.0f,0.0f };
+		isSwappped_ = false;
+
+		isHitMapChip_ = 0;
+
+		isSwitchPushable_ = true;
+
 		break;
 		//====================================================================================
 	case CLEAR://								クリア画面
@@ -27,20 +57,33 @@ void Player::Init(int sceneNum) {
 }
 
 //====================================================アップデート=============================================================
-void Player::Update(char* keys, Map& map,ChangeScene& cs,bool isPause) {
-	if (!isPause && !cs.isEndChange_) {
-		switch (Scene::sceneNum_) {
-			//====================================================================================
-		case TITLE://							   タイトル画面
-			//====================================================================================
-			break;
-			//====================================================================================
-		case SELECT://							   ステージ選択
-			//====================================================================================
-			break;
-			//====================================================================================
-		case GAME://								ゲーム本編
-			//====================================================================================
+void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause) {
+
+	//シーン遷移の始まった瞬間にシーンに合わせて初期化
+	if (cs.isStartChange_ && cs.preIsEndChange_) {
+		Init(Scene::sceneNum_, map);
+	}
+
+	switch (Scene::sceneNum_) {
+		//====================================================================================
+	case TITLE://							   タイトル画面
+		//====================================================================================
+		break;
+		//====================================================================================
+	case SELECT://							   ステージ選択
+		//====================================================================================
+		break;
+		//====================================================================================
+	case GAME://								ゲーム本編
+		//====================================================================================
+
+		if (keys[DIK_R]) {
+			Init(Scene::sceneNum_, map);
+		}
+
+		if (!isPause) {
+			//毎フレームの初期化
+			isSwappped_ = false;
 
 			//前のフレームの情報保存に関するもの
 			prePos_ = pos_;
@@ -70,19 +113,22 @@ void Player::Update(char* keys, Map& map,ChangeScene& cs,bool isPause) {
 														map.GetPos()[address_[i].y][address_[i].x - 1].x
 														+ (map.GetSize().x * 0.5f) + (size_.x * 0.5f)) {
 
-														//プレイヤーの右側が空いていれば
-														if (address_[i].x + 1 < map.GetMapChip()[0].size()) {
-															if (map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 0) {
+														if (address_[i].y == address_[2].y) {
 
-																//動かすフラグを立てる
-																isMoveBlock_ = true;
-																moveDirection_ = Right;
-																//動かすブロックのアドレスを保存
-																moveBlockAddress_ = { address_[i].x - 1,address_[i].y };
-																moveStartPos_ = map.GetPos()[address_[i].y][address_[i].x - 1];
+															//プレイヤーの右側が空いていれば
+															if (address_[i].x + 1 < map.GetMapChip()[0].size()) {
+																if (map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 0) {
 
-																//プレイヤーの座標を保存
-																savedPlayerPos_ = pos_;
+																	//動かすフラグを立てる
+																	isMoveBlock_ = true;
+																	moveDirection_ = Right;
+																	//動かすブロックのアドレスを保存
+																	moveBlockAddress_ = { address_[i].x - 1,address_[i].y };
+																	moveStartPos_ = map.GetPos()[address_[i].y][address_[i].x - 1];
+
+																	//プレイヤーの座標を保存
+																	savedPlayerPos_ = pos_;
+																}
 															}
 														}
 													}
@@ -101,19 +147,22 @@ void Player::Update(char* keys, Map& map,ChangeScene& cs,bool isPause) {
 														map.GetPos()[address_[i].y][address_[i].x - 1].x
 														+ (map.GetSize().x * 0.5f) + (size_.x * 0.5f)) {
 
-														//動かすブロックの左側が空いていれば
-														if (address_[i].x - 2 >= 0) {
-															if (map.GetMapChip()[address_[i].y][address_[i].x - 2] <= 0) {
+														if (address_[i].y == address_[2].y) {
 
-																//動かすフラグを立てる
-																isMoveBlock_ = true;
-																moveDirection_ = Left;
-																//動かすブロックのアドレスを保存
-																moveBlockAddress_ = { address_[i].x - 1,address_[i].y };
-																moveStartPos_ = map.GetPos()[address_[i].y][address_[i].x - 1];
+															//動かすブロックの左側が空いていれば
+															if (address_[i].x - 2 >= 0) {
+																if (map.GetMapChip()[address_[i].y][address_[i].x - 2] <= 0) {
 
-																//プレイヤーの座標を保存
-																savedPlayerPos_ = pos_;
+																	//動かすフラグを立てる
+																	isMoveBlock_ = true;
+																	moveDirection_ = Left;
+																	//動かすブロックのアドレスを保存
+																	moveBlockAddress_ = { address_[i].x - 1,address_[i].y };
+																	moveStartPos_ = map.GetPos()[address_[i].y][address_[i].x - 1];
+
+																	//プレイヤーの座標を保存
+																	savedPlayerPos_ = pos_;
+																}
 															}
 														}
 													}
@@ -134,19 +183,22 @@ void Player::Update(char* keys, Map& map,ChangeScene& cs,bool isPause) {
 														map.GetPos()[address_[i].y - 1][address_[i].x].y
 														+ (map.GetSize().y * 0.5f) + (size_.y * 0.5f)) {
 
-														//ブロックのの上側が空いていれば
-														if (address_[i].y - 2 >= 0) {
-															if (map.GetMapChip()[address_[i].y - 2][address_[i].x] <= 0) {
+														if (address_[i].x == address_[1].x) {
 
-																//動かすフラグを立てる
-																isMoveBlock_ = true;
-																moveDirection_ = Top;
-																//動かすブロックのアドレスを保存
-																moveBlockAddress_ = { address_[i].x,address_[i].y - 1 };
-																moveStartPos_ = map.GetPos()[address_[i].y - 1][address_[i].x];
+															//ブロックのの上側が空いていれば
+															if (address_[i].y - 2 >= 0) {
+																if (map.GetMapChip()[address_[i].y - 2][address_[i].x] <= 0) {
 
-																//プレイヤーの座標を保存
-																savedPlayerPos_ = pos_;
+																	//動かすフラグを立てる
+																	isMoveBlock_ = true;
+																	moveDirection_ = Top;
+																	//動かすブロックのアドレスを保存
+																	moveBlockAddress_ = { address_[i].x,address_[i].y - 1 };
+																	moveStartPos_ = map.GetPos()[address_[i].y - 1][address_[i].x];
+
+																	//プレイヤーの座標を保存
+																	savedPlayerPos_ = pos_;
+																}
 															}
 														}
 													}
@@ -165,19 +217,22 @@ void Player::Update(char* keys, Map& map,ChangeScene& cs,bool isPause) {
 														map.GetPos()[address_[i].y - 1][address_[i].x].y
 														+ (map.GetSize().x * 0.5f) + (size_.x * 0.5f)) {
 
-														//プレイヤーの下側が空いていれば
-														if (address_[i].y + 1 < map.GetMapChip().size()) {
-															if (map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 0) {
+														if (address_[i].x == address_[1].x) {
 
-																//動かすフラグを立てる
-																isMoveBlock_ = true;
-																moveDirection_ = Bottom;
-																//動かすブロックのアドレスを保存
-																moveBlockAddress_ = { address_[i].x,address_[i].y - 1 };
-																moveStartPos_ = map.GetPos()[address_[i].y - 1][address_[i].x];
+															//プレイヤーの下側が空いていれば
+															if (address_[i].y + 1 < map.GetMapChip().size()) {
+																if (map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 0) {
 
-																//プレイヤーの座標を保存
-																savedPlayerPos_ = pos_;
+																	//動かすフラグを立てる
+																	isMoveBlock_ = true;
+																	moveDirection_ = Bottom;
+																	//動かすブロックのアドレスを保存
+																	moveBlockAddress_ = { address_[i].x,address_[i].y - 1 };
+																	moveStartPos_ = map.GetPos()[address_[i].y - 1][address_[i].x];
+
+																	//プレイヤーの座標を保存
+																	savedPlayerPos_ = pos_;
+																}
 															}
 														}
 													}
@@ -205,19 +260,22 @@ void Player::Update(char* keys, Map& map,ChangeScene& cs,bool isPause) {
 														map.GetPos()[address_[i].y][address_[i].x + 1].x
 														- (map.GetSize().x * 0.5f) - (size_.x * 0.5f)) {
 
-														//動かすブロックの右が空いているとき
-														if (address_[i].x + 2 < map.GetMapChip()[0].size()) {
-															if (map.GetMapChip()[address_[i].y][address_[i].x + 2] <= 0) {
+														if (address_[i].y == address_[3].y) {
 
-																//動かすフラグを立てる
-																isMoveBlock_ = true;
-																moveDirection_ = Right;
-																//動かすブロックのアドレスを保存
-																moveBlockAddress_ = { address_[i].x + 1,address_[i].y };
-																moveStartPos_ = map.GetPos()[address_[i].y][address_[i].x + 1];
+															//動かすブロックの右が空いているとき
+															if (address_[i].x + 2 < map.GetMapChip()[0].size()) {
+																if (map.GetMapChip()[address_[i].y][address_[i].x + 2] <= 0) {
 
-																//プレイヤーの座標を保存
-																savedPlayerPos_ = pos_;
+																	//動かすフラグを立てる
+																	isMoveBlock_ = true;
+																	moveDirection_ = Right;
+																	//動かすブロックのアドレスを保存
+																	moveBlockAddress_ = { address_[i].x + 1,address_[i].y };
+																	moveStartPos_ = map.GetPos()[address_[i].y][address_[i].x + 1];
+
+																	//プレイヤーの座標を保存
+																	savedPlayerPos_ = pos_;
+																}
 															}
 														}
 													}
@@ -236,19 +294,22 @@ void Player::Update(char* keys, Map& map,ChangeScene& cs,bool isPause) {
 														map.GetPos()[address_[i].y][address_[i].x + 1].x
 														- (map.GetSize().x * 0.5f) - (size_.x * 0.5f)) {
 
-														//動かすブロックの左側が空いていれば
-														if (address_[i].x - 1 >= 0) {
-															if (map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 0) {
+														if (address_[i].y == address_[3].y) {
 
-																//動かすフラグを立てる
-																isMoveBlock_ = true;
-																moveDirection_ = Left;
-																//動かすブロックのアドレスを保存
-																moveBlockAddress_ = { address_[i].x + 1,address_[i].y };
-																moveStartPos_ = map.GetPos()[address_[i].y][address_[i].x + 1];
+															//動かすブロックの左側が空いていれば
+															if (address_[i].x - 1 >= 0) {
+																if (map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 0) {
 
-																//プレイヤーの座標を保存
-																savedPlayerPos_ = pos_;
+																	//動かすフラグを立てる
+																	isMoveBlock_ = true;
+																	moveDirection_ = Left;
+																	//動かすブロックのアドレスを保存
+																	moveBlockAddress_ = { address_[i].x + 1,address_[i].y };
+																	moveStartPos_ = map.GetPos()[address_[i].y][address_[i].x + 1];
+
+																	//プレイヤーの座標を保存
+																	savedPlayerPos_ = pos_;
+																}
 															}
 														}
 													}
@@ -269,19 +330,22 @@ void Player::Update(char* keys, Map& map,ChangeScene& cs,bool isPause) {
 														map.GetPos()[address_[i].y - 1][address_[i].x].y
 														+ (map.GetSize().y * 0.5f) + (size_.y * 0.5f)) {
 
-														//ブロックのの上側が空いていれば
-														if (address_[i].y - 2 >= 0) {
-															if (map.GetMapChip()[address_[i].y - 2][address_[i].x] <= 0) {
+														if (address_[i].x == address_[0].x) {
 
-																//動かすフラグを立てる
-																isMoveBlock_ = true;
-																moveDirection_ = Top;
-																//動かすブロックのアドレスを保存
-																moveBlockAddress_ = { address_[i].x,address_[i].y - 1 };
-																moveStartPos_ = map.GetPos()[address_[i].y - 1][address_[i].x];
+															//ブロックのの上側が空いていれば
+															if (address_[i].y - 2 >= 0) {
+																if (map.GetMapChip()[address_[i].y - 2][address_[i].x] <= 0) {
 
-																//プレイヤーの座標を保存
-																savedPlayerPos_ = pos_;
+																	//動かすフラグを立てる
+																	isMoveBlock_ = true;
+																	moveDirection_ = Top;
+																	//動かすブロックのアドレスを保存
+																	moveBlockAddress_ = { address_[i].x,address_[i].y - 1 };
+																	moveStartPos_ = map.GetPos()[address_[i].y - 1][address_[i].x];
+
+																	//プレイヤーの座標を保存
+																	savedPlayerPos_ = pos_;
+																}
 															}
 														}
 													}
@@ -300,19 +364,22 @@ void Player::Update(char* keys, Map& map,ChangeScene& cs,bool isPause) {
 														map.GetPos()[address_[i].y - 1][address_[i].x].y
 														+ (map.GetSize().x * 0.5f) + (size_.x * 0.5f)) {
 
-														//プレイヤーの下側が空いていれば
-														if (address_[i].y + 1 < map.GetMapChip().size()) {
-															if (map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 0) {
+														if (address_[i].x == address_[0].x) {
 
-																//動かすフラグを立てる
-																isMoveBlock_ = true;
-																moveDirection_ = Bottom;
-																//動かすブロックのアドレスを保存
-																moveBlockAddress_ = { address_[i].x,address_[i].y - 1 };
-																moveStartPos_ = map.GetPos()[address_[i].y - 1][address_[i].x];
+															//プレイヤーの下側が空いていれば
+															if (address_[i].y + 1 < map.GetMapChip().size()) {
+																if (map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 0) {
 
-																//プレイヤーの座標を保存
-																savedPlayerPos_ = pos_;
+																	//動かすフラグを立てる
+																	isMoveBlock_ = true;
+																	moveDirection_ = Bottom;
+																	//動かすブロックのアドレスを保存
+																	moveBlockAddress_ = { address_[i].x,address_[i].y - 1 };
+																	moveStartPos_ = map.GetPos()[address_[i].y - 1][address_[i].x];
+
+																	//プレイヤーの座標を保存
+																	savedPlayerPos_ = pos_;
+																}
 															}
 														}
 													}
@@ -339,19 +406,22 @@ void Player::Update(char* keys, Map& map,ChangeScene& cs,bool isPause) {
 														map.GetPos()[address_[i].y][address_[i].x - 1].x
 														+ (map.GetSize().x * 0.5f) + (size_.x * 0.5f)) {
 
-														//プレイヤーの右側が空いていれば
-														if (address_[i].x + 1 < map.GetMapChip()[0].size()) {
-															if (map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 0) {
+														if (address_[i].y == address_[0].y) {
 
-																//動かすフラグを立てる
-																isMoveBlock_ = true;
-																moveDirection_ = Right;
-																//動かすブロックのアドレスを保存
-																moveBlockAddress_ = { address_[i].x - 1,address_[i].y };
-																moveStartPos_ = map.GetPos()[address_[i].y][address_[i].x - 1];
+															//プレイヤーの右側が空いていれば
+															if (address_[i].x + 1 < map.GetMapChip()[0].size()) {
+																if (map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 0) {
 
-																//プレイヤーの座標を保存
-																savedPlayerPos_ = pos_;
+																	//動かすフラグを立てる
+																	isMoveBlock_ = true;
+																	moveDirection_ = Right;
+																	//動かすブロックのアドレスを保存
+																	moveBlockAddress_ = { address_[i].x - 1,address_[i].y };
+																	moveStartPos_ = map.GetPos()[address_[i].y][address_[i].x - 1];
+
+																	//プレイヤーの座標を保存
+																	savedPlayerPos_ = pos_;
+																}
 															}
 														}
 													}
@@ -370,19 +440,22 @@ void Player::Update(char* keys, Map& map,ChangeScene& cs,bool isPause) {
 														map.GetPos()[address_[i].y][address_[i].x - 1].x
 														+ (map.GetSize().x * 0.5f) + (size_.x * 0.5f)) {
 
-														//動かすブロックの左側が空いていれば
-														if (address_[i].x - 2 >= 0) {
-															if (map.GetMapChip()[address_[i].y][address_[i].x - 2] <= 0) {
+														if (address_[i].y == address_[0].y) {
 
-																//動かすフラグを立てる
-																isMoveBlock_ = true;
-																moveDirection_ = Left;
-																//動かすブロックのアドレスを保存
-																moveBlockAddress_ = { address_[i].x - 1,address_[i].y };
-																moveStartPos_ = map.GetPos()[address_[i].y][address_[i].x - 1];
+															//動かすブロックの左側が空いていれば
+															if (address_[i].x - 2 >= 0) {
+																if (map.GetMapChip()[address_[i].y][address_[i].x - 2] <= 0) {
 
-																//プレイヤーの座標を保存
-																savedPlayerPos_ = pos_;
+																	//動かすフラグを立てる
+																	isMoveBlock_ = true;
+																	moveDirection_ = Left;
+																	//動かすブロックのアドレスを保存
+																	moveBlockAddress_ = { address_[i].x - 1,address_[i].y };
+																	moveStartPos_ = map.GetPos()[address_[i].y][address_[i].x - 1];
+
+																	//プレイヤーの座標を保存
+																	savedPlayerPos_ = pos_;
+																}
 															}
 														}
 													}
@@ -403,19 +476,22 @@ void Player::Update(char* keys, Map& map,ChangeScene& cs,bool isPause) {
 														map.GetPos()[address_[i].y + 1][address_[i].x].y
 														- (map.GetSize().y * 0.5f) - (size_.y * 0.5f)) {
 
-														//プレイヤーの上側が空いていれば
-														if (address_[i].y - 1 >= 0) {
-															if (map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 0) {
+														if (address_[i].x == address_[3].x) {
 
-																//動かすフラグを立てる
-																isMoveBlock_ = true;
-																moveDirection_ = Top;
-																//動かすブロックのアドレスを保存
-																moveBlockAddress_ = { address_[i].x,address_[i].y + 1 };
-																moveStartPos_ = map.GetPos()[address_[i].y + 1][address_[i].x];
+															//プレイヤーの上側が空いていれば
+															if (address_[i].y - 1 >= 0) {
+																if (map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 0) {
 
-																//プレイヤーの座標を保存
-																savedPlayerPos_ = pos_;
+																	//動かすフラグを立てる
+																	isMoveBlock_ = true;
+																	moveDirection_ = Top;
+																	//動かすブロックのアドレスを保存
+																	moveBlockAddress_ = { address_[i].x,address_[i].y + 1 };
+																	moveStartPos_ = map.GetPos()[address_[i].y + 1][address_[i].x];
+
+																	//プレイヤーの座標を保存
+																	savedPlayerPos_ = pos_;
+																}
 															}
 														}
 													}
@@ -434,20 +510,24 @@ void Player::Update(char* keys, Map& map,ChangeScene& cs,bool isPause) {
 														map.GetPos()[address_[i].y + 1][address_[i].x].y
 														- (map.GetSize().y * 0.5f) - (size_.y * 0.5f)) {
 
-														//動かすブロックの下側が空いていれば
-														if (address_[i].y + 2 < map.GetMapChip().size()) {
-															if (map.GetMapChip()[address_[i].y + 2][address_[i].x] <= 0) {
+														if (address_[i].x == address_[3].x) {
 
-																//動かすフラグを立てる
-																isMoveBlock_ = true;
-																moveDirection_ = Bottom;
-																//動かすブロックのアドレスを保存
-																moveBlockAddress_ = { address_[i].x,address_[i].y + 1 };
-																moveStartPos_ = map.GetPos()[address_[i].y + 1][address_[i].x];
+															//動かすブロックの下側が空いていれば
+															if (address_[i].y + 2 < map.GetMapChip().size()) {
+																if (map.GetMapChip()[address_[i].y + 2][address_[i].x] <= 0) {
 
-																//プレイヤーの座標を保存
-																savedPlayerPos_ = pos_;
+																	//動かすフラグを立てる
+																	isMoveBlock_ = true;
+																	moveDirection_ = Bottom;
+																	//動かすブロックのアドレスを保存
+																	moveBlockAddress_ = { address_[i].x,address_[i].y + 1 };
+																	moveStartPos_ = map.GetPos()[address_[i].y + 1][address_[i].x];
+
+																	//プレイヤーの座標を保存
+																	savedPlayerPos_ = pos_;
+																}
 															}
+
 														}
 													}
 												}
@@ -474,19 +554,22 @@ void Player::Update(char* keys, Map& map,ChangeScene& cs,bool isPause) {
 														map.GetPos()[address_[i].y][address_[i].x + 1].x
 														- (map.GetSize().x * 0.5f) - (size_.x * 0.5f)) {
 
-														//動かすブロックの右が空いているとき
-														if (address_[i].x + 2 < map.GetMapChip()[0].size()) {
-															if (map.GetMapChip()[address_[i].y][address_[i].x + 2] <= 0) {
+														if (address_[i].y == address_[1].y) {
 
-																//動かすフラグを立てる
-																isMoveBlock_ = true;
-																moveDirection_ = Right;
-																//動かすブロックのアドレスを保存
-																moveBlockAddress_ = { address_[i].x + 1,address_[i].y };
-																moveStartPos_ = map.GetPos()[address_[i].y][address_[i].x + 1];
+															//動かすブロックの右が空いているとき
+															if (address_[i].x + 2 < map.GetMapChip()[0].size()) {
+																if (map.GetMapChip()[address_[i].y][address_[i].x + 2] <= 0) {
 
-																//プレイヤーの座標を保存
-																savedPlayerPos_ = pos_;
+																	//動かすフラグを立てる
+																	isMoveBlock_ = true;
+																	moveDirection_ = Right;
+																	//動かすブロックのアドレスを保存
+																	moveBlockAddress_ = { address_[i].x + 1,address_[i].y };
+																	moveStartPos_ = map.GetPos()[address_[i].y][address_[i].x + 1];
+
+																	//プレイヤーの座標を保存
+																	savedPlayerPos_ = pos_;
+																}
 															}
 														}
 													}
@@ -505,19 +588,23 @@ void Player::Update(char* keys, Map& map,ChangeScene& cs,bool isPause) {
 														map.GetPos()[address_[i].y][address_[i].x + 1].x
 														- (map.GetSize().x * 0.5f) - (size_.x * 0.5f)) {
 
-														//動かすブロックの左側が空いていれば
-														if (address_[i].x - 1 >= 0) {
-															if (map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 0) {
+														if (address_[i].y == address_[1].y) {
 
-																//動かすフラグを立てる
-																isMoveBlock_ = true;
-																moveDirection_ = Left;
-																//動かすブロックのアドレスを保存
-																moveBlockAddress_ = { address_[i].x + 1,address_[i].y };
-																moveStartPos_ = map.GetPos()[address_[i].y][address_[i].x + 1];
+															//動かすブロックの左側が空いていれば
+															if (address_[i].x - 1 >= 0) {
+																if (map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 0) {
 
-																//プレイヤーの座標を保存
-																savedPlayerPos_ = pos_;
+																	//動かすフラグを立てる
+																	isMoveBlock_ = true;
+																	moveDirection_ = Left;
+																	//動かすブロックのアドレスを保存
+																	moveBlockAddress_ = { address_[i].x + 1,address_[i].y };
+																	moveStartPos_ = map.GetPos()[address_[i].y][address_[i].x + 1];
+
+																	//プレイヤーの座標を保存
+																	savedPlayerPos_ = pos_;
+
+																}
 															}
 														}
 													}
@@ -538,19 +625,22 @@ void Player::Update(char* keys, Map& map,ChangeScene& cs,bool isPause) {
 														map.GetPos()[address_[i].y + 1][address_[i].x].y
 														- (map.GetSize().y * 0.5f) - (size_.y * 0.5f)) {
 
-														//プレイヤーの上側が空いていれば
-														if (address_[i].y - 1 >= 0) {
-															if (map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 0) {
+														if (address_[i].x == address_[2].x) {
 
-																//動かすフラグを立てる
-																isMoveBlock_ = true;
-																moveDirection_ = Top;
-																//動かすブロックのアドレスを保存
-																moveBlockAddress_ = { address_[i].x,address_[i].y + 1 };
-																moveStartPos_ = map.GetPos()[address_[i].y + 1][address_[i].x];
+															//プレイヤーの上側が空いていれば
+															if (address_[i].y - 1 >= 0) {
+																if (map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 0) {
 
-																//プレイヤーの座標を保存
-																savedPlayerPos_ = pos_;
+																	//動かすフラグを立てる
+																	isMoveBlock_ = true;
+																	moveDirection_ = Top;
+																	//動かすブロックのアドレスを保存
+																	moveBlockAddress_ = { address_[i].x,address_[i].y + 1 };
+																	moveStartPos_ = map.GetPos()[address_[i].y + 1][address_[i].x];
+
+																	//プレイヤーの座標を保存
+																	savedPlayerPos_ = pos_;
+																}
 															}
 														}
 													}
@@ -569,19 +659,22 @@ void Player::Update(char* keys, Map& map,ChangeScene& cs,bool isPause) {
 														map.GetPos()[address_[i].y + 1][address_[i].x].y
 														- (map.GetSize().y * 0.5f) - (size_.y * 0.5f)) {
 
-														//動かすブロックの下側が空いていれば
-														if (address_[i].y + 2 < map.GetMapChip().size()) {
-															if (map.GetMapChip()[address_[i].y + 2][address_[i].x] <= 0) {
+														if (address_[i].x == address_[2].x) {
 
-																//動かすフラグを立てる
-																isMoveBlock_ = true;
-																moveDirection_ = Bottom;
-																//動かすブロックのアドレスを保存
-																moveBlockAddress_ = { address_[i].x,address_[i].y + 1 };
-																moveStartPos_ = map.GetPos()[address_[i].y + 1][address_[i].x];
+															//動かすブロックの下側が空いていれば
+															if (address_[i].y + 2 < map.GetMapChip().size()) {
+																if (map.GetMapChip()[address_[i].y + 2][address_[i].x] <= 0) {
 
-																//プレイヤーの座標を保存
-																savedPlayerPos_ = pos_;
+																	//動かすフラグを立てる
+																	isMoveBlock_ = true;
+																	moveDirection_ = Bottom;
+																	//動かすブロックのアドレスを保存
+																	moveBlockAddress_ = { address_[i].x,address_[i].y + 1 };
+																	moveStartPos_ = map.GetPos()[address_[i].y + 1][address_[i].x];
+
+																	//プレイヤーの座標を保存
+																	savedPlayerPos_ = pos_;
+																}
 															}
 														}
 													}
@@ -623,6 +716,7 @@ void Player::Update(char* keys, Map& map,ChangeScene& cs,bool isPause) {
 
 			/*------------------------------ブロックを動かす-------------------------------*/
 			if (isMoveBlock_) {
+
 				if (moveDirection_ != Top) {
 					Global::isMoveShadow_ = true;
 				}
@@ -775,6 +869,8 @@ void Player::Update(char* keys, Map& map,ChangeScene& cs,bool isPause) {
 							0
 						);
 
+						isSwappped_ = true;
+
 						break;
 
 					case Left:
@@ -801,9 +897,20 @@ void Player::Update(char* keys, Map& map,ChangeScene& cs,bool isPause) {
 					default:
 						break;
 					}
-				}
-			}
 
+					//プレイヤーの番地計算
+					CalcAddress(
+						address_,
+						{ pos_.x - map.GetPuzzleLeftTop().x + 1,pos_.y - map.GetPuzzleLeftTop().y + 1 },
+						{ map.GetSize().x,map.GetSize().y },
+						size_.x * 0.5f,
+						int(map.GetPos().size()), int(map.GetPos()[0].size())
+					);
+
+				}
+			} else {
+				Global::isMoveShadow_ = false;
+			}
 
 			/*map.SetPos(
 				3, 4,
@@ -842,8 +949,6 @@ void Player::Update(char* keys, Map& map,ChangeScene& cs,bool isPause) {
 					//前フレーム番地の保存
 					for (int i = 0; i < 4; i++) {
 						preAddress_[i] = address_[i];
-
-						Novice::ScreenPrintf(0, i * 20, "[%d,%d]", address_[i].x, address_[i].y);
 					}
 
 					//プレイヤーの番地計算
@@ -855,7 +960,8 @@ void Player::Update(char* keys, Map& map,ChangeScene& cs,bool isPause) {
 						int(map.GetPos().size()), int(map.GetPos()[0].size())
 					);
 
-
+					centerAddress_.x = int((pos_.x - map.GetPuzzleLeftTop().x) / map.GetSize().x);
+					centerAddress_.y = int((pos_.y - map.GetPuzzleLeftTop().y) / map.GetSize().y);
 
 					//マップチップの当たり判定
 					PushBackMapChip(
@@ -880,6 +986,8 @@ void Player::Update(char* keys, Map& map,ChangeScene& cs,bool isPause) {
 						int(map.GetPos().size()), int(map.GetPos()[0].size())
 					);
 
+					centerAddress_.x = int((pos_.x - map.GetPuzzleLeftTop().x) / map.GetSize().x);
+					centerAddress_.y = int((pos_.y - map.GetPuzzleLeftTop().y) / map.GetSize().y);
 				}
 			}
 
@@ -912,12 +1020,12 @@ void Player::Update(char* keys, Map& map,ChangeScene& cs,bool isPause) {
 
 			break;
 			//====================================================================================
-		case CLEAR://								クリア画面
-			//====================================================================================
-			break;
+	case CLEAR://								クリア画面
+		//====================================================================================
+		break;
 
-		default:
-			break;
+	default:
+		break;
 		}
 	}
 }

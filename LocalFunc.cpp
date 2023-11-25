@@ -1,4 +1,5 @@
 ﻿#include "LocalFunc.h"
+
 void NormalizeMikami(Vec2& vec2) {
 	float length = sqrtf(vec2.x * vec2.x + vec2.y * vec2.y);
 	if (length != 0.0f) {
@@ -157,8 +158,8 @@ int PushBackMapChip(
 
 		if (playerAddress[i].x >= 0 && playerAddress[i].x < colMAX) {
 			if (playerAddress[i].y >= 0 && playerAddress[i].y < rowMAX) {
-				if (blockType[playerAddress[i].y][playerAddress[i].x] != 0 && 
-					blockType[playerAddress[i].y][playerAddress[i].x] != 3 && 
+				if (blockType[playerAddress[i].y][playerAddress[i].x] != 0 &&
+					blockType[playerAddress[i].y][playerAddress[i].x] != 3 &&
 					blockType[playerAddress[i].y][playerAddress[i].x] != 9) {
 					/*------------------前フレームとX座標の番地のみが違う場合--------------------*/
 
@@ -725,12 +726,12 @@ int PushBackMapChip(
 }
 
 //矩形と円の押し戻し関数
-void PushBackBox_Ball(char* keys,
+int PushBackBox_Ball(char* keys,
 	Vec2 leftTop, Vec2 rightTop, Vec2 leftBottom, Vec2 rightBottom,
 	Vec2 preLeftTop, Vec2 preRightTop, Vec2 preLeftBottom, Vec2 preRightBottom,
 	Vec2& ballPos, Vec2 preBallPos, float ballRadius,
 	bool& isDrop, bool& isJump, float& dropSpeed, float& jumpSpeed,
-	int& hitCount, int& hitSurface,int preHitSurface
+	int& hitCount, int& hitSurface, int preHitSurface
 ) {
 
 	//矩形と円が当たっているかの判定=========================================
@@ -779,11 +780,12 @@ void PushBackBox_Ball(char* keys,
 			for (int i = 0; i < 4; i++) {
 				if (preCross[i] <= -ballRadius) {
 					hitSurface = i + 1;
+					break;
 				}
 			}
 
 			//当たった面に応じた処理
-			
+
 			if (hitSurface > 0) {
 				switch (hitSurface) {
 
@@ -802,12 +804,14 @@ void PushBackBox_Ball(char* keys,
 
 					NormalizedVec = Normalize({ 0.0f,0.0f }, VerticleVec(leftTop, rightTop));
 					ballPos = newCrossPos.operator+(NormalizedVec.operator*({ -ballRadius,-ballRadius }));
+					ballPos.y--;
 
 					isDrop = false;
 					isJump = false;
 					dropSpeed = 0.0f;
 					jumpSpeed = 0.0f;
 
+					return Top;
 					break;
 
 				case Right:
@@ -823,9 +827,9 @@ void PushBackBox_Ball(char* keys,
 					);
 
 					NormalizedVec = Normalize({ 0.0f,0.0f }, VerticleVec(rightTop, rightBottom));
-					ballPos = newCrossPos.operator+(NormalizedVec.operator*({ -ballRadius - 1,-ballRadius -1}));
+					ballPos = newCrossPos.operator+(NormalizedVec.operator*({ -ballRadius - 1,-ballRadius - 1 }));
 
-
+					return Right;
 					break;
 
 				case Bottom:
@@ -843,8 +847,9 @@ void PushBackBox_Ball(char* keys,
 
 					NormalizedVec = Normalize({ 0.0f,0.0f }, VerticleVec(rightBottom, leftBottom));
 					ballPos = newCrossPos.operator+(NormalizedVec.operator*({ -ballRadius,-ballRadius }));
+					ballPos.y++;
 
-
+					return Bottom;
 					break;
 
 				case Left:
@@ -860,15 +865,16 @@ void PushBackBox_Ball(char* keys,
 					);
 
 					NormalizedVec = Normalize({ 0.0f,0.0f }, VerticleVec(leftBottom, leftTop));
-					ballPos = newCrossPos.operator+(NormalizedVec.operator*({ -ballRadius - 1,-ballRadius -1}));
+					ballPos = newCrossPos.operator+(NormalizedVec.operator*({ -ballRadius - 1,-ballRadius - 1 }));
 
-
+					return Left;
 					break;
 
 				default:
+					return 0;
 					break;
 				}
-			
+
 			} else {
 
 				switch (preHitSurface) {
@@ -894,6 +900,7 @@ void PushBackBox_Ball(char* keys,
 					dropSpeed = 0.0f;
 					jumpSpeed = 0.0f;
 
+					return Top;
 					break;
 
 				case Right:
@@ -909,9 +916,10 @@ void PushBackBox_Ball(char* keys,
 					);
 
 					NormalizedVec = Normalize({ 0.0f,0.0f, }, VerticleVec(rightTop, rightBottom));
-					ballPos = newCrossPos.operator+(NormalizedVec.operator*({ -ballRadius - 1,-ballRadius - 1}));
+					ballPos = newCrossPos.operator+(NormalizedVec.operator*({ -ballRadius - 1,-ballRadius - 1 }));
 
 
+					return Right;
 					break;
 
 				case Bottom:
@@ -931,6 +939,7 @@ void PushBackBox_Ball(char* keys,
 					ballPos = newCrossPos.operator+(NormalizedVec.operator*({ -ballRadius,-ballRadius }));
 
 
+					return Bottom;
 					break;
 
 				case Left:
@@ -946,21 +955,24 @@ void PushBackBox_Ball(char* keys,
 					);
 
 					NormalizedVec = Normalize({ 0.0f,0.0f, }, VerticleVec(leftBottom, leftTop));
-					ballPos = newCrossPos.operator+(NormalizedVec.operator*({ -ballRadius - 1,-ballRadius - 1}));
+					ballPos = newCrossPos.operator+(NormalizedVec.operator*({ -ballRadius - 1,-ballRadius - 1 }));
 
-
+					return Left;
 					break;
 
 				default:
+					return 0;
 					break;
 				}
-				
-			}
 
+			}
 
 
 		} else {
 			hitSurface = 0;
+			return 0;
 		}
+
 	}
+	return 0;
 };

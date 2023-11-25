@@ -94,12 +94,15 @@ void Light::Update(char* keys, const ChangeScene& cs, Map map, float rangeTheta,
 
 
 			if (keys[DIK_Q]) {
+				Global::isMoveShadow_ = true;
 				emitPos_.x -= 2.0f;
 			}
 
 			if (keys[DIK_E]) {
+				Global::isMoveShadow_ = true;
 				emitPos_.x += 2.0f;
 			}
+
 
 			//左右の壁
 			if (emitPos_.x > Global::windowSize_.x - 32.0f) {

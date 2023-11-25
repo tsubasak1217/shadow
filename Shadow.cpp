@@ -17,7 +17,7 @@ Shadow::Shadow(const Resources& rs, Screen screen) {
 	};
 
 	/*ゴール関係*/
-	goalSize_ = { float(size_.x*0.8f),float(size_.y*1.6f) };
+	goalSize_ = { float(size_.x * 0.8f),float(size_.y * 1.6f) };
 
 
 	//読み込んだマップチップの情報決定
@@ -40,7 +40,7 @@ Shadow::Shadow(const Resources& rs, Screen screen) {
 			if (mapChip_[i][j] == -1) {
 				firstPlayerPos_ = {
 			size_.x + (j * size_.x) - (size_.x * 0.5f),
-			size_.y + (i * size_.y) - (size_.y * 0.5f)
+			size_.y + (i * size_.y) - (size_.y * 0.5f) - 1.0f
 				};
 			}
 			//存在フラグ決定
@@ -49,6 +49,7 @@ Shadow::Shadow(const Resources& rs, Screen screen) {
 			size_.x + (j * size_.x) + (size_.x * 0.7f),
 			size_.y + (i * size_.y) - (size_.y * 0.4f)
 				};
+
 			}
 
 			if (mapChip_[i][j] > 0 && mapChip_[i][j] <= 10) {
@@ -77,7 +78,7 @@ Shadow::Shadow(const Resources& rs, Screen screen) {
 	VectorVertexS(goalVertex_, goalPos_, goalSize_.x, goalSize_.y);
 }
 
-void Shadow::Init(const Resources& rs, Screen screen,int sceneNum) {
+void Shadow::Init(const Resources& rs, Screen screen, int sceneNum) {
 
 	switch (sceneNum) {
 		//====================================================================================
@@ -91,7 +92,7 @@ void Shadow::Init(const Resources& rs, Screen screen,int sceneNum) {
 		//====================================================================================
 	case GAME://								ゲーム本編
 		//====================================================================================
-		
+
 		//要素を消去
 		pos_.clear();
 		mapChip_.clear();
@@ -130,7 +131,7 @@ void Shadow::Init(const Resources& rs, Screen screen,int sceneNum) {
 				if (mapChip_[i][j] == -1) {
 					firstPlayerPos_ = {
 				size_.x + (j * size_.x) - (size_.x * 0.5f),
-				size_.y + (i * size_.y) - (size_.y * 0.5f)
+				size_.y + (i * size_.y) - (size_.y * 0.5f) - 1.0f
 					};
 				}
 				//存在フラグ決定
@@ -178,11 +179,11 @@ void Shadow::Init(const Resources& rs, Screen screen,int sceneNum) {
 
 
 
-void Shadow::Update(char* keys,const ChangeScene& cs,const Resources& rs,const Screen& screen,Map map) {
+void Shadow::Update(char* keys, const ChangeScene& cs, const Resources& rs, const Screen& screen, Map map) {
 
 	//シーン遷移の始まった瞬間にシーンに合わせて初期化
 	if (cs.isStartChange_ && cs.preIsEndChange_) {
-		Init(rs,screen,Scene::sceneNum_);
+		Init(rs, screen, Scene::sceneNum_);
 	}
 
 	switch (Scene::sceneNum_) {
@@ -255,6 +256,76 @@ void Shadow::Draw(const Resources& rs) {
 						rs.whiteGH_,
 						0x000000ff
 					);
+
+				} else if (mapChip_[i][j] == 2) {//トゲトゲ
+
+					Vec2 inSideLT = { pos_[i][j].x - size_.x * 0.25f,pos_[i][j].y - size_.y * 0.25f };
+					Vec2 inSideRT = { pos_[i][j].x + size_.x * 0.25f,pos_[i][j].y - size_.y * 0.25f };
+					Vec2 inSideLB = { pos_[i][j].x - size_.x * 0.25f,pos_[i][j].y + size_.y * 0.25f };
+					Vec2 inSideRB = { pos_[i][j].x + size_.x * 0.25f,pos_[i][j].y + size_.y * 0.25f };
+
+					//中心の矩形
+					Novice::DrawQuad(
+						int(inSideLT.x),
+						int(inSideLT.y),
+						int(inSideRT.x),
+						int(inSideRT.y),
+						int(inSideLB.x),
+						int(inSideLB.y),
+						int(inSideRB.x),
+						int(inSideRB.y),
+						0, 0,
+						1, 1,
+						rs.whiteGH_,
+						0x000000ff
+					);
+
+					//周りのトゲトゲ
+					for (int k = 0; k < 3; k++) {
+						Novice::DrawTriangle(
+							int(inSideLT.x + k * (size_.x / 6)),
+							int(inSideLT.y),
+							int(inSideLT.x + k * (size_.x / 6) + size_.x / 12),
+							int(pos_[i][j].y - size_.y * 0.5f),
+							int(inSideLT.x + (k + 1) * (size_.x / 6)),
+							int(inSideLT.y),
+							0x000000ff,
+							kFillModeSolid
+						);
+
+						Novice::DrawTriangle(
+							int(inSideRT.x),
+							int(inSideRT.y + k * (size_.y / 6)),
+							int(pos_[i][j].x + size_.x * 0.5f),
+							int(inSideRT.y + k * (size_.y / 6) + size_.y / 12),
+							int(inSideRT.x),
+							int(inSideRT.y + (k + 1) * (size_.y / 6)),
+							0x000000ff,
+							kFillModeSolid
+						);
+
+						Novice::DrawTriangle(
+							int(inSideLB.x + k * (size_.x / 6)),
+							int(inSideLB.y),
+							int(inSideLB.x + k * (size_.x / 6) + size_.x / 12),
+							int(pos_[i][j].y + size_.y * 0.5f),
+							int(inSideLB.x + (k + 1) * (size_.x / 6)),
+							int(inSideLB.y),
+							0x000000ff,
+							kFillModeSolid
+						);
+
+						Novice::DrawTriangle(
+							int(inSideLT.x),
+							int(inSideLT.y + k * (size_.y / 6)),
+							int(pos_[i][j].x - size_.x * 0.5f),
+							int(inSideLT.y + k * (size_.y / 6) + size_.y / 12),
+							int(inSideLT.x),
+							int(inSideLT.y + (k + 1) * (size_.y / 6)),
+							0x000000ff,
+							kFillModeSolid
+						);
+					}
 
 				} else if (mapChip_[i][j] == 11) {
 					Novice::DrawQuad(//スイッチを踏むと現れるブロック
