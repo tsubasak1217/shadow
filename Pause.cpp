@@ -16,9 +16,8 @@ void Pause::Draw() {
 		//====================================================================================
 	case GAME://								ゲーム本編
 		//====================================================================================
-		if (isPause_ ||
-			isStartPause_ ||
-			isEndPause_) {
+
+		if (isPause_ || isStartPause_ || isEndPause_) {
 			Novice::DrawBox(0, 0, int(Global::windowSize_.x), int(Global::windowSize_.y), 0.0f, BCColor_, kFillModeSolid);
 
 			Novice::DrawBox(int(pauseFontPos_.x - pauseFontSize_.x / 2), int(pauseFontPos_.y - pauseFontSize_.y / 2),
@@ -27,7 +26,6 @@ void Pause::Draw() {
 				Novice::DrawBox(int(buttonPos_[i].x - buttonSize_[i].x / 2), int(buttonPos_[i].y - buttonSize_[i].y / 2),
 					int(buttonSize_[i].x), int(buttonSize_[i].y), 0.0f, buttonColor_[i], kFillModeWireFrame);
 			}
-
 
 			DrawCat(catPos_, catSize_.x, catSize_.y, 0xFFFFFFFF);
 			Novice::DrawLine(int(lineStart_.x), int(lineStart_.y), int(lineEnd_.x), int(lineEnd_.y), elseColor_);
@@ -42,7 +40,7 @@ void Pause::Draw() {
 		break;
 	}
 }
-void Pause::Update(ChangeScene cs, char* keys, char* preKeys) {
+void Pause::Update(ChangeScene& cs, char* keys, char* preKeys) {
 	switch (Scene::sceneNum_) {
 		//====================================================================================
 	case TITLE://							   タイトル画面
@@ -51,10 +49,16 @@ void Pause::Update(ChangeScene cs, char* keys, char* preKeys) {
 		//====================================================================================
 	case SELECT://							   ステージ選択
 		//====================================================================================
+
+		if (!cs.isEndChange_ && !cs.isStartChange_) {
+			Reset();
+		}
+
 		break;
 		//====================================================================================
 	case GAME://								ゲーム本編
 		//====================================================================================
+#pragma region"ESCAPEキーでポーズ切り替え"
 
 		/*ESCAPEキーでPAUSEのONOFFを可能にする*/
 		if (!preKeys[DIK_ESCAPE] && keys[DIK_ESCAPE]) {
@@ -69,6 +73,7 @@ void Pause::Update(ChangeScene cs, char* keys, char* preKeys) {
 
 			}
 		}
+#pragma endregion
 
 #pragma region"ポーズ画面開始終了の処理"
 		/*ポーズ開始終了の処理*/
@@ -122,56 +127,64 @@ void Pause::Update(ChangeScene cs, char* keys, char* preKeys) {
 		}
 #pragma endregion
 
-
-		//猫の回転軌道の処理
-		rotateLength_ = rotateVect(length_, sinf(theta_), cosf(theta_));
-		catPos_ = getVectAdd(rotateLength_, originPos_);
-		//指定したボタンが大きくなり光る
-		for (int i = 0; i < 3; i++) {
-			buttonColor_[i] = 0x66666600 + int(addElseColor_);
-			buttonSize_[i] = { 265,75 };
+#pragma region"猫の移動処理&&指定したボタンの色サイズ処理"
+		if (isPause_ || isStartPause_ || isEndPause_) {
+			//猫の回転軌道の処理
+			rotateLength_ = rotateVect(length_, sinf(theta_), cosf(theta_));
+			catPos_ = getVectAdd(rotateLength_, originPos_);
+			//指定したボタンが大きくなり光る
+			for (int i = 0; i < 3; i++) {
+				buttonColor_[i] = 0x66666600 + int(addElseColor_);
+				buttonSize_[i] = { 265,75 };
+			}
+			buttonColor_[selectNum_] = 0xFFFFFF00 + int(addElseColor_);
+			buttonSize_[selectNum_] = { 300,100 };
 		}
-		buttonColor_[selectNum_] = 0xFFFFFF00 + int(addElseColor_);
-		buttonSize_[selectNum_] = { 300,100 };
+#pragma endregion
 
-
+#pragma region"ポーズ画面の選択処理"
 		//PAUSE画面の時
 		if (isPause_) {
+			if (!isSelect_) {//選択されていない時
 
-			//選択範囲の移動
-			if (!preKeys[DIK_W] && keys[DIK_W] ||
-				keys[DIK_UP] && !preKeys[DIK_UP]) {
-				selectNum_--;
-			}
-			if (!preKeys[DIK_S] && keys[DIK_S] ||
-				keys[DIK_DOWN] && !preKeys[DIK_DOWN]) {
-				selectNum_++;
-			}
+				//選択範囲の移動
+				if (!preKeys[DIK_W] && keys[DIK_W] ||
+					keys[DIK_UP] && !preKeys[DIK_UP]) {
+					selectNum_--;
+				}
 
-			//clamp
-			if (selectNum_ == 3) {
-				selectNum_ = 0;
-			}
-			if (selectNum_ == -1) {
-				selectNum_ = 2;
-			}
+				if (!preKeys[DIK_S] && keys[DIK_S] ||
+					keys[DIK_DOWN] && !preKeys[DIK_DOWN]) {
+					selectNum_++;
+				}
 
-			if (keys[DIK_SPACE] && !preKeys[DIK_SPACE] ||
-				keys[DIK_RETURN] && !preKeys[DIK_RETURN] &&
-				!isSelect_) {
-				isSelect_ = true;
+				//clamp
+				if (selectNum_ == 3) {
+					selectNum_ = 0;
+				}
+				if (selectNum_ == -1) {
+					selectNum_ = 2;
+				}
+				//SPACEキーで選択できる
+				if (keys[DIK_SPACE] && !preKeys[DIK_SPACE]) {
+					isSelect_ = true;
+				}
 			}
 
 
 			//選択した時の処理
 			if (isSelect_) {
-				switch (selectNum_)
-				{
+				switch (selectNum_) {
 				case 0://セレクト画面へ戻る
-					cs.isEndChange_;
+					if (!cs.isStartChange_ && !cs.isEndChange_) {//クリア画面で全ての処理が終わったとき
+						cs.isEndChange_ = true;
+					}
 					break;
 				case 1://ステージをリセット
-
+					if (isStageReset_) {
+						isStageReset_ = false;
+					}
+					isStageReset_ = true;
 					break;
 
 				case 2://ゲーム画面へ戻る
@@ -186,17 +199,17 @@ void Pause::Update(ChangeScene cs, char* keys, char* preKeys) {
 			}
 
 		}
-
-		//Debug(keys, preKeys);
-
-
-
-
+#pragma endregion
 
 		break;
 		//====================================================================================
 	case CLEAR://								クリア画面
 		//====================================================================================
+
+
+		if (!cs.isEndChange_ && !cs.isStartChange_) {
+			Reset();
+		}
 		break;
 
 	default:
@@ -208,100 +221,67 @@ void Pause::Update(ChangeScene cs, char* keys, char* preKeys) {
 
 
 
-/*
-void Pause::Debug(char* keys, char* preKeys) {
+void Pause::Reset() {
+#pragma region"リセット"
+	//PAUSEの文字
+	pauseFontSize_ = { 265,75 };
+	pauseFontPos_ = { 345 ,60 };
 
-#pragma region"デバック用"
-
-
-	//操作したい番号選択
-	if (keys[DIK_SPACE] && !preKeys[DIK_SPACE]) {
-		debugNum += 1;
-		//[1]=originPos_
-		//[2]=size_
-		//[3]=length_
-		if (debugNum == 4) {
-			debugNum = 0;
-		}
-
-	}
-
+	//選択する場所
+	BOffset_ = 200;
+	BSpace_ = 150;
 
 	for (int i = 0; i < 3; i++) {
+		buttonSize_[i] = { 265,75 };
 		buttonPos_[i] = { float(Global::windowSize_.x) / 2,(BSpace_ * i + BOffset_) };
 		//全体の色
-		Color_[i] = 0x666666FF;//灰色
+		buttonColor_[i] = 0x66666600;//灰色
 	}
 
-	switch (debugNum)
-	{
-	case 0:
-		if (keys[DIK_W]) {
-			pauseFontPos_.y -= 1;
-		}
-		if (keys[DIK_S]) {
-			pauseFontPos_.y += 1;
-		}
-		if (keys[DIK_A]) {
-			pauseFontPos_.x -= 1;
-		}
-		if (keys[DIK_D]) {
-			pauseFontPos_.x += 1;
-		}
-		break;
 
-	case 1:
-		if (keys[DIK_W]) {
-			pauseFontSize_.y -= 1;
-		}
-		if (keys[DIK_S]) {
-			pauseFontSize_.y += 1;
-		}
-		if (keys[DIK_A]) {
-			pauseFontSize_.x -= 1;
-		}
-		if (keys[DIK_D]) {
-			pauseFontSize_.x += 1;
-		}
-		break;
-
-	case 2:
-		if (keys[DIK_W]) {
-			BSpace_ -= 1;
-		}
-		if (keys[DIK_S]) {
-			BSpace_ += 1;
-		}
-
-		break;
-	case 3:
-		if (keys[DIK_W]) {
-			buttonSize_.y -= 1;
-		}
-		if (keys[DIK_S]) {
-			buttonSize_.y += 1;
-		}
-		if (keys[DIK_A]) {
-			buttonSize_.x -= 1;
-		}
-		if (keys[DIK_D]) {
-			buttonSize_.x += 1;
-		}
-		break;
+	//選択された範囲
+	selectNum_ = 0;//選択する番号
+	selectColor_ = 0xFFFFFF00;//選択したところの色（白）
 
 
-	default:
-		break;
-	}
+	isSelect_ = false;//選択するフラグ
 
-	Novice::ScreenPrintf(0, 20, "debugNum=%d", debugNum);
-	Novice::ScreenPrintf(0, 40, "pauseFontPos_ x=%f,y=%f", pauseFontPos_.x, pauseFontPos_.y);
-	Novice::ScreenPrintf(0, 60, " pauseFontSize_ x=%f,y=%f", pauseFontSize_.x, pauseFontSize_.y);
-	Novice::ScreenPrintf(0, 80, "BSpace_=%f", BSpace_);
-	Novice::ScreenPrintf(0, 100, "buttonSize_x = %f, y = %f", buttonSize_.x, buttonSize_.y);
+	/*装飾*/
 
+	//地面
+	lineStart_ = { 0,650 };
+	lineEnd_ = { float(Global::windowSize_.x),650 };
 
+	//猫
+	catSize_ = { 100,100 };
+	catPos_ = { -catSize_.x,lineStart_.y - catSize_.y / 2 };
+	catDir_ = 1;
+	theta_ = 0.0f;
+	originPos_ = { -catSize_.x,lineStart_.y - catSize_.y / 2 };//{640,1490}
+	length_ = { 200,0 };//{1150,0}
+	rotateLength_ = { 0 };
+	maxTheta_ = 0;
+	minTheta_ = (float(-M_PI));
+
+	BCT_ = 0;
+	BCAddT_ = 0;
+	BCEaseTimer_ = 30;
+	BCEaseDir_ = 1;
+
+	minColor_ = 0x0;
+	maxBCColor_ = 0xFD;
+	addBCColor_ = minColor_;
+
+	maxElseColor_ = 0xFF;
+	addElseColor_ = minColor_;
+
+	BCColor_ = 0x00000000;
+	elseColor_ = 0xFFFFFF00;
+
+	isPause_ = false;//PAUSE画面か否か
+	isStartPause_ = false;//PAUSE画面か否か
+	isEndPause_ = false;//PAUSE画面か否か
+	isStageReset_ = false;
 #pragma endregion
 
-}
-*/
+};

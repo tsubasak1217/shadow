@@ -236,8 +236,9 @@ public:
 
 	}
 
-	void UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CPos[], int selectNum, bool& CanCS, Vec2 goalPos, Vec2 goalSize);
-	void Draw(int GH, unsigned int DoorColor, Vec2 goalPos, Vec2 goalSize);
+	void UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CPos[],
+		int selectNum, bool& CanCS, Vec2 goalPos, Vec2 goalSize, bool& isPauseSelect);
+	void Draw(int GH, unsigned int DoorColor, Vec2 goalPos, Vec2 goalSize, bool& isPauseSelect);
 	void Reset();
 	//bool GetIsStart() { return isStartChange_; }
 	//bool GetIsEnd() { return isEndChange_; }

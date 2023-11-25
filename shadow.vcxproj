@@ -127,6 +127,7 @@
     <ClCompile Include="selectDoor.cpp" />
     <ClCompile Include="Shadow.cpp" />
     <ClCompile Include="stageClear.cpp" />
+    <ClCompile Include="Title.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="C:\KamataEngine\DirectXGame\3d\CircleShadow.h" />
@@ -169,6 +170,7 @@
     <ClInclude Include="selectDoor.h" />
     <ClInclude Include="Shadow.h" />
     <ClInclude Include="stageClear.h" />
+    <ClInclude Include="Title.h" />
     <ClInclude Include="VectorN.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

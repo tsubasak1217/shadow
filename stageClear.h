@@ -69,6 +69,8 @@ class StageClear {
 	Vec2 CatCPos_;
 	Vec2 CatSize_;
 
+	int starGet_;
+
 	int debugNum;
 public:
 	StageClear() {
@@ -89,6 +91,7 @@ public:
 		itemMaxColor_ = 0xFF;
 		itemMinColor_ = 0x0;
 		itemAddColor_ = 0x00;
+		starGet_ = 0;
 
 		/*ライトの色のイージング用の変数*/
 		easeNum_ = 0;//イージングするライトの色を決定する変数
@@ -140,13 +143,14 @@ public:
 		CatSize_ = { 100,100 };
 		CatCPos_ = { float(Global::windowSize_.x) / 2,float(Global::windowSize_.y) - CatSize_.y };
 
+
 		debugNum = 0;
 
 
 	}
 
 	void Update(bool isStartScene);
-	void Draw();
+	void Draw(int starGetCount_);
 	void Debug(char* keys, char* preKeys);
 	float GetFT() { return FT_; };
 	void Reset();

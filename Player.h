@@ -59,7 +59,7 @@ public:
 
 	void Init(int sceneNum);
 
-	void Update(char* keys,Map& map);
+	void Update(char* keys,Map& map, ChangeScene& cs, bool isPause);
 
 	void Draw(const Resources& rs);
 

@@ -86,11 +86,12 @@ public:
 
 	void Init(int sceneNum, Screen screen, Shadow shadow);
 
-	void Update(char* keys, const ChangeScene& cs, Screen screen, Shadow& shadow,Player& player);
+	void Update(char* keys, ChangeScene& cs, Screen screen, Shadow& shadow,Player& player, bool isPause);
 
 	void Draw(Screen screen);
 
 	//アクセッサ
 	Vec2 GetPos() { return pos_; }
+	int GetstarCount() { return starGetCount_; }
 };
 

@@ -39,7 +39,7 @@ public:
 
 	void Init(int stageNum,Map map);
 
-	void Update(char* keys,const ChangeScene& cs,Map map, float rangeTheta);
+	void Update(char* keys,const ChangeScene& cs,Map map, float rangeTheta,bool isPause);
 
 	void Draw(Map map, ChangeScene CS);
 

@@ -4,6 +4,7 @@
 #include"stageClearEffect.h"
 #include"stageClear.h"
 #include"Pause.h"
+#include"Title.h"
 #include "ImGuiManager.h"
 
 //======================================================
@@ -49,6 +50,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Shadow shadow(rs, screen);
 	PlayerShadow playerShadow(screen, shadow);
 
+	Title title;
 	SelectDoor door;//セレクト画面
 	StageClear stageClear;//ステージクリア
 	SCE SCE;//ステージクリアのパーティクル
@@ -68,21 +70,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		Novice::ScreenPrintf(0, 0, "StageNum=%d", Map::stageNum_);
 		SCE.Init();
-
-
 		map.Update(keys, rs, cs);
-		player.Update(keys, map);
-		light.Update(keys,cs, map, ((3.0f / 4.0f) * float(M_PI)));
+		player.Update(keys, map,cs,pause.isPause_);
+		light.Update(keys,cs, map, ((3.0f / 4.0f) * float(M_PI)), pause.isPause_);
+
 		shadow.Update(keys,cs,rs,screen,map);
 		screen.Update(keys,cs,map, light);
-
+		
+		title.Update(keys,preKeys);
 		door.Update(keys, preKeys);
-		cs.UpDate(keys, preKeys, door.isChangeScene_, door.CPos_, door.selectNum_, SCE.canSceneChange, shadow.GetGoalPos(), shadow.GetGoalSize());
+		cs.UpDate(keys, preKeys, door.isChangeScene_, door.CPos_, door.selectNum_, SCE.canSceneChange, shadow.GetGoalPos(), shadow.GetGoalSize(),pause.isSelect_);
 		stageClear.Update(cs.isStartChange_);
 		SCE.Update(stageClear.GetFT());
-		playerShadow.Update(keys, cs, screen, shadow, player);
+		playerShadow.Update(keys, cs, screen, shadow, player, pause.isPause_);
 		pause.Update(cs, keys, preKeys);
-		//DOOR.Reset(keys,preKeys);
+
+
 		if (keys[DIK_1]) {
 			Scene::sceneNum_ = TITLE;
 		} else if (keys[DIK_2]) {
@@ -111,22 +114,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		player.Draw(rs);
 
 
+		title.Draw(rs);
 		door.Draw();
-		stageClear.Draw();
+		stageClear.Draw(playerShadow.GetstarCount());
 
 		SCE.Draw();
 
-		if (keys[DIK_H]&&!preKeys[DIK_H]) {
-			if (cs.isEndChange_) {
-				cs.isEndChange_ = false;
-			} else {
-				cs.isEndChange_ = true;
-			}
-		}
-
 		pause.Draw();
 		/*シーンチェンジ一番前*/
-		cs.Draw(door.GH_, door.color_, shadow.GetGoalPos(), shadow.GetGoalSize());
+		cs.Draw(door.GH_, door.color_, shadow.GetGoalPos(), shadow.GetGoalSize(), pause.isSelect_);
 
 
 		

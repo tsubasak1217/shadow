@@ -2,7 +2,7 @@
 #include"Map.h"
 
 class Pause {
-public:
+
 	//PAUSEの文字
 	Vec2 pauseFontPos_;
 	Vec2 pauseFontSize_;
@@ -22,7 +22,7 @@ public:
 	//選択された範囲
 	int selectNum_;//扉の番号
 	unsigned int selectColor_;//選択したところの色（白）
-	bool isSelect_;//選択するフラグ
+
 
 
 	/*装飾*/
@@ -60,11 +60,13 @@ public:
 
 	//暗幕の色
 	unsigned int BCColor_;
-
+public:
 
 	bool isPause_;//PAUSE画面か否か
 	bool isStartPause_;
 	bool isEndPause_;
+	bool isStageReset_;
+	bool isSelect_;//選択するフラグ
 
 	int debugNum = 0;
 	Pause() {
@@ -127,10 +129,11 @@ public:
 		isPause_ = false;//PAUSE画面か否か
 		isStartPause_ = false;//PAUSE画面か否か
 		isEndPause_ = false;//PAUSE画面か否か
+		isStageReset_=false;
 
 	}
 	void Draw();
-	void Update(ChangeScene cs, char* keys, char* preKeys);
+	void Update(ChangeScene& cs, char* keys, char* preKeys);
 	void Debug(char* keys, char* preKeys);
-
+	void Reset();
 };

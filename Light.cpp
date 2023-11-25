@@ -48,70 +48,71 @@ void Light::Init(int sceneNum,Map map) {
 }
 
 //====================================================アップデート=============================================================
-void Light::Update(char* keys, const ChangeScene& cs, Map map, float rangeTheta) {
+void Light::Update(char* keys, const ChangeScene& cs, Map map, float rangeTheta,bool isPause) {
 
 	//シーン遷移の始まった瞬間にシーンに合わせて初期化
 	if (cs.isStartChange_ && cs.preIsEndChange_) {
 		Init(Scene::sceneNum_,map);
 	}
 
-	switch (Scene::sceneNum_) {
-		//====================================================================================
-	case TITLE://							   タイトル画面
-		//====================================================================================
-		break;
-		//====================================================================================
-	case SELECT://							   ステージ選択
-		//====================================================================================
-		break;
-		//====================================================================================
-	case GAME://								ゲーム本編
-		//====================================================================================
+	if (!isPause) {
+		switch (Scene::sceneNum_) {
+			//====================================================================================
+		case TITLE://							   タイトル画面
+			//====================================================================================
+			break;
+			//====================================================================================
+		case SELECT://							   ステージ選択
+			//====================================================================================
+			break;
+			//====================================================================================
+		case GAME://								ゲーム本編
+			//====================================================================================
 
-		//Rで初期化
-		if(keys[DIK_R]) {
-			Init(Scene::sceneNum_, map);
+			//Rで初期化
+			if (keys[DIK_R]) {
+				Init(Scene::sceneNum_, map);
+			}
+
+			lightHitSpot_.clear();
+
+			aimPos_ = { emitPos_.x,emitPos_.y - Global::windowSize_.y };
+
+			leftVec_ = Multiply(
+				aimPos_.operator-(emitPos_),
+				AffineMatrix({ 1.0f,1.0f }, -(rangeTheta * 0.5f), emitPos_)
+			);
+
+			rightVec_ = Multiply(
+				aimPos_.operator-(emitPos_),
+				AffineMatrix({ 1.0f,1.0f }, rangeTheta * 0.5f, emitPos_)
+			);
+
+			leftVec_ = CrossPos(emitPos_, leftVec_, { 0,0 }, { float(Global::windowSize_.x),0 });
+			rightVec_ = CrossPos(emitPos_, rightVec_, { 0,0 }, { float(Global::windowSize_.x),0 });
+
+
+
+			if (keys[DIK_Q]) {
+				emitPos_.x -= 2.0f;
+			}
+
+			if (keys[DIK_E]) {
+				emitPos_.x += 2.0f;
+			}
+
+			break;
+
+
+			//====================================================================================
+		case CLEAR://								クリア画面
+			//====================================================================================
+			break;
+
+		default:
+			break;
 		}
-
-		lightHitSpot_.clear();
-
-		aimPos_ = { emitPos_.x,emitPos_.y - Global::windowSize_.y };
-
-		leftVec_ = Multiply(
-			aimPos_.operator-(emitPos_),
-			AffineMatrix({ 1.0f,1.0f }, -(rangeTheta * 0.5f), emitPos_)
-		);
-
-		rightVec_ = Multiply(
-			aimPos_.operator-(emitPos_),
-			AffineMatrix({ 1.0f,1.0f }, rangeTheta * 0.5f, emitPos_)
-		);
-
-		leftVec_ = CrossPos(emitPos_, leftVec_, { 0,0 }, { float(Global::windowSize_.x),0 });
-		rightVec_ = CrossPos(emitPos_, rightVec_, { 0,0 }, { float(Global::windowSize_.x),0 });
-
-
-
-		if (keys[DIK_Q]) {
-			emitPos_.x -= 2.0f;
-		}
-
-		if (keys[DIK_E]) {
-			emitPos_.x += 2.0f;
-		}
-
-		break;
-
-
-		//====================================================================================
-	case CLEAR://								クリア画面
-		//====================================================================================
-		break;
-
-	default:
-		break;
 	}
-
 };
 
 

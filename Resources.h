@@ -9,6 +9,8 @@ public:
 	std::string screenCsv_[8];
 	int whiteGH_;
 	int doorGH_;
+	int titleFontGH_;
+	int pressSpaceFontGH_;
 
 	Resources();
 	~Resources();

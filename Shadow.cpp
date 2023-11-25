@@ -49,7 +49,6 @@ Shadow::Shadow(const Resources& rs, Screen screen) {
 			size_.x + (j * size_.x) + (size_.x * 0.7f),
 			size_.y + (i * size_.y) - (size_.y * 0.4f)
 				};
-
 			}
 
 			if (mapChip_[i][j] > 0 && mapChip_[i][j] <= 10) {

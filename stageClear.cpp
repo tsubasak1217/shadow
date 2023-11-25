@@ -20,6 +20,8 @@ void StageClear::Update(bool isStartScene) {
 	case GAME://								ゲーム本編
 		//====================================================================================
 		Reset();
+
+
 		break;
 		//====================================================================================
 	case CLEAR://								クリア画面
@@ -41,9 +43,8 @@ void StageClear::Update(bool isStartScene) {
 					/*T関連の値をリセットして*/
 					lightT_ = 0.0f;
 					lightAddT_ = 0.0f;
-					lightAddColor_ = 0x0;
-					itemAddColor_ = 0x0;
-
+					lightAddColor_ = 0x00;
+					itemAddColor_ = 0x00;
 					isEaseL_ = false;//フラグを下す
 
 					easeNum_ += 1;//次のライトへ
@@ -64,13 +65,16 @@ void StageClear::Update(bool isStartScene) {
 
 				if (easeNum_ <= 2) {
 					lightColor_[easeNum_] = 0xFFFFFF00 + int(lightAddColor_);//ここで透明度を足す
-					itemColor_[easeNum_] = 0x00000000 + int(itemAddColor_);//ここで透明度を足す
+					itemColor_[easeNum_] = 0x66666600 + int(itemAddColor_);//ここで透明度を足す
 				}
 
 			} else {
-
+				if (easeNum_ - 1 != -1) {
+					itemColor_[easeNum_ - 1] = 0x666666FF;
+				}
 				if (easeNum_ <= 2) {//ライトの最大数以下の時
 					nextLightEasingTimer_ -= 1;//タイマー経過
+
 					if (nextLightEasingTimer_ == 0) {//０になったら
 						isEaseL_ = true;//イージング開始
 						nextLightEasingTimer_ = nextLightEasingTimerMax_;//タイマーを最大値に戻す
@@ -141,7 +145,7 @@ void StageClear::Update(bool isStartScene) {
 
 
 
-void StageClear::Draw() {
+void StageClear::Draw(int starGetCount_) {
 	switch (Scene::sceneNum_) {
 		//====================================================================================
 	case TITLE://							   タイトル画面
@@ -173,8 +177,16 @@ void StageClear::Draw() {
 				Novice::DrawEllipse(static_cast<int>(itemCPos_[i].x), static_cast<int>(itemCPos_[i].y),
 					static_cast<int>(itemSize_.x + (j * itemSize_.x / 8)), static_cast<int>(itemSize_.y + (j * itemSize_.y / 8)), 0.0f, lightColor_[i], kFillModeSolid);
 			}
+		}
+		for (int i = 0; i < starGetCount_; i++) {
 			/*とったアイテム*/
-			Novice::DrawBox(int(itemCPos_[i].x - (itemSize_.x + 20) / 2), int(itemCPos_[i].y - (itemSize_.y + 20) / 2), int(itemSize_.x + 20), int(itemSize_.y + 20), 0.0f, itemColor_[i], kFillModeWireFrame);
+			//Novice::DrawBox(int(itemCPos_[i].x - (itemSize_.x + 20) / 2), int(itemCPos_[i].y - (itemSize_.y + 20) / 2), int(itemSize_.x + 20), int(itemSize_.y + 20), 0.0f, itemColor_[i], kFillModeWireFrame);
+			My::DrawStar(
+				itemCPos_[i],
+				itemSize_.x * 0.7f,
+				0.0f,
+				itemColor_[i]
+			);
 		}
 
 		/*ステージクリアの文字*/
