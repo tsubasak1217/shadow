@@ -6,6 +6,8 @@
 #include"Pause.h"
 #include"Title.h"
 #include "ImGuiManager.h"
+#include "selectLightParticle.h"
+
 
 //======================================================
 //					グローバル変数/定数
@@ -49,7 +51,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Screen screen(map, light);
 	Shadow shadow(rs, screen);
 	PlayerShadow playerShadow(screen, shadow);
-
 	Title title;
 	SelectDoor door;//セレクト画面
 	StageClear stageClear;//ステージクリア

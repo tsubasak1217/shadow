@@ -110,6 +110,7 @@
     <ClCompile Include="ChangeScene.cpp" />
     <ClCompile Include="Easing.cpp" />
     <ClCompile Include="Pause.cpp" />
+    <ClCompile Include="selectLightParticle.cpp" />
     <ClCompile Include="stageClearEffect.cpp" />
     <ClCompile Include="global.cpp" />
     <ClCompile Include="Light.cpp" />
@@ -155,6 +156,7 @@
     <ClInclude Include="ChangeScene.h" />
     <ClInclude Include="Easing.h" />
     <ClInclude Include="Pause.h" />
+    <ClInclude Include="selectLightParticle.h" />
     <ClInclude Include="stageClearEffect.h" />
     <ClInclude Include="global.h" />
     <ClInclude Include="Light.h" />
