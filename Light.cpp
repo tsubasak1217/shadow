@@ -100,6 +100,14 @@ void Light::Update(char* keys, const ChangeScene& cs, Map map, float rangeTheta)
 			emitPos_.x += 2.0f;
 		}
 
+		//左右の壁
+		if (emitPos_.x > Global::windowSize_.x - 32.0f) {
+			emitPos_.x = Global::windowSize_.x - 32.0f;
+		
+		} else if (emitPos_.x < 32.0f) {
+			emitPos_.x = 32.0f;
+		}
+
 		break;
 
 
