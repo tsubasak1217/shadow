@@ -419,7 +419,7 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 
 			if (!isStartChange_ && isEndChange_) {
 				changeTime_ += 1;
-				if (changeTime_ >= 100) {
+				if (changeTime_ >= 60) {
 					for (int i = 0; i < kMaxWall; i++) {
 						//wall[i].Update();
 						if (wallT_ < 1.0f) {
@@ -434,7 +434,7 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 					}
 				}
 			}
-			if (changeTime_ >= 160) {
+			if (changeTime_ >= 120) {
 				//goal.UpDate();
 				GopenT_ += (1.0f / 120) * easeDirGO_;
 				if (easeDirGO_ > 0) {
@@ -455,7 +455,7 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 
 			}
 
-			if (changeTime_ >= 250) {
+			if (changeTime_ >= 210) {
 				for (int i = 0; i < kMaxStairs; i++) {
 					timeCount_ += 1;
 					if (timeCount_ > (stairsMoveTime_ / kMaxStairs) * i) {
@@ -472,7 +472,7 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 				}
 			}
 
-			if (changeTime_ >= 360) {
+			if (changeTime_ >= 320) {
 				isEndChange_ = false;
 				isStartChange_ = true;
 				Scene::sceneNum_ = CLEAR;
