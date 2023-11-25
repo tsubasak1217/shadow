@@ -1,7 +1,7 @@
 ﻿#include"stageClear.h"
 
 
-void StageClear::Update(bool isStartScene) {
+void StageClear::Update(bool isStartScene, int starGetCount) {
 
 
 	switch (Scene::sceneNum_) {
@@ -26,90 +26,47 @@ void StageClear::Update(bool isStartScene) {
 		//====================================================================================
 	case CLEAR://								クリア画面
 		//====================================================================================
+		starGet_ = starGetCount;
 
-		/*ライトイージング*/
-#pragma region"ライトの透明度のイージング"
-
-		if (!isStartScene) {/*シーン遷移が終わったら*/
-			//ライトの透明度のイージング（高速でライトがパッとつくようなイメージ&&StartSceneフラグが降りてから数秒経過後）
-			if (isEaseL_) {
-				lightT_ += (1.0f / lightEaseTimer_) * lightEaseDir_;
-
-				lightAddT_ = EaseInBounce(lightT_);
-				lightAddColor_ = (1 - lightAddT_) * lightMinColor_ + lightAddT_ * lightMaxColor_;
-				itemAddColor_ = (1 - lightAddT_) * itemMinColor_ + lightAddT_ * itemMaxColor_;
-
-				if (lightT_ >= 1.0f) {
-					/*T関連の値をリセットして*/
-					lightT_ = 0.0f;
-					lightAddT_ = 0.0f;
-					lightAddColor_ = 0x00;
-					itemAddColor_ = 0x00;
-					isEaseL_ = false;//フラグを下す
-
-					easeNum_ += 1;//次のライトへ
-				}
-
-				if (lightAddColor_ >= lightMaxColor_) {
-					lightAddColor_ = lightMaxColor_;//バウンドで色がオーバーフローしないように上限で無理やり止める
-				}
-				if (lightAddColor_ <= lightMinColor_) {
-					lightAddColor_ = lightMinColor_;//バウンドで色がオーバーフローしないように上限で無理やり止める
-				}
-				if (itemAddColor_ >= itemMaxColor_) {
-					itemAddColor_ = itemMaxColor_;//バウンドで色がオーバーフローしないように上限で無理やり止める
-				}
-				if (itemAddColor_ <= itemMinColor_) {
-					itemAddColor_ = itemMinColor_;//バウンドで色がオーバーフローしないように上限で無理やり止める
-				}
-
-				if (easeNum_ <= 2) {
-					lightColor_[easeNum_] = 0xFFFFFF00 + int(lightAddColor_);//ここで透明度を足す
-					itemColor_[easeNum_] = 0x66666600 + int(itemAddColor_);//ここで透明度を足す
-				}
-
-			} else {
-				if (easeNum_ - 1 != -1) {
-					itemColor_[easeNum_ - 1] = 0x666666FF;
-				}
-				if (easeNum_ <= 2) {//ライトの最大数以下の時
-					nextLightEasingTimer_ -= 1;//タイマー経過
-
-					if (nextLightEasingTimer_ == 0) {//０になったら
-						isEaseL_ = true;//イージング開始
-						nextLightEasingTimer_ = nextLightEasingTimerMax_;//タイマーを最大値に戻す
-					}
-				} else {
-
-					isAppearFont_ = true;
-
-				}
-
-			}
+		//中心（オリジンポス）を基準とした角度
+		for (int i = 0; i < 3; i++) {
+			starTheta_[i] += (1.0f / 60.0f);//回転させる	
+			rotateLength_[i] = rotateVect(length_, sinf(starTheta_[i]), cosf(starTheta_[i]));
+			starPos_[i] = getVectAdd(rotateLength_[i], starOriginPos_);
 		}
+		if (!isStartScene) {
 
-#pragma endregion
-
-		/*ライトのイージングが終了した後*/
-#pragma region"CLEARと文字押せを出現させる"
-		if (isAppearFont_) {
-			FT_ += (1.0f / FEaseTimer_) * FEaseDir_;
-
-			FAddT_ = EaseInBounce(FT_);
-			FAddColor_ = (1 - FAddT_) * FMinColor_ + FAddT_ * FMaxColor_;
-
+			//文字が完全に出現したら動く
 			if (FT_ >= 1.0f) {
-				FT_ = 1.0f;
+				MoveStarT_ += (1.0f / MoveStarEaseTimer_);
+				MoveStarAddT_ = EaseInOutCubic(MoveStarT_);
+				length_.x = (1 - MoveStarAddT_) * minLength_.x + MoveStarAddT_ * maxLength_.x;
+				if (MoveStarT_ >= 1.0f) {
+					MoveStarT_ = 1.0f;
+				}
 			}
-
-			if (FAddColor_ >= FMaxColor_) {
-				FAddColor_ = FMaxColor_;//バウンドで色がオーバーフローしないように上限で無理やり止める
-			}
-			if (FAddColor_ <= FMinColor_) {
-				FAddColor_ = FMinColor_;//バウンドで色がオーバーフローしないように上限で無理やり止める
-			}
-			FColor_ = 0xFFFFFF00 + int(FAddColor_);//ここで透明度を足す
 		}
+
+
+
+#pragma region"CLEARと文字押せを出現させる"
+
+		FT_ += (1.0f / FEaseTimer_) * FEaseDir_;
+
+		FAddT_ = EaseInBounce(FT_);
+		FAddColor_ = (1 - FAddT_) * FMinColor_ + FAddT_ * FMaxColor_;
+
+		if (FT_ >= 1.0f) {
+			FT_ = 1.0f;
+		}
+
+		if (FAddColor_ >= FMaxColor_) {
+			FAddColor_ = FMaxColor_;//バウンドで色がオーバーフローしないように上限で無理やり止める
+		}
+		if (FAddColor_ <= FMinColor_) {
+			FAddColor_ = FMinColor_;//バウンドで色がオーバーフローしないように上限で無理やり止める
+		}
+		FColor_ = 0xFFFFFF00 + int(FAddColor_);//ここで透明度を足す
 #pragma endregion
 
 		/*PRESSキーを押せが出現した後*/
@@ -145,7 +102,7 @@ void StageClear::Update(bool isStartScene) {
 
 
 
-void StageClear::Draw(int starGetCount_,Resources rs) {
+void StageClear::Draw(Resources rs) {
 	switch (Scene::sceneNum_) {
 		//====================================================================================
 	case TITLE://							   タイトル画面
@@ -164,42 +121,52 @@ void StageClear::Draw(int starGetCount_,Resources rs) {
 		//====================================================================================
 #pragma region"描画"
 
+
+
+
+
 		/*背景*/
-		Novice::DrawBox(0, 0, int(Global::windowSize_.x), int(Global::windowSize_.y), 0.0f, 0x444444FF, kFillModeSolid);
-		for (int i = 0; i < 2; i++) {
-			Novice::DrawBox(int(outerFrameCPos_[i].x), int(outerFrameCPos_[i].y), int(outerFrameSize_.x), int(outerFrameSize_.y), 0.0f, 0x000000FF, kFillModeSolid);
+		Novice::DrawBox(0, 0, int(Global::windowSize_.x), int(Global::windowSize_.y), 0.0f, 0x000000FF, kFillModeSolid);
+
+		/*上下の黒幕*/
+		for (int i = 1; i < 2; i++) {
+			//Novice::DrawBox(int(outerFrameCPos_[i].x), int(outerFrameCPos_[i].y), int(outerFrameSize_.x), int(outerFrameSize_.y), 0.0f, 0xFFFFFFFF, kFillModeSolid);
 
 		}
 
-		/*ライト*/
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 3; j++) {
-				Novice::DrawEllipse(static_cast<int>(itemCPos_[i].x), static_cast<int>(itemCPos_[i].y),
-					static_cast<int>(itemSize_.x + (j * itemSize_.x / 8)), static_cast<int>(itemSize_.y + (j * itemSize_.y / 8)), 0.0f, lightColor_[i], kFillModeSolid);
+		/*星*/
+		for (int i = 0; i < starGet_; i++) {
+			My::DrawStar(starPos_[i], starSize_, 0.0f, starColor_);
+		}
+		/*ゲットできなかった星（ワイヤーフレームにする）*/
+		for (int i = starGet_; i < (3 - starGet_); i++) {
+			My::DrawStar(starPos_[i], starSize_, 0.0f, 0x444444FF);
+		}
+
+
+		if (starGet_ >= 2) {
+			Novice::DrawLine(int(starPos_[0].x), int(starPos_[0].y), int(starPos_[1].x), int(starPos_[1].y), starColor_);
+			if (starGet_ >= 3) {
+				Novice::DrawLine(int(starPos_[0].x), int(starPos_[0].y), int(starPos_[2].x), int(starPos_[2].y), starColor_);
+				Novice::DrawLine(int(starPos_[1].x), int(starPos_[1].y), int(starPos_[2].x), int(starPos_[2].y), starColor_);
 			}
 		}
-		for (int i = 0; i < starGetCount_; i++) {
-			/*とったアイテム*/
-			//Novice::DrawBox(int(itemCPos_[i].x - (itemSize_.x + 20) / 2), int(itemCPos_[i].y - (itemSize_.y + 20) / 2), int(itemSize_.x + 20), int(itemSize_.y + 20), 0.0f, itemColor_[i], kFillModeWireFrame);
-			My::DrawStar(
-				itemCPos_[i],
-				itemSize_.x * 0.7f,
-				0.0f,
-				itemColor_[i]
-			);
+
+
+		if (debugNum % 2 == 0) {
+			/*ステージクリアの文字*/
+			Novice::DrawSprite(int(StageClearFontCPos_.x - StageClearFontSize_.x / 2), int(StageClearFontCPos_.y - StageClearFontSize_.y / 2), rs.stageClearFontGH_, 1, 1, 0.0f, FColor_);
+		} else {
+			Novice::DrawSprite(int(StageClearFontCPos_.x - 220 / 2),
+				int(StageClearFontCPos_.y + 150 - 220 / 2), rs.stageClearFont2GH_, 1, 1, 0.0f, FColor_);
 		}
 
-		/*ステージクリアの文字*/
-		//Novice::DrawBox(int(StageClearFontCPos_.x - StageClearFontSize_.x / 2), int(StageClearFontCPos_.y - StageClearFontSize_.y / 2), int(StageClearFontSize_.x), int(StageClearFontSize_.y), 0.0f, FColor_, kFillModeWireFrame);
-		Novice::DrawSprite(int(StageClearFontCPos_.x - StageClearFontSize_.x / 2), int(StageClearFontCPos_.y - StageClearFontSize_.y / 2), rs.stageClearFontGH_, 1, 1, 0.0f, FColor_);
 
 		/*猫*/
-		DrawCat(CatCPos_, CatSize_.x, CatSize_.y, 0x000000FF);
+		//DrawCat(CatCPos_, CatSize_.x, CatSize_.y, 0x000000FF);
 
 		/*押してくださいの文字*/
-		//Novice::DrawBox(int(PressKeyFontCPos_.x - PressKeyFontSize_.x / 2), int(PressKeyFontCPos_.y - PressKeyFontSize_.y / 2), int(PressKeyFontSize_.x), int(PressKeyFontSize_.y),
-			//0.0f, FColor_, kFillModeWireFrame);
-		Novice::DrawSprite(int(PressKeyFontCPos_.x - PressKeyFontSize_.x / 2), int(PressKeyFontCPos_.y - PressKeyFontSize_.y / 2),rs.pressSpaceFontGH_, 0.5f, 0.5f, 0.0f, FColor_);
+		Novice::DrawSprite(int(PressKeyFontCPos_.x - PressKeyFontSize_.x / 2), int(PressKeyFontCPos_.y - PressKeyFontSize_.y / 2), rs.pressSpaceFontGH_, 0.5f, 0.5f, 0.0f, FColor_);
 
 
 		break;
@@ -216,6 +183,12 @@ void StageClear::Debug(char* keys, char* preKeys) {
 
 #pragma region"デバック用"
 
+	if (keys[DIK_R] && !preKeys[DIK_R]) {
+		length_ = minLength_;
+		MoveStarT_ = 0;
+		MoveStarAddT_ = 0;
+
+	}
 
 	//操作したい番号選択
 	if (keys[DIK_SPACE] && !preKeys[DIK_SPACE]) {
@@ -232,10 +205,10 @@ void StageClear::Debug(char* keys, char* preKeys) {
 	{
 	case 0:
 		if (keys[DIK_W]) {
-			PressKeyFontCPos_.y -= 1;
+			length_.x -= 1;
 		}
 		if (keys[DIK_S]) {
-			PressKeyFontCPos_.y += 1;
+			length_.x += 1;
 		}
 		if (keys[DIK_A]) {
 			PressKeyFontCPos_.x -= 1;
@@ -247,16 +220,16 @@ void StageClear::Debug(char* keys, char* preKeys) {
 
 	case 1:
 		if (keys[DIK_W]) {
-			PressKeyFontSize_.y -= 1;
+			maxLength_.y -= 1;
 		}
 		if (keys[DIK_S]) {
-			PressKeyFontSize_.y += 1;
+			maxLength_.y += 1;
 		}
 		if (keys[DIK_A]) {
-			PressKeyFontSize_.x -= 1;
+			maxLength_.x -= 1;
 		}
 		if (keys[DIK_D]) {
-			PressKeyFontSize_.x += 1;
+			maxLength_.x += 1;
 		}
 		break;
 
@@ -293,77 +266,21 @@ void StageClear::Debug(char* keys, char* preKeys) {
 	default:
 		break;
 	}
-
+	/*
 	Novice::ScreenPrintf(0, 20, "debugNum=%d", debugNum);
-	Novice::ScreenPrintf(0, 40, "PressKeyFontCPos_ x=%f,y=%f", PressKeyFontCPos_.x, PressKeyFontCPos_.y);
-	Novice::ScreenPrintf(0, 60, "PressKeyFontSize_ x=%f,y=%f", PressKeyFontSize_.x, PressKeyFontSize_.y);
+	Novice::ScreenPrintf(0, 40, "length x=%f,y=%f", length_.x, length_.y);
+	Novice::ScreenPrintf(0, 60, "maxLength_ x=%f,y=%f", maxLength_.x, maxLength_.y);
 	Novice::ScreenPrintf(0, 80, "StageClearFontCPos_ x=%f,y=%f", StageClearFontCPos_.x, StageClearFontCPos_.y);
 	Novice::ScreenPrintf(0, 100, "StageClearFontSize_x = %f, y = %f", StageClearFontSize_.x, StageClearFontSize_.y);
-
+	*/
 
 #pragma endregion
 
 }
 #endif // _DEBUG
 void StageClear::Reset() {
-#pragma region"リセット"
-	for (int i = 0; i < 3; i++) {
-		lightColor_[i] = 0xFFFFFF00;
-		itemColor_[i] = 0x00000000;
-	}
-	itemMaxColor_ = 0xFF;
-	itemMinColor_ = 0x0;
-	itemAddColor_ = 0x00;
-
-	/*ライトの色のイージング用の変数*/
-	easeNum_ = 0;//イージングするライトの色を決定する変数
-	lightT_ = 0;
-	lightAddT_ = 0;
-	lightEaseDir_ = 1;
-	lightMaxColor_ = 0x44;
-	lightMinColor_ = 0x0;
-	lightAddColor_ = lightMinColor_;
-	isEaseL_ = false;
-	nextLightEasingTimerMax_ = 20;
-	nextLightEasingTimer_ = nextLightEasingTimerMax_;
-	starGet_ = 0;
-
-	/*キーを押してくださいの文字*/
-	PressKeyFontCPos_ = { 240,645 };
-	PressKeyFontSize_ = { 240,120 };
-
-	/*プレスキーの文字をふわふわさせる*/
-	PKT_ = 0;
-	PKEaseDir_ = 1;
-	PKEaseTimer_ = 60;
-	PKAddT_ = 0;
-
-	/*Fontを透明から白に変える*/
-	FT_ = 0;
-	FAddT_ = 0;
-	FEaseTimer_ = 20;
-	FEaseDir_ = 1;
-
-	FMaxColor_ = 0xFF;
-	FMinColor_ = 0x0;
-	FAddColor_ = FMinColor_;
-	FColor_ = 0xFFFFFF00;
-	isAppearFont_ = false;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#pragma endregion
+	length_ = minLength_;
+	MoveStarT_ = 0;
+	MoveStarAddT_ = 0;
 
 };

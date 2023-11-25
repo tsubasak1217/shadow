@@ -1,69 +1,45 @@
 ﻿#pragma once
-#include "Map.h"
+#include "stageClear.h"
 
-const int EFP_MAX = 20;
+const int STAR_MAX = 3;
+const int EFP_MAX = 50;
 class SCE {
 	/*パーティクル本体*/
-	Vec2 CPos_[EFP_MAX];
-	Vec2 vertex_[EFP_MAX][4];
-	Vec2 affineVertex_[EFP_MAX][4];
-	float size_[EFP_MAX];
-	Vec2 vel_[EFP_MAX];
-	Vec2 Dirvel_[EFP_MAX];
-	Vec2 acc_;
-	float moveSpeed[EFP_MAX];
+	Vec2 CPos_[STAR_MAX][EFP_MAX];
+	float size_[STAR_MAX][EFP_MAX];
+	int alpha_[STAR_MAX][EFP_MAX];
+	float theta_[STAR_MAX][EFP_MAX];
+	float MoveTheta_[STAR_MAX][EFP_MAX];
+	float speed_[STAR_MAX][EFP_MAX];
+	unsigned int color_[STAR_MAX][EFP_MAX];
+	bool isAlive_[STAR_MAX][EFP_MAX];//エフェクト開始
 
+	const int kPopTimer_=20;
+	int popTimer_;
 
-	/*イージング*/
-	float t_;
-	float addT_;
-	float easeTimer_;
-	Vec2 scale_;
-	/*回転*/
-	float rotateTheta_[EFP_MAX];
-	float theta_[EFP_MAX];
-
-	Matrix3x3 affineMatrix_[EFP_MAX];
-	int GH;
-	unsigned int color_;
-
-	int EffectCount;//エフェクトが地面に落ちた数をカウントする
-	bool isEffect_;//エフェクト開始
 
 public:
 	/*このフラグが立っているときシーンチェンジできるようになる*/
 	bool canSceneChange;
 
 	SCE() {
-		for (int i = 0; i < EFP_MAX; i++) {
-			CPos_[i] = { 0 };
-			size_[i] = float(rand() % 30 + 15);
-
-			t_ = 0;
-			addT_ = 0;
-			easeTimer_ = 30.0f;
-			scale_ = { 1,1 };
-
-			rotateTheta_[i] = { 0 };
-			theta_[i] = (1.0f / static_cast<int>(rand() % 30 + 10) * float(M_PI));
-			for (int j = 0; j < 4; j++) {
-				vertex_[i][j] = { 0 };
-				affineVertex_[i][j] = { 0 };
+		for (int i = 0; i < STAR_MAX; i++) {
+			for (int j = 0; j < EFP_MAX; j++) {
+				CPos_[i][j] = { -200,-200 };
+				size_[i][j] = float(rand() % 200) / 100;
+				alpha_[i][j] = 0xFF;
+				color_[i][j] = 0x00000000;
+				theta_[i][j] = float(rand() % 128 + 1) / 256 * float(M_PI);
+				MoveTheta_[i][j] = float(rand() % 200-100)/100;
+				speed_[i][j] = 0;
+				isAlive_[i][j] = false;
+				popTimer_ = kPopTimer_;
 			}
-			vel_[i] = { 0 };
-			Dirvel_[i] = { 0 };
-			acc_ = { 0,0.6f };
-			isEffect_ = false;
-			moveSpeed[i] = float(rand() % 5 + 20);
-			GH = Novice::LoadTexture("./NoviceResources/white1x1.png");
-			EffectCount = 0;
-			canSceneChange = false;
-			color_=0x000000FF;
 		}
-
+		canSceneChange = false;
 
 	}
-	void Init();
-	void Update(float FT);
-	void Draw();
+	void Init(int i ,int j,StageClear stageColor);
+	void Update(StageClear stageColor, int starGetCount);
+	void Draw( int starGetCount);
 };

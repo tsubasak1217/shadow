@@ -7,33 +7,26 @@ class StageClear {
 		DOWN
 	};
 
+	/*星の変数*/
 
-	/*回収したアイテムの数　何かを表示　*/
-	Vec2 itemCPos_[3];
-	Vec2 itemSize_;
-	Vec2 itemVertex_[3][4];
-	float itemMaxColor_;
-	float itemMinColor_;
-	float itemAddColor_;
+	float starSize_;
+	unsigned int starColor_;
+	Vec2 starOriginPos_;
+	float starTheta_[3];
+	Vec2 length_;
 
-	int easeNum_;//イージングするライトの色を決定する変数
+	float MoveStarT_;
+	float MoveStarAddT_;
+	Vec2 maxLength_;
+	Vec2 minLength_;
+	float MoveStarEaseTimer_;
 
-	float lightT_;
-	float lightAddT_;
-	float lightEaseTimer_;
-	float lightEaseDir_;
+	Vec2 rotateLength_[3];
 
-	float lightMaxColor_;
-	float lightMinColor_;
-	float lightAddColor_;
-	unsigned int lightColor_[3];
-	unsigned int itemColor_[3];
+	bool isDrawStar_[3];
 
-	/*一つのライトが点灯してから次のライトが点灯するまでの時間*/
-	int nextLightEasingTimer_;
-	int nextLightEasingTimerMax_;
-	/*イージング開始フラグ*/
-	bool isEaseL_;
+
+
 
 	/*上下の黒枠*/
 	Vec2 outerFrameCPos_[2];
@@ -54,6 +47,7 @@ class StageClear {
 	float PKAddT_;
 	float PKMaxPos_;
 	float PKMinPos_;
+
 	/*Fontを透明から白に変える*/
 	float FT_;
 	float FAddT_;
@@ -71,41 +65,35 @@ class StageClear {
 
 	int starGet_;
 
+	
 	int debugNum;
 public:
+	Vec2 starPos_[3];
+
 	StageClear() {
-		/*とった数に応じて表示*/
-		itemCPos_[0] = { 80.0f,float(Global::windowSize_.y) / 2.2f + 40 };
-		itemCPos_[1] = { 240.0f,float(Global::windowSize_.y) / 2.2f - 40 };
-		itemCPos_[2] = { 400.0f,float(Global::windowSize_.y) / 2.2f + 40 };
+		starSize_ = 32;
+		starColor_ = 0xFFFFFFFF;
+		starOriginPos_ = { float(Global::windowSize_.x / 2),300 };
 
+		/*星の変数*/
 		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 4; j++) {
-				itemVertex_[i][j] = { 0 };
-			}
+			starPos_[i] = { 0 };
+			starTheta_[i] = 0;
 
-			lightColor_[i] = 0xFFFFFF00;
-			itemColor_[i] = 0x00000000;
+			rotateLength_[i] = { 0 };
+			isDrawStar_[i] = { 0 };
+			starTheta_[i] = starTheta_[0] + (-2.0f / 3.0f * float(M_PI)) * i;
 		}
-		itemSize_ = { 55,55 };
-		itemMaxColor_ = 0xFF;
-		itemMinColor_ = 0x0;
-		itemAddColor_ = 0x00;
-		starGet_ = 0;
+		MoveStarT_ =0;
+		MoveStarAddT_ = 0;
+		maxLength_ = {200,0};
+		minLength_ = {0,0};
+		length_ = minLength_;
+		MoveStarEaseTimer_=60;
 
-		/*ライトの色のイージング用の変数*/
-		easeNum_ = 0;//イージングするライトの色を決定する変数
 
-		lightT_ = 0;
-		lightAddT_ = 0;
-		lightEaseTimer_ = 10;
-		lightEaseDir_ = 1;
-		lightMaxColor_ = 0x44;
-		lightMinColor_ = 0x0;
-		lightAddColor_ = lightMinColor_;
-		isEaseL_ = false;
-		nextLightEasingTimerMax_ = 20;
-		nextLightEasingTimer_ = nextLightEasingTimerMax_;
+
+
 
 
 		/*ステージクリアの文字*/
@@ -146,11 +134,11 @@ public:
 
 		debugNum = 0;
 
-
+		starGet_ = 0;
 	}
 
-	void Update(bool isStartScene);
-	void Draw(int starGetCount_,Resources rs);
+	void Update(bool isStartScene,int starGetCount);
+	void Draw(Resources rs);
 	void Debug(char* keys, char* preKeys);
 	float GetFT() { return FT_; };
 	void Reset();

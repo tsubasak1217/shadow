@@ -11,6 +11,7 @@ Resources::Resources() {
 	pauseMenuGH_= Novice::LoadTexture("./Resources/images/pauseMenu.png");
 	pauseGH_= Novice::LoadTexture("./Resources/images/pause.png");
 	stageClearFontGH_ = Novice::LoadTexture("./Resources/images/stageClear.png");
+	stageClearFont2GH_ = Novice::LoadTexture("./Resources/images/stageClear2.png");
 	selectFontGH_ = Novice::LoadTexture("./Resources/images/stageSelect.png");
 	
 

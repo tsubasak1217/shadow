@@ -72,7 +72,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓更新処理ここから
 		///
 		Novice::ScreenPrintf(0, 0, "StageNum=%d", Map::stageNum_);
-		SCE.Init();
 		map.Update(keys, rs, cs);
 		player.Update(keys, map, cs, pause.isPause_);
 		light.Update(keys, cs, map, ((3.0f / 4.0f) * float(M_PI)), pause.isPause_);
@@ -83,8 +82,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		title.Update(keys, preKeys);
 		door.Update(keys, preKeys);
 		cs.UpDate(keys, preKeys, door.isChangeScene_, door.CPos_, door.selectNum_, SCE.canSceneChange, shadow.GetGoalPos(), shadow.GetGoalSize(), pause.isSelect_, title.isPush_);
-		stageClear.Update(cs.isStartChange_);
-		SCE.Update(stageClear.GetFT());
+		stageClear.Update(cs.isStartChange_, playerShadow.GetstarCount());
+		SCE.Update(stageClear, playerShadow.GetstarCount());
 		playerShadow.Update(keys, cs, screen, shadow, player, pause.isPause_);
 		pause.Update(cs, keys, preKeys);
 
@@ -92,6 +91,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		{
 			SLParticle[i].Update(door);
 		}
+
+
+		stageClear.Debug(keys, preKeys);
+
 		//デバックでのみ操作可能
 #if _DEBUG
 		/*シーン遷移が終了した状態でしかシーンを移動できない*/
@@ -128,7 +131,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		title.Draw(rs);
 		door.Draw(rs);
-		stageClear.Draw(playerShadow.GetstarCount(), rs);
+		stageClear.Draw( rs);
 		
 		
 		for (int i = 0; i < 120; i++)
@@ -136,7 +139,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			SLParticle[i].Draw(keys);
 		}
 		
-		SCE.Draw();
+		SCE.Draw( playerShadow.GetstarCount());
 
 		pause.Draw(rs);
 		/*シーンチェンジ一番前*/
