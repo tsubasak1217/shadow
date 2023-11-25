@@ -1,7 +1,7 @@
 ﻿#include "Light.h"
 
 //=========================================================初期化関数==============================================================
-void Light::Init(int sceneNum,Map map) {
+void Light::Init(int sceneNum, Map map) {
 	switch (sceneNum) {
 		//====================================================================================
 	case TITLE://							   タイトル画面
@@ -44,80 +44,89 @@ void Light::Init(int sceneNum,Map map) {
 	default:
 		break;
 	}
-	
+
 }
 
 //====================================================アップデート=============================================================
-void Light::Update(char* keys, const ChangeScene& cs, Map map, float rangeTheta,bool isPause) {
+void Light::Update(char* keys, const ChangeScene& cs, Map map, float rangeTheta) {
 
 	//シーン遷移の始まった瞬間にシーンに合わせて初期化
 	if (cs.isStartChange_ && cs.preIsEndChange_) {
-		Init(Scene::sceneNum_,map);
+		Init(Scene::sceneNum_, map);
 	}
 
-	if (!isPause) {
-		switch (Scene::sceneNum_) {
-			//====================================================================================
-		case TITLE://							   タイトル画面
-			//====================================================================================
-			break;
-			//====================================================================================
-		case SELECT://							   ステージ選択
-			//====================================================================================
-			break;
-			//====================================================================================
-		case GAME://								ゲーム本編
-			//====================================================================================
+	switch (Scene::sceneNum_) {
+		//====================================================================================
+	case TITLE://							   タイトル画面
+		//====================================================================================
+		break;
+		//====================================================================================
+	case SELECT://							   ステージ選択
+		//====================================================================================
+		break;
+		//====================================================================================
+	case GAME://								ゲーム本編
+		//====================================================================================
 
-			//Rで初期化
-			if (keys[DIK_R]) {
-				Init(Scene::sceneNum_, map);
-			}
-
-			lightHitSpot_.clear();
-
-			aimPos_ = { emitPos_.x,emitPos_.y - Global::windowSize_.y };
-
-			leftVec_ = Multiply(
-				aimPos_.operator-(emitPos_),
-				AffineMatrix({ 1.0f,1.0f }, -(rangeTheta * 0.5f), emitPos_)
-			);
-
-			rightVec_ = Multiply(
-				aimPos_.operator-(emitPos_),
-				AffineMatrix({ 1.0f,1.0f }, rangeTheta * 0.5f, emitPos_)
-			);
-
-			leftVec_ = CrossPos(emitPos_, leftVec_, { 0,0 }, { float(Global::windowSize_.x),0 });
-			rightVec_ = CrossPos(emitPos_, rightVec_, { 0,0 }, { float(Global::windowSize_.x),0 });
-
-
-
-			if (keys[DIK_Q]) {
-				emitPos_.x -= 2.0f;
-			}
-
-			if (keys[DIK_E]) {
-				emitPos_.x += 2.0f;
-			}
-
-			break;
-
-
-			//====================================================================================
-		case CLEAR://								クリア画面
-			//====================================================================================
-			break;
-
-		default:
-			break;
+		//Rで初期化
+		if (keys[DIK_R]) {
+			Init(Scene::sceneNum_, map);
 		}
+
+		lightHitSpot_.clear();
+
+		aimPos_ = { emitPos_.x,emitPos_.y - Global::windowSize_.y };
+
+		leftVec_ = Multiply(
+			aimPos_.operator-(emitPos_),
+			AffineMatrix({ 1.0f,1.0f }, -(rangeTheta * 0.5f), emitPos_)
+		);
+
+		rightVec_ = Multiply(
+			aimPos_.operator-(emitPos_),
+			AffineMatrix({ 1.0f,1.0f }, rangeTheta * 0.5f, emitPos_)
+		);
+
+		leftVec_ = CrossPos(emitPos_, leftVec_, { 0,0 }, { float(Global::windowSize_.x),0 });
+		rightVec_ = CrossPos(emitPos_, rightVec_, { 0,0 }, { float(Global::windowSize_.x),0 });
+
+
+
+		if (keys[DIK_Q]) {
+			Global::isMoveShadow_ = true;
+			emitPos_.x -= 2.0f;
+		}
+
+		if (keys[DIK_E]) {
+			Global::isMoveShadow_ = true;
+			emitPos_.x += 2.0f;
+		}
+
+		//左右の壁
+		if (emitPos_.x > Global::windowSize_.x - 32.0f) {
+			emitPos_.x = Global::windowSize_.x - 32.0f;
+
+		} else if (emitPos_.x < 32.0f) {
+			emitPos_.x = 32.0f;
+		}
+
+		break;
+
+
+		//====================================================================================
+	case CLEAR://								クリア画面
+		//====================================================================================
+		break;
+
+	default:
+		break;
 	}
+
 };
 
 
 //====================================================描画=============================================================
-void Light::Draw(Map map,ChangeScene CS) {
+void Light::Draw(Map map, ChangeScene CS) {
 
 	switch (Scene::sceneNum_) {
 		//====================================================================================

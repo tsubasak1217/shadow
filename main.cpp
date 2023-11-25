@@ -1,13 +1,12 @@
-#include "PlayerShadow.h"
-#include "Player.h"
+#include "Particle.h"
 #include "selectDoor.h"
 #include"stageClearEffect.h"
 #include"stageClear.h"
+#include "ImGuiManager.h"
+
 #include"Pause.h"
 #include"Title.h"
-#include "ImGuiManager.h"
 #include "selectLightParticle.h"
-
 
 //======================================================
 //					グローバル変数/定数
@@ -33,7 +32,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// ライブラリの初期化
 	Novice::Initialize(kWindowTitle, global.windowSize_.x, global.windowSize_.y);
 
-
+	unsigned int currentTime = unsigned int(time(nullptr));
+	srand(currentTime);
 
 	// キー入力結果を受け取る箱
 	char keys[256] = { 0 };
@@ -45,17 +45,24 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Scene scene;
 	ChangeScene cs;
 
+
 	Map map(rs);
 	Player player(map);
 	Light light(map);
 	Screen screen(map, light);
+
 	Shadow shadow(rs, screen);
 	PlayerShadow playerShadow(screen, shadow);
+
+	Emitter emitter;
+	Particle particle[120];
+
 	Title title;
 	SelectDoor door;//セレクト画面
 	StageClear stageClear;//ステージクリア
 	SCE SCE;//ステージクリアのパーティクル
 	Pause pause;
+
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -71,22 +78,30 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		Novice::ScreenPrintf(0, 0, "StageNum=%d", Map::stageNum_);
 		SCE.Init();
-		map.Update(keys, rs, cs);
-		player.Update(keys, map, cs, pause.isPause_);
-		light.Update(keys, cs, map, ((3.0f / 4.0f) * float(M_PI)), pause.isPause_);
 
-		shadow.Update(keys, cs, rs, screen, map);
-		screen.Update(keys, cs, map, light);
-
-		title.Update(keys, preKeys);
-		door.Update(keys, preKeys);
 		cs.UpDate(keys, preKeys, door.isChangeScene_, door.CPos_, door.selectNum_, SCE.canSceneChange, shadow.GetGoalPos(), shadow.GetGoalSize(), pause.isSelect_, title.isPush_);
+
+		map.Update(keys, rs, cs);
+		player.Update(keys, cs, map);
+		light.Update(keys, cs, map, ((3.0f / 4.0f) * float(M_PI)), isPause_);
+
+
+		screen.Update(keys, cs, map, light);
+		shadow.Update(keys, cs, rs, screen, map);
+
 		stageClear.Update(cs.isStartChange_);
+		door.Update(keys, preKeys);
 		SCE.Update(stageClear.GetFT());
-		playerShadow.Update(keys, cs, screen, shadow, player, pause.isPause_);
+		playerShadow.Update(keys, rs, cs, screen, shadow, player, map, light, , pause.isPause_);
+
+		for (int i = 0; i < 120; i++) {
+			particle[i].Update(emitter, playerShadow, shadow, screen);
+		}
+		title.Update(keys, preKeys);
+
 		pause.Update(cs, keys, preKeys);
 
-
+		//DOOR.Reset(keys,preKeys);
 		//デバックでのみ操作可能
 #if _DEBUG
 		/*シーン遷移が終了した状態でしかシーンを移動できない*/
@@ -115,6 +130,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		screen.Draw(map, rs, light);
 		shadow.Draw(rs);
 		playerShadow.Draw(screen);
+		for (int i = 0; i < 120; i++) {
+			particle[i].Draw();
+		}
 
 		light.Draw(map, cs);
 		map.Draw(rs);
@@ -128,6 +146,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		SCE.Draw();
 
 		pause.Draw(rs);
+		if (keys[DIK_H] && !preKeys[DIK_H]) {
+			if (cs.isEndChange_) {
+				cs.isEndChange_ = false;
+			} else {
+				cs.isEndChange_ = true;
+			}
+		}
+
+		/*シーンチェンジ一番前*/
 		/*シーンチェンジ一番前*/
 		cs.Draw(door.GH_, door.color_, shadow.GetGoalPos(), shadow.GetGoalSize(), pause.isSelect_);
 
@@ -165,12 +192,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Novice::EndFrame();
 
 		// ESCキーが押されたらループを抜ける
-		//if (preKeys[DIK_ESCAPE] == 0 && keys[DIK_ESCAPE] != 0) {
-			//break;
-		//}
+		//if (preKeys[DIK_ESCAPE] == 0 && //keys[DIK_ESCAPE] != 0) {
+//			break;
 	}
+}
 
-	// ライブラリの終了
-	Novice::Finalize();
-	return 0;
+// ライブラリの終了
+Novice::Finalize();
+return 0;
 }

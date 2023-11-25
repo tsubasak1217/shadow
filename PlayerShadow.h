@@ -13,9 +13,16 @@ class PlayerShadow {
 	Vector2<int>preAddress_[4];
 	float speed_;
 
+	bool isAlive_;
+	bool preIsAlive_;
+	bool isBackToRespawnPos_;
+	bool preIsBackToRespawnPos_;
+	int respawnTimeCount_;
+
 	bool isJump_;
 	bool  isDrop_;
 	float jumpSpeed_;
+	float jumpVelocity_;
 	float dropSpeed_;
 	float gravity_;
 
@@ -26,6 +33,12 @@ class PlayerShadow {
 	std::vector<int>hitSurface2_;
 	std::vector<int>preHitSurface2_;
 	int blockCount;
+
+	int boardingBlock_;
+	Vec2 boardingPos_;
+	float preBoadingVecRatio_;
+	float boadingVecRatio_;
+
 	bool isHitMapChip_;
 	bool isHitRect_;
 	bool isInsideLightLT_;
@@ -62,15 +75,26 @@ public:
 		pos_.y += (shadow.GetSize().y * 0.5f);
 		pos_.y += -(size_.y * 0.5f);
 
+		isAlive_ = true;
+		preIsAlive_ = isAlive_;
+		isBackToRespawnPos_ = false;
+		preIsBackToRespawnPos_ = isBackToRespawnPos_;
+		respawnTimeCount_ = 200;
+
 		isJump_ = false;
 		isDrop_ = false;
 		jumpSpeed_ = 0.0f;
+		jumpVelocity_ = -7.5f;
 		dropSpeed_ = 0.0f;
 		gravity_ = 0.4f;
 		hitCount_ = 0;
 		isHitMapChip_ = false;
 		isHitRect_ = false;
 		blockCount = 0;
+		boardingBlock_ = -1;
+		boardingPos_ = { 0.0f,0.0f };
+		boadingVecRatio_ = 0.0f;
+		preBoadingVecRatio_ = boadingVecRatio_;
 
 		isInsideLightLB_ = false;
 		isInsideLightRB_ = false;
@@ -86,12 +110,19 @@ public:
 
 	void Init(int sceneNum, Screen screen, Shadow shadow);
 
-	void Update(char* keys, ChangeScene& cs, Screen screen, Shadow& shadow,Player& player, bool isPause);
+	void Update(char* keys, const Resources& rs, const ChangeScene& cs, Screen& screen, Shadow& shadow, Player& player, Map& map, Light& light);
 
 	void Draw(Screen screen);
 
 	//アクセッサ
 	Vec2 GetPos() { return pos_; }
+	Vec2 GetSize() { return size_; }
+
+	bool GetIsAlive() { return isAlive_; }
+	bool GetIsPreAlive() { return preIsAlive_; }
+
+	bool GetIsBackToResPawnPos() { return isBackToRespawnPos_; }
+	bool GetPreIsBackToResPawnPos() { return preIsBackToRespawnPos_; }
 	int GetstarCount() { return starGetCount_; }
 };
 
