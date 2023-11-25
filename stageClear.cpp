@@ -178,9 +178,10 @@ void StageClear::Draw(Resources rs) {
 #pragma endregion
 
 }
-#if _DEBUG
-void StageClear::Debug(char* keys, char* preKeys) {
 
+void StageClear::Debug(char* keys, char* preKeys) {
+	keys, preKeys;
+#if _DEBUG
 #pragma region"デバック用"
 
 	if (keys[DIK_R] && !preKeys[DIK_R]) {
@@ -275,9 +276,9 @@ void StageClear::Debug(char* keys, char* preKeys) {
 	*/
 
 #pragma endregion
-
-}
 #endif // _DEBUG
+}
+
 void StageClear::Reset() {
 	length_ = minLength_;
 	MoveStarT_ = 0;
