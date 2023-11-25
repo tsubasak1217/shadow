@@ -57,6 +57,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	SCE SCE;//ステージクリアのパーティクル
 	Pause pause;
 
+	SelectLightParticle SLParticle[120];
+
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
 		// フレームの開始
@@ -86,7 +88,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		playerShadow.Update(keys, cs, screen, shadow, player, pause.isPause_);
 		pause.Update(cs, keys, preKeys);
 
-
+		for (int i = 0; i < 120; i++)
+		{
+			SLParticle[i].Update(door);
+		}
 		//デバックでのみ操作可能
 #if _DEBUG
 		/*シーン遷移が終了した状態でしかシーンを移動できない*/
@@ -124,7 +129,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		title.Draw(rs);
 		door.Draw(rs);
 		stageClear.Draw(playerShadow.GetstarCount(), rs);
-
+		
+		
+		for (int i = 0; i < 120; i++)
+		{
+			SLParticle[i].Draw(keys);
+		}
+		
 		SCE.Draw();
 
 		pause.Draw(rs);

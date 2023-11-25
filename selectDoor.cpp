@@ -16,9 +16,12 @@ void SelectDoor::Draw(Resources rs) {
 		//size_に応じてSpriteの表示サイズを変更
 		Drawsize_.x = size_.x / 100;
 		Drawsize_.y = size_.y / 200;
+		for (int i = 0; i < 10; i++){
+			Novice::DrawEllipse(int(NumlightEllCPos_.x), 0, 60+(i*2), 5 + (i * 2), 0.0f, DLColor_, kFillModeSolid);
+		}
 
 		/*ステージの文字*/
-	//	Novice::DrawBox(int(selectFontCPos_.x - selectFontSize_.x / 2), int(selectFontCPos_.y - selectFontSize_.y / 2), int(selectFontSize_.x), int(selectFontSize_.y), 0.0f, FColor_, kFillModeWireFrame);
+		Novice::DrawBox(int(selectFontCPos_.x - selectFontSize_.x / 2), int(selectFontCPos_.y - selectFontSize_.y / 2), int(selectFontSize_.x), int(selectFontSize_.y), 0.0f, FColor_, kFillModeWireFrame);
 		Novice::DrawSprite(int(selectFontCPos_.x - selectFontSize_.x / 2), int(selectFontCPos_.y - selectFontSize_.y / 2), rs.selectFontGH_, 0.5f, 0.5f, 0.0f, FColor_);
 
 
