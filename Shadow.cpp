@@ -40,7 +40,7 @@ Shadow::Shadow(const Resources& rs, Screen screen) {
 			if (mapChip_[i][j] == -1) {
 				firstPlayerPos_ = {
 			size_.x + (j * size_.x) - (size_.x * 0.5f),
-			size_.y + (i * size_.y) - (size_.y * 0.5f)
+			size_.y + (i * size_.y) - (size_.y * 0.5f) - 1.0f
 				};
 			}
 			//存在フラグ決定
@@ -131,7 +131,7 @@ void Shadow::Init(const Resources& rs, Screen screen, int sceneNum) {
 				if (mapChip_[i][j] == -1) {
 					firstPlayerPos_ = {
 				size_.x + (j * size_.x) - (size_.x * 0.5f),
-				size_.y + (i * size_.y) - (size_.y * 0.5f)
+				size_.y + (i * size_.y) - (size_.y * 0.5f) - 1.0f
 					};
 				}
 				//存在フラグ決定

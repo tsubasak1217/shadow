@@ -71,16 +71,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Novice::ScreenPrintf(0, 0, "StageNum=%d", Map::stageNum_);
 		SCE.Init();
 
+		cs.UpDate(keys, preKeys, door.isChangeScene_, door.CPos_, door.selectNum_, SCE.canSceneChange, shadow.GetGoalPos(), shadow.GetGoalSize());
 
 		map.Update(keys, rs, cs);
 		player.Update(keys,cs, map);
 		light.Update(keys,cs, map, ((3.0f / 4.0f) * float(M_PI)));
-		shadow.Update(keys,cs,rs,screen,map);
 		screen.Update(keys,cs,map, light);
+		shadow.Update(keys,cs,rs,screen,map);
 
-		door.Update(keys, preKeys);
-		cs.UpDate(keys, preKeys, door.isChangeScene_, door.CPos_, door.selectNum_, SCE.canSceneChange, shadow.GetGoalPos(), shadow.GetGoalSize());
 		stageClear.Update(cs.isStartChange_);
+		door.Update(keys, preKeys);
 		SCE.Update(stageClear.GetFT());
 		playerShadow.Update(keys,rs,cs, screen, shadow, player,map,light);
 

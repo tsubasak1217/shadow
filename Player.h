@@ -20,6 +20,7 @@ class Player{
 	Vector2<int>moveBlockAddress_;
 	Vec2 moveStartPos_;
 	Vec2 savedPlayerPos_;
+	bool isSwappped_;
 
 	//スイッチを押せるかどうか
 	bool isSwitchPushable_;
@@ -53,6 +54,7 @@ public:
 		moveBlockAddress_ = {0,0};
 		moveStartPos_ = { 0.0f,0.0f };
 		savedPlayerPos_ = { 0.0f,0.0f };
+		isSwappped_ = false;
 
 		isHitMapChip_ = 0;
 
@@ -68,5 +70,6 @@ public:
 	//アクセッサ
 	Vec2 GetPos() { return pos_; }
 	void SetSwitchPushable(bool flag) { isSwitchPushable_ = flag; }
+	bool GetIsSwapped() { return isSwappped_; }
 };
 

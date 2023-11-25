@@ -22,6 +22,7 @@ class PlayerShadow {
 	bool isJump_;
 	bool  isDrop_;
 	float jumpSpeed_;
+	float jumpVelocity_;
 	float dropSpeed_;
 	float gravity_;
 
@@ -77,6 +78,7 @@ public:
 		isJump_ = false;
 		isDrop_ = false;
 		jumpSpeed_ = 0.0f;
+		jumpVelocity_ = -7.5f;
 		dropSpeed_ = 0.0f;
 		gravity_ = 0.4f;
 		hitCount_ = 0;
