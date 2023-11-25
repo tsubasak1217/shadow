@@ -199,7 +199,7 @@ void StageClear::Draw(int starGetCount_,Resources rs) {
 		/*押してくださいの文字*/
 		//Novice::DrawBox(int(PressKeyFontCPos_.x - PressKeyFontSize_.x / 2), int(PressKeyFontCPos_.y - PressKeyFontSize_.y / 2), int(PressKeyFontSize_.x), int(PressKeyFontSize_.y),
 			//0.0f, FColor_, kFillModeWireFrame);
-		Novice::DrawSprite(int(PressKeyFontCPos_.x - PressKeyFontSize_.x / 2), int(PressKeyFontCPos_.y - PressKeyFontSize_.y / 2),rs.pressSpaceFontGH_, 1, 1, 0.0f, FColor_);
+		Novice::DrawSprite(int(PressKeyFontCPos_.x - PressKeyFontSize_.x / 2), int(PressKeyFontCPos_.y - PressKeyFontSize_.y / 2),rs.pressSpaceFontGH_, 0.5f, 0.5f, 0.0f, FColor_);
 
 
 		break;
@@ -326,7 +326,7 @@ void StageClear::Reset() {
 	isEaseL_ = false;
 	nextLightEasingTimerMax_ = 20;
 	nextLightEasingTimer_ = nextLightEasingTimerMax_;
-
+	starGet_ = 0;
 
 	/*キーを押してくださいの文字*/
 	PressKeyFontCPos_ = { 240,645 };

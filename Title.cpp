@@ -44,7 +44,7 @@ void Title::Draw(Resources rs) {
 
 		Novice::DrawSprite(
 			int(spaceFontPos_.x), int(spaceFontPos_.y),
-			rs.pressSpaceFontGH_, 1, 1, 0.0f, spaceFontColor_);
+			rs.pressSpaceFontGH_, 0.5f, 0.5f, 0.0f, spaceFontColor_);
 
 		break;
 		//====================================================================================
