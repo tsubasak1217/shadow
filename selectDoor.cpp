@@ -1,7 +1,7 @@
 ﻿#include"selectDoor.h"
 
 
-void SelectDoor::Draw() {
+void SelectDoor::Draw(Resources rs) {
 	switch (Scene::sceneNum_) {
 		//====================================================================================
 	case TITLE://							   タイトル画面
@@ -17,8 +17,9 @@ void SelectDoor::Draw() {
 		Drawsize_.x = size_.x / 100;
 		Drawsize_.y = size_.y / 200;
 
-		/*ステージクリアの文字*/
+		/*ステージの文字*/
 		Novice::DrawBox(int(selectFontCPos_.x - selectFontSize_.x / 2), int(selectFontCPos_.y - selectFontSize_.y / 2), int(selectFontSize_.x), int(selectFontSize_.y), 0.0f, FColor_, kFillModeWireFrame);
+		Novice::DrawSprite(int(selectFontCPos_.x - selectFontSize_.x / 2), int(selectFontCPos_.y - selectFontSize_.y / 2), rs.selectFontGH_, 0.5f, 0.5f, 0.0f, FColor_);
 
 
 		//床の円
@@ -69,8 +70,8 @@ void SelectDoor::Draw() {
 
 		//選択範囲の描画
 		if (isSelectDraw_) {
-			Novice::DrawBox(static_cast<int>(selectPos_.x - (size_.x / 2) - 1), static_cast<int>(selectPos_.y - (size_.y / 2) - 1),
-				static_cast<int>(size_.x + 1), static_cast<int>(size_.y + 1), 0.0f, selectColor_, kFillModeWireFrame);
+			Novice::DrawBox(static_cast<int>(selectPos_.x - (size_.x / 2) - 2), static_cast<int>(selectPos_.y - (size_.y / 2) - 2),
+				static_cast<int>(size_.x + 4), static_cast<int>(size_.y + 4), 0.0f, selectColor_, kFillModeWireFrame);
 		}
 
 

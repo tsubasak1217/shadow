@@ -190,7 +190,8 @@ void StageClear::Draw(int starGetCount_,Resources rs) {
 		}
 
 		/*ステージクリアの文字*/
-		Novice::DrawBox(int(StageClearFontCPos_.x - StageClearFontSize_.x / 2), int(StageClearFontCPos_.y - StageClearFontSize_.y / 2), int(StageClearFontSize_.x), int(StageClearFontSize_.y), 0.0f, FColor_, kFillModeWireFrame);
+		//Novice::DrawBox(int(StageClearFontCPos_.x - StageClearFontSize_.x / 2), int(StageClearFontCPos_.y - StageClearFontSize_.y / 2), int(StageClearFontSize_.x), int(StageClearFontSize_.y), 0.0f, FColor_, kFillModeWireFrame);
+		Novice::DrawSprite(int(StageClearFontCPos_.x - StageClearFontSize_.x / 2), int(StageClearFontCPos_.y - StageClearFontSize_.y / 2), rs.stageClearFontGH_, 1, 1, 0.0f, FColor_);
 
 		/*猫*/
 		DrawCat(CatCPos_, CatSize_.x, CatSize_.y, 0x000000FF);

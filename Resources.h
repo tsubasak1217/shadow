@@ -13,7 +13,10 @@ public:
 	int pressSpaceFontGH_;
 	int rengaGH_;
 	int titleBGGH_;
-
+	int pauseMenuGH_;
+	int pauseGH_;
+	int stageClearFontGH_;
+	int selectFontGH_;
 	Resources();
 	~Resources();
 

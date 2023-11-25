@@ -71,30 +71,36 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Novice::ScreenPrintf(0, 0, "StageNum=%d", Map::stageNum_);
 		SCE.Init();
 		map.Update(keys, rs, cs);
-		player.Update(keys, map,cs,pause.isPause_);
-		light.Update(keys,cs, map, ((3.0f / 4.0f) * float(M_PI)), pause.isPause_);
+		player.Update(keys, map, cs, pause.isPause_);
+		light.Update(keys, cs, map, ((3.0f / 4.0f) * float(M_PI)), pause.isPause_);
 
-		shadow.Update(keys,cs,rs,screen,map);
-		screen.Update(keys,cs,map, light);
-		
-		title.Update(keys,preKeys);
+		shadow.Update(keys, cs, rs, screen, map);
+		screen.Update(keys, cs, map, light);
+
+		title.Update(keys, preKeys);
 		door.Update(keys, preKeys);
-		cs.UpDate(keys, preKeys, door.isChangeScene_, door.CPos_, door.selectNum_, SCE.canSceneChange, shadow.GetGoalPos(), shadow.GetGoalSize(),pause.isSelect_,title.isPush_);
+		cs.UpDate(keys, preKeys, door.isChangeScene_, door.CPos_, door.selectNum_, SCE.canSceneChange, shadow.GetGoalPos(), shadow.GetGoalSize(), pause.isSelect_, title.isPush_);
 		stageClear.Update(cs.isStartChange_);
 		SCE.Update(stageClear.GetFT());
 		playerShadow.Update(keys, cs, screen, shadow, player, pause.isPause_);
 		pause.Update(cs, keys, preKeys);
 
 
-		if (keys[DIK_1]) {
-			Scene::sceneNum_ = TITLE;
-		} else if (keys[DIK_2]) {
-			Scene::sceneNum_ = SELECT;
-		} else if (keys[DIK_3]) {
-			Scene::sceneNum_ = GAME;
-		} else if (keys[DIK_4]) {
-			Scene::sceneNum_ = CLEAR;
+		//デバックでのみ操作可能
+#if _DEBUG
+		/*シーン遷移が終了した状態でしかシーンを移動できない*/
+		if (!cs.isEndChange_ && !cs.isStartChange_) {
+			if (keys[DIK_1]) {
+				Scene::sceneNum_ = TITLE;
+			} else if (keys[DIK_2]) {
+				Scene::sceneNum_ = SELECT;
+			} else if (keys[DIK_3]) {
+				Scene::sceneNum_ = GAME;
+			} else if (keys[DIK_4]) {
+				Scene::sceneNum_ = CLEAR;
+			}
 		}
+#endif DEBUG
 
 		///
 		/// ↑更新処理ここまで
@@ -109,23 +115,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		shadow.Draw(rs);
 		playerShadow.Draw(screen);
 
-		light.Draw(map,cs);
+		light.Draw(map, cs);
 		map.Draw(rs);
 		player.Draw(rs);
 
 
 		title.Draw(rs);
-		door.Draw();
-		stageClear.Draw(playerShadow.GetstarCount(),rs);
+		door.Draw(rs);
+		stageClear.Draw(playerShadow.GetstarCount(), rs);
 
 		SCE.Draw();
 
-		pause.Draw();
+		pause.Draw(rs);
 		/*シーンチェンジ一番前*/
 		cs.Draw(door.GH_, door.color_, shadow.GetGoalPos(), shadow.GetGoalSize(), pause.isSelect_);
 
 
-		
+
 		//デバッグ
 		switch (Scene::sceneNum_) {
 

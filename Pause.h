@@ -14,6 +14,9 @@ class Pause {
 	float BSpace_;
 	Vec2 buttonPos_[3];
 	Vec2 buttonSize_[3];
+	Vec2 buttonDrawSize_[3];
+	Vec2 buttonDrawScale_[3];
+
 
 	//ボタンの色
 	unsigned int buttonColor_[3];//灰色
@@ -81,6 +84,8 @@ public:
 
 		for (int i = 0; i < 3; i++) {
 			buttonSize_[i] = { 265,75 };
+			buttonDrawSize_[i] = { 265,75 };
+			buttonDrawScale_[i] = { 0.33f,1.0f };
 			buttonPos_[i] = { float(Global::windowSize_.x) / 2,(BSpace_ * i + BOffset_) };
 			//全体の色
 			buttonColor_[i] = 0x66666600;//灰色
@@ -129,10 +134,10 @@ public:
 		isPause_ = false;//PAUSE画面か否か
 		isStartPause_ = false;//PAUSE画面か否か
 		isEndPause_ = false;//PAUSE画面か否か
-		isStageReset_=false;
+		isStageReset_ = false;
 
 	}
-	void Draw();
+	void Draw(Resources rs);
 	void Update(ChangeScene& cs, char* keys, char* preKeys);
 	void Debug(char* keys, char* preKeys);
 	void Reset();

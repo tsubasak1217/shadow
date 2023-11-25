@@ -1,7 +1,7 @@
 ﻿#include"Pause.h"
 
 
-void Pause::Draw() {
+void Pause::Draw(Resources rs) {
 	switch (Scene::sceneNum_) {
 		//====================================================================================
 	case TITLE://							   タイトル画面
@@ -20,11 +20,21 @@ void Pause::Draw() {
 		if (isPause_ || isStartPause_ || isEndPause_) {
 			Novice::DrawBox(0, 0, int(Global::windowSize_.x), int(Global::windowSize_.y), 0.0f, BCColor_, kFillModeSolid);
 
-			Novice::DrawBox(int(pauseFontPos_.x - pauseFontSize_.x / 2), int(pauseFontPos_.y - pauseFontSize_.y / 2),
-				int(pauseFontSize_.x), int(pauseFontSize_.y), 0.0f, elseColor_, kFillModeWireFrame);
+			//Novice::DrawBox(int(pauseFontPos_.x - pauseFontSize_.x / 2), int(pauseFontPos_.y - pauseFontSize_.y / 2),
+			//	int(pauseFontSize_.x), int(pauseFontSize_.y), 0.0f, elseColor_, kFillModeWireFrame);
+			Novice::DrawSprite(int(pauseFontPos_.x - pauseFontSize_.x / 2), int(pauseFontPos_.y - pauseFontSize_.y / 2),
+				rs.pauseGH_, 1.0f, 1.0f, 0.0f, elseColor_);
+
+
+
 			for (int i = 0; i < 3; i++) {
-				Novice::DrawBox(int(buttonPos_[i].x - buttonSize_[i].x / 2), int(buttonPos_[i].y - buttonSize_[i].y / 2),
-					int(buttonSize_[i].x), int(buttonSize_[i].y), 0.0f, buttonColor_[i], kFillModeWireFrame);
+				//Novice::DrawBox(int(buttonPos_[i].x - buttonSize_[i].x / 2), int(buttonPos_[i].y - buttonSize_[i].y / 2),
+					//int(buttonSize_[i].x), int(buttonSize_[i].y), 0.0f, buttonColor_[i], kFillModeWireFrame);
+
+				Novice::DrawSpriteRect(int(buttonPos_[i].x - buttonSize_[i].x / 2), int(buttonPos_[i].y - buttonSize_[i].y / 2),
+					int(buttonDrawSize_[i].x * i), 0,
+					int(buttonDrawSize_[i].x), int(buttonDrawSize_[i].y), rs.pauseMenuGH_, 0.33f * buttonDrawScale_[i].x, 1.0f * buttonDrawScale_[i].y, 0.0f, buttonColor_[i]);
+
 			}
 
 			DrawCat(catPos_, catSize_.x, catSize_.y, 0xFFFFFFFF);
@@ -136,9 +146,11 @@ void Pause::Update(ChangeScene& cs, char* keys, char* preKeys) {
 			for (int i = 0; i < 3; i++) {
 				buttonColor_[i] = 0x66666600 + int(addElseColor_);
 				buttonSize_[i] = { 265,75 };
+				buttonDrawScale_[i] = { 1.0f,1.0f };
 			}
 			buttonColor_[selectNum_] = 0xFFFFFF00 + int(addElseColor_);
-			buttonSize_[selectNum_] = { 300,100 };
+			buttonSize_[selectNum_] = { 318,90 };
+			buttonDrawScale_[selectNum_] = { 1.2f,1.2f };//{ 1.134f,1.34f };
 		}
 #pragma endregion
 
@@ -233,6 +245,8 @@ void Pause::Reset() {
 
 	for (int i = 0; i < 3; i++) {
 		buttonSize_[i] = { 265,75 };
+		buttonDrawSize_[i] = { 265,75 };
+		buttonDrawScale_[i] = { 1.0f,1.0f };
 		buttonPos_[i] = { float(Global::windowSize_.x) / 2,(BSpace_ * i + BOffset_) };
 		//全体の色
 		buttonColor_[i] = 0x66666600;//灰色

@@ -152,7 +152,7 @@ public:
 		isChangeScene_ = false;
 	};
 
-	void Draw();
+	void Draw(Resources rs);
 
 	void Update(char* keys, char* preKeys);
 	void Debug(char* keys, char* preKeys);
