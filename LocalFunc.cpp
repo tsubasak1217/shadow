@@ -725,7 +725,7 @@ int PushBackMapChip(
 }
 
 //矩形と円の押し戻し関数
-int PushBackBox_Ball(char* keys,
+void PushBackBox_Ball(char* keys,
 	Vec2 leftTop, Vec2 rightTop, Vec2 leftBottom, Vec2 rightBottom,
 	Vec2 preLeftTop, Vec2 preRightTop, Vec2 preLeftBottom, Vec2 preRightBottom,
 	Vec2& ballPos, Vec2 preBallPos, float ballRadius,
@@ -779,7 +779,6 @@ int PushBackBox_Ball(char* keys,
 			for (int i = 0; i < 4; i++) {
 				if (preCross[i] <= -ballRadius) {
 					hitSurface = i + 1;
-					break;
 				}
 			}
 
@@ -803,14 +802,12 @@ int PushBackBox_Ball(char* keys,
 
 					NormalizedVec = Normalize({ 0.0f,0.0f }, VerticleVec(leftTop, rightTop));
 					ballPos = newCrossPos.operator+(NormalizedVec.operator*({ -ballRadius,-ballRadius }));
-					ballPos.y--;
 
 					isDrop = false;
 					isJump = false;
 					dropSpeed = 0.0f;
 					jumpSpeed = 0.0f;
 
-					return Top;
 					break;
 
 				case Right:
@@ -828,7 +825,7 @@ int PushBackBox_Ball(char* keys,
 					NormalizedVec = Normalize({ 0.0f,0.0f }, VerticleVec(rightTop, rightBottom));
 					ballPos = newCrossPos.operator+(NormalizedVec.operator*({ -ballRadius - 1,-ballRadius -1}));
 
-					return Right;
+
 					break;
 
 				case Bottom:
@@ -846,9 +843,8 @@ int PushBackBox_Ball(char* keys,
 
 					NormalizedVec = Normalize({ 0.0f,0.0f }, VerticleVec(rightBottom, leftBottom));
 					ballPos = newCrossPos.operator+(NormalizedVec.operator*({ -ballRadius,-ballRadius }));
-					ballPos.y++;
 
-					return Bottom;
+
 					break;
 
 				case Left:
@@ -866,11 +862,10 @@ int PushBackBox_Ball(char* keys,
 					NormalizedVec = Normalize({ 0.0f,0.0f }, VerticleVec(leftBottom, leftTop));
 					ballPos = newCrossPos.operator+(NormalizedVec.operator*({ -ballRadius - 1,-ballRadius -1}));
 
-					return Left;
+
 					break;
 
 				default:
-					return 0;
 					break;
 				}
 			
@@ -899,7 +894,6 @@ int PushBackBox_Ball(char* keys,
 					dropSpeed = 0.0f;
 					jumpSpeed = 0.0f;
 
-					return Top;
 					break;
 
 				case Right:
@@ -918,7 +912,6 @@ int PushBackBox_Ball(char* keys,
 					ballPos = newCrossPos.operator+(NormalizedVec.operator*({ -ballRadius - 1,-ballRadius - 1}));
 
 
-					return Right;
 					break;
 
 				case Bottom:
@@ -938,7 +931,6 @@ int PushBackBox_Ball(char* keys,
 					ballPos = newCrossPos.operator+(NormalizedVec.operator*({ -ballRadius,-ballRadius }));
 
 
-					return Bottom;
 					break;
 
 				case Left:
@@ -956,22 +948,19 @@ int PushBackBox_Ball(char* keys,
 					NormalizedVec = Normalize({ 0.0f,0.0f, }, VerticleVec(leftBottom, leftTop));
 					ballPos = newCrossPos.operator+(NormalizedVec.operator*({ -ballRadius - 1,-ballRadius - 1}));
 
-					return Left;
+
 					break;
 
 				default:
-					return 0;
 					break;
 				}
 				
 			}
 
 
+
 		} else {
 			hitSurface = 0;
-			return 0;
 		}
-
 	}
-		return 0;
 };

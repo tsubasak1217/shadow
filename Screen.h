@@ -14,9 +14,6 @@ class Screen {
 public:
 	Screen(Map map, Light light) {
 
-		boxPos_.clear();
-		preBoxPos_.clear();
-
 		size_ = {
 			map.GetPuzzleMapSize().x,
 			map.GetPuzzleMapSize().y * 2.0f
@@ -68,8 +65,6 @@ public:
 
 			boxPos_.push_back(objVertex);
 		}
-
-		preBoxPos_ = boxPos_;
 	};
 
 	void Init(int sceneNum, Map map, Light light);

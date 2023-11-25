@@ -68,7 +68,7 @@ Map::Map(const Resources& rs) {
 			//各頂点の座標計算(3d)------------------------------------------------
 			if (mapChip_[i][j] == 1 or mapChip_[i][j] == 2) {
 				std::vector<Vec3>objVertex;
-				float zRate = 2;
+				float zRate = (5.0f / 3.0f);
 
 				//手前 → 奥
 				//LT,RT,LB,RB の順番
@@ -619,11 +619,7 @@ void Map::Draw(const Resources &rs) {
 						0xff3399ff
 					);
 				}
-			}
-		}
 
-		for (int row = 0; row < mapChip_.size(); row++) {
-			for (int col = 0; col < mapChip_[0].size(); col++) {
 				if (mapChip_[row][col] == 1) {
 
 					Novice::DrawQuad(
