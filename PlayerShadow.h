@@ -33,6 +33,12 @@ class PlayerShadow {
 	std::vector<int>hitSurface2_;
 	std::vector<int>preHitSurface2_;
 	int blockCount;
+
+	int boardingBlock_;
+	Vec2 boardingPos_;
+	float preBoadingVecRatio_;
+	float boadingVecRatio_;
+
 	bool isHitMapChip_;
 	bool isHitRect_;
 	bool isInsideLightLT_;
@@ -85,6 +91,10 @@ public:
 		isHitMapChip_ = false;
 		isHitRect_ = false;
 		blockCount = 0;
+		boardingBlock_ = -1;
+		boardingPos_ = { 0.0f,0.0f };
+		boadingVecRatio_ = 0.0f;
+		preBoadingVecRatio_ = boadingVecRatio_;
 
 		isInsideLightLB_ = false;
 		isInsideLightRB_ = false;

@@ -660,7 +660,7 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map) {
 
 													if (address_[i].x == address_[2].x) {
 
-													//動かすブロックの下側が空いていれば
+														//動かすブロックの下側が空いていれば
 														if (address_[i].y + 2 < map.GetMapChip().size()) {
 															if (map.GetMapChip()[address_[i].y + 2][address_[i].x] <= 0) {
 
@@ -715,6 +715,8 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map) {
 
 		/*------------------------------ブロックを動かす-------------------------------*/
 		if (isMoveBlock_) {
+
+			Global::isMoveShadow_ = true;
 
 			switch (moveDirection_) {
 
@@ -901,6 +903,8 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map) {
 				);
 
 			}
+		} else {
+			Global::isMoveShadow_ = false;
 		}
 
 		/*map.SetPos(

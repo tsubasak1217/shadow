@@ -93,10 +93,12 @@ void Light::Update(char* keys, const ChangeScene& cs, Map map, float rangeTheta)
 
 
 		if (keys[DIK_Q]) {
+			Global::isMoveShadow_ = true;
 			emitPos_.x -= 2.0f;
 		}
 
 		if (keys[DIK_E]) {
+			Global::isMoveShadow_ = true;
 			emitPos_.x += 2.0f;
 		}
 

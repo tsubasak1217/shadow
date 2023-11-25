@@ -50,6 +50,10 @@ void PlayerShadow::Init(int sceneNum, Screen screen, Shadow shadow) {
 		isHitMapChip_ = false;
 		isHitRect_ = false;
 		blockCount = 0;
+		boardingBlock_ = -1;
+		boardingPos_ = { 0.0f,0.0f };
+		boadingVecRatio_ = 0.0f;
+		preBoadingVecRatio_ = boadingVecRatio_;
 
 		hitSurface_.clear();
 		hitSurface2_.clear();
@@ -286,6 +290,51 @@ void PlayerShadow::Update(char* keys, const Resources& rs, const ChangeScene& cs
 				pos_.x += velocity_.x;
 				pos_.y += velocity_.y;
 			}
+
+
+			//乗っている影ブロックが動けば一緒に動く--------------------------------------
+			if (boardingBlock_ >= 0) {
+				if (isJump_) {
+					boardingBlock_ = -1;
+				}
+			}
+
+			preBoadingVecRatio_ = boadingVecRatio_;
+			for (int i = 0; i < screen.GetPos().size(); i++) {
+
+				hitSurface_[i] = 0;
+
+				//
+				if (boardingBlock_ >= 0) {
+
+					boardingPos_ = CrossPos(
+						screen.GetPos(boardingBlock_, 0), screen.GetPos(boardingBlock_, 1),
+						pos_, { pos_.x,pos_.y + 1.0f }
+					);
+
+					boadingVecRatio_ = Dot(
+						screen.GetPos(boardingBlock_, 0), screen.GetPos(boardingBlock_, 1),
+						pos_
+					);
+
+					if (boadingVecRatio_ >= 0.0f &&
+						boadingVecRatio_ <= CheckLength(screen.GetPos(boardingBlock_, 0), screen.GetPos(boardingBlock_, 1))) {
+						if (Global::isMoveShadow_) {
+							pos_.x = screen.GetPos(boardingBlock_, 0).x +
+								Normalize(screen.GetPos(boardingBlock_, 1), screen.GetPos(boardingBlock_, 0)).x * preBoadingVecRatio_;
+							pos_.y = screen.GetPos(boardingBlock_, 0).y +
+								Normalize(screen.GetPos(boardingBlock_, 1), screen.GetPos(boardingBlock_, 0)).y * preBoadingVecRatio_
+								- (size_.y * 0.5f);
+						}
+
+						Novice::ScreenPrintf(0, 100, "%f",boadingVecRatio_);
+
+					} else {
+						boardingBlock_ = -1;
+					}
+				}
+			}
+
 
 			/*-------------------------------押し戻し-------------------------------*/
 
@@ -617,40 +666,45 @@ void PlayerShadow::Update(char* keys, const Resources& rs, const ChangeScene& cs
 				}
 			}
 
-			/*if (shadow.GetMapChip()[address_[2].y][address_[2].x] != 7 or
-				shadow.GetMapChip()[address_[3].y][address_[3].x] != 7) {*/
 
-				//影の矩形との当たり判定
 			for (int i = 0; i < screen.GetPos().size(); i++) {
 
-				hitSurface_[i] = 0;
-
+				//影の矩形との当たり判定
 				if (screen.GetPos(i, 6).x >= screen.GetPos(i, 2).x && screen.GetPos(i, 7).x >= screen.GetPos(i, 3).x) {
 
-					PushBackBox_Ball(keys,
-						screen.GetPos(i, 0), screen.GetPos(i, 1), screen.GetPos(i, 2), screen.GetPos(i, 7),
-						screen.GetPrePos(i, 0), screen.GetPrePos(i, 1), screen.GetPrePos(i, 2), screen.GetPrePos(i, 7),
-						pos_, prePos_, size_.x * 0.5f,
-						isDrop_, isJump_, dropSpeed_, jumpSpeed_, hitCount_, hitSurface_[i], preHitSurface_[i]
-					);
+					if (
+						PushBackBox_Ball(keys,
+							screen.GetPos(i, 0), screen.GetPos(i, 1), screen.GetPos(i, 2), screen.GetPos(i, 7),
+							screen.GetPrePos(i, 0), screen.GetPrePos(i, 1), screen.GetPrePos(i, 2), screen.GetPrePos(i, 7),
+							pos_, prePos_, size_.x * 0.5f,
+							isDrop_, isJump_, dropSpeed_, jumpSpeed_, hitCount_, hitSurface_[i], preHitSurface_[i]
+						) == Top) {
+						boardingBlock_ = i;
+					}
 
 				} else if (screen.GetPos(i, 7).x <= screen.GetPos(i, 3).x && screen.GetPos(i, 6).x <= screen.GetPos(i, 2).x) {
 
-					PushBackBox_Ball(keys,
-						screen.GetPos(i, 0), screen.GetPos(i, 1), screen.GetPos(i, 6), screen.GetPos(i, 3),
-						screen.GetPrePos(i, 0), screen.GetPrePos(i, 1), screen.GetPrePos(i, 6), screen.GetPrePos(i, 3),
-						pos_, prePos_, size_.x * 0.5f,
-						isDrop_, isJump_, dropSpeed_, jumpSpeed_, hitCount_, hitSurface_[i], preHitSurface_[i]
-					);
+					if (
+						PushBackBox_Ball(keys,
+							screen.GetPos(i, 0), screen.GetPos(i, 1), screen.GetPos(i, 6), screen.GetPos(i, 3),
+							screen.GetPrePos(i, 0), screen.GetPrePos(i, 1), screen.GetPrePos(i, 6), screen.GetPrePos(i, 3),
+							pos_, prePos_, size_.x * 0.5f,
+							isDrop_, isJump_, dropSpeed_, jumpSpeed_, hitCount_, hitSurface_[i], preHitSurface_[i]
+						) == Top) {
+						boardingBlock_ = i;
+					}
 
 				} else if (screen.GetPos(i, 6).x >= screen.GetPos(i, 2).x && screen.GetPos(i, 7).x <= screen.GetPos(i, 3).x) {
 
-					PushBackBox_Ball(keys,
-						screen.GetPos(i, 0), screen.GetPos(i, 1), screen.GetPos(i, 2), screen.GetPos(i, 3),
-						screen.GetPrePos(i, 0), screen.GetPrePos(i, 1), screen.GetPrePos(i, 2), screen.GetPrePos(i, 3),
-						pos_, prePos_, size_.x * 0.5f,
-						isDrop_, isJump_, dropSpeed_, jumpSpeed_, hitCount_, hitSurface_[i], preHitSurface_[i]
-					);
+					if (
+						PushBackBox_Ball(keys,
+							screen.GetPos(i, 0), screen.GetPos(i, 1), screen.GetPos(i, 2), screen.GetPos(i, 3),
+							screen.GetPrePos(i, 0), screen.GetPrePos(i, 1), screen.GetPrePos(i, 2), screen.GetPrePos(i, 3),
+							pos_, prePos_, size_.x * 0.5f,
+							isDrop_, isJump_, dropSpeed_, jumpSpeed_, hitCount_, hitSurface_[i], preHitSurface_[i]
+						) == Top) {
+						boardingBlock_ = i;
+					}
 				}
 			}
 
@@ -777,30 +831,39 @@ void PlayerShadow::Update(char* keys, const Resources& rs, const ChangeScene& cs
 
 						if (screen.GetPos(i, 6).x >= screen.GetPos(i, 2).x && screen.GetPos(i, 7).x >= screen.GetPos(i, 3).x) {
 
-							PushBackBox_Ball(keys,
-								screen.GetPos(i, 0), screen.GetPos(i, 1), screen.GetPos(i, 2), screen.GetPos(i, 7),
-								screen.GetPrePos(i, 0), screen.GetPrePos(i, 1), screen.GetPrePos(i, 2), screen.GetPrePos(i, 7),
-								pos_, prePos_, size_.x * 0.5f,
-								isDrop_, isJump_, dropSpeed_, jumpSpeed_, hitCount_, hitSurface_[i], preHitSurface_[i]
-							);
+							if (
+								PushBackBox_Ball(keys,
+									screen.GetPos(i, 0), screen.GetPos(i, 1), screen.GetPos(i, 2), screen.GetPos(i, 7),
+									screen.GetPrePos(i, 0), screen.GetPrePos(i, 1), screen.GetPrePos(i, 2), screen.GetPrePos(i, 7),
+									pos_, prePos_, size_.x * 0.5f,
+									isDrop_, isJump_, dropSpeed_, jumpSpeed_, hitCount_, hitSurface_[i], preHitSurface_[i]
+								) == Top) {
+								boardingBlock_ = i;
+							}
 
 						} else if (screen.GetPos(i, 7).x <= screen.GetPos(i, 3).x && screen.GetPos(i, 6).x <= screen.GetPos(i, 2).x) {
 
-							PushBackBox_Ball(keys,
-								screen.GetPos(i, 0), screen.GetPos(i, 1), screen.GetPos(i, 6), screen.GetPos(i, 3),
-								screen.GetPrePos(i, 0), screen.GetPrePos(i, 1), screen.GetPrePos(i, 6), screen.GetPrePos(i, 3),
-								pos_, prePos_, size_.x * 0.5f,
-								isDrop_, isJump_, dropSpeed_, jumpSpeed_, hitCount_, hitSurface_[i], preHitSurface_[i]
-							);
+							if (
+								PushBackBox_Ball(keys,
+									screen.GetPos(i, 0), screen.GetPos(i, 1), screen.GetPos(i, 6), screen.GetPos(i, 3),
+									screen.GetPrePos(i, 0), screen.GetPrePos(i, 1), screen.GetPrePos(i, 6), screen.GetPrePos(i, 3),
+									pos_, prePos_, size_.x * 0.5f,
+									isDrop_, isJump_, dropSpeed_, jumpSpeed_, hitCount_, hitSurface_[i], preHitSurface_[i]
+								) == Top) {
+								boardingBlock_ = i;
+							}
 
 						} else if (screen.GetPos(i, 6).x >= screen.GetPos(i, 2).x && screen.GetPos(i, 7).x <= screen.GetPos(i, 3).x) {
 
-							PushBackBox_Ball(keys,
-								screen.GetPos(i, 0), screen.GetPos(i, 1), screen.GetPos(i, 2), screen.GetPos(i, 3),
-								screen.GetPrePos(i, 0), screen.GetPrePos(i, 1), screen.GetPrePos(i, 2), screen.GetPrePos(i, 3),
-								pos_, prePos_, size_.x * 0.5f,
-								isDrop_, isJump_, dropSpeed_, jumpSpeed_, hitCount_, hitSurface_[i], preHitSurface_[i]
-							);
+							if (
+								PushBackBox_Ball(keys,
+									screen.GetPos(i, 0), screen.GetPos(i, 1), screen.GetPos(i, 2), screen.GetPos(i, 3),
+									screen.GetPrePos(i, 0), screen.GetPrePos(i, 1), screen.GetPrePos(i, 2), screen.GetPrePos(i, 3),
+									pos_, prePos_, size_.x * 0.5f,
+									isDrop_, isJump_, dropSpeed_, jumpSpeed_, hitCount_, hitSurface_[i], preHitSurface_[i]
+								) == Top) {
+								boardingBlock_ = i;
+							}
 						}
 					}
 
@@ -877,6 +940,8 @@ void PlayerShadow::Update(char* keys, const Resources& rs, const ChangeScene& cs
 				int(shadow.GetPos().size()), int(shadow.GetPos()[0].size())
 			);
 		}
+
+		Novice::ScreenPrintf(0, 60, "%d", boardingBlock_);
 
 		break;
 		//====================================================================================
