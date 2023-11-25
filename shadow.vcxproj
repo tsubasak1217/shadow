@@ -109,8 +109,6 @@
     <ClCompile Include="C:\KamataEngine\Adapter\Novice.cpp" />
     <ClCompile Include="ChangeScene.cpp" />
     <ClCompile Include="Easing.cpp" />
-    <ClCompile Include="Emitter.cpp" />
-    <ClCompile Include="Particle.cpp" />
     <ClCompile Include="Pause.cpp" />
     <ClCompile Include="stageClearEffect.cpp" />
     <ClCompile Include="global.cpp" />
