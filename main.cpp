@@ -107,7 +107,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓描画処理ここから
 		///
 
-		map.DrawBG();
+		global.Update();
+
+		map.DrawBG(rs);
 		screen.Draw(map, rs, light);
 		shadow.Draw(rs);
 		playerShadow.Draw(screen);
@@ -158,7 +160,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		default:
 			break;
 		}
-
 
 		//ImGui::Begin("window");
 		//ImGui::End();

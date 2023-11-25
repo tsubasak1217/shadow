@@ -1,7 +1,7 @@
 ﻿#include "Light.h"
 
 //=========================================================初期化関数==============================================================
-void Light::Init(int sceneNum,Map map) {
+void Light::Init(int sceneNum, Map map) {
 	switch (sceneNum) {
 		//====================================================================================
 	case TITLE://							   タイトル画面
@@ -44,7 +44,7 @@ void Light::Init(int sceneNum,Map map) {
 	default:
 		break;
 	}
-	
+
 }
 
 //====================================================アップデート=============================================================
@@ -52,7 +52,7 @@ void Light::Update(char* keys, const ChangeScene& cs, Map map, float rangeTheta)
 
 	//シーン遷移の始まった瞬間にシーンに合わせて初期化
 	if (cs.isStartChange_ && cs.preIsEndChange_) {
-		Init(Scene::sceneNum_,map);
+		Init(Scene::sceneNum_, map);
 	}
 
 	switch (Scene::sceneNum_) {
@@ -69,7 +69,7 @@ void Light::Update(char* keys, const ChangeScene& cs, Map map, float rangeTheta)
 		//====================================================================================
 
 		//Rで初期化
-		if(keys[DIK_R]) {
+		if (keys[DIK_R]) {
 			Init(Scene::sceneNum_, map);
 		}
 
@@ -105,7 +105,7 @@ void Light::Update(char* keys, const ChangeScene& cs, Map map, float rangeTheta)
 		//左右の壁
 		if (emitPos_.x > Global::windowSize_.x - 32.0f) {
 			emitPos_.x = Global::windowSize_.x - 32.0f;
-		
+
 		} else if (emitPos_.x < 32.0f) {
 			emitPos_.x = 32.0f;
 		}
@@ -126,7 +126,7 @@ void Light::Update(char* keys, const ChangeScene& cs, Map map, float rangeTheta)
 
 
 //====================================================描画=============================================================
-void Light::Draw(Map map,ChangeScene CS) {
+void Light::Draw(Map map, ChangeScene CS) {
 
 	switch (Scene::sceneNum_) {
 		//====================================================================================
@@ -141,6 +141,7 @@ void Light::Draw(Map map,ChangeScene CS) {
 	case GAME://								ゲーム本編
 		//====================================================================================
 		if (!CS.isEndChange_) {//ゴールにたどり着いたとき、光を消す
+
 			Novice::DrawTriangle(
 				int(emitPos_.x),
 				int(emitPos_.y),
@@ -148,9 +149,22 @@ void Light::Draw(Map map,ChangeScene CS) {
 				int(leftVec_.y),
 				int(rightVec_.x),
 				int(rightVec_.y),
-				0xffffff22,
+				0xffffff00 + (18 - (((Global::timeCount_ % 4 )/2) * 1)),
 				kFillModeSolid
 			);
+
+			for (int i = 0; i < 2; i++) {
+				Novice::DrawTriangle(
+					int(emitPos_.x),
+					int(emitPos_.y),
+					int(leftVec_.x - i * 48.0f),
+					int(leftVec_.y),
+					int(rightVec_.x + i * 48.0f),
+					int(rightVec_.y),
+					0xffffff02,
+					kFillModeSolid
+				);
+			}
 		}
 		Novice::DrawEllipse(
 			int(emitPos_.x),

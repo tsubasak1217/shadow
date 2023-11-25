@@ -162,6 +162,7 @@ namespace My {
 	void DrawTriangle(Vec2 center, float radius, float theta, int color);
 	//星
 	void DrawStar(Vec2 center, float radius, float theta, int color);
+	void DrawStarWire(Vec2 center, float radius, float theta, int color);
 }
 
 //================================================================
