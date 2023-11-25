@@ -304,11 +304,11 @@ void Shadow::Draw(const Resources& rs) {
 					Novice::DrawQuad(//スイッチを踏むと現れるブロック(スイッチが踏まれていないとき)
 						int(pos_[i][j].x - size_.x * 0.5f),
 						int(pos_[i][j].y + size_.y * 0.5f),
-						int(pos_[i][j].x + size_.x * 0.5f + 1),
+						int(pos_[i][j].x + size_.x * 0.5f),
 						int(pos_[i][j].y + size_.y * 0.5f),
 						int(pos_[i][j].x - size_.x * 0.5f),
 						int(pos_[i][j].y - size_.y * 0.5f),
-						int(pos_[i][j].x + size_.x * 0.5f + 1),
+						int(pos_[i][j].x + size_.x * 0.5f),
 						int(pos_[i][j].y - size_.y * 0.5f),
 						0, 0,
 						1, 1,

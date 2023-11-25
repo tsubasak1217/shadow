@@ -35,7 +35,7 @@ public:
 
 	//
 	void Draw(const Resources& rs);
-	void DrawBG();
+	void DrawBG(const Resources& rs);
 
 	//アクセッサ
 	std::vector<std::vector<int>>GetMapChip() { return mapChip_; }

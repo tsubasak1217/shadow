@@ -623,6 +623,9 @@ void Player::Update(char* keys, Map& map,ChangeScene& cs,bool isPause) {
 
 			/*------------------------------ブロックを動かす-------------------------------*/
 			if (isMoveBlock_) {
+				if (moveDirection_ != Top) {
+					Global::isMoveShadow_ = true;
+				}
 
 				switch (moveDirection_) {
 
@@ -698,11 +701,13 @@ void Player::Update(char* keys, Map& map,ChangeScene& cs,bool isPause) {
 
 				//媒介変数を加算
 				if (blockMoveT_ < 1.0f) {
+
 					blockMoveT_ += (1.0f / moveTime_);
 
 				} else if (blockMoveT_ >= 1.0f) {//-----------------------------------------------------
 
 					//フラグと媒介変数を元に戻す
+					//Global::isMoveShadow_ = false;
 					isMoveBlock_ = false;
 					blockMoveT_ = 0.0f;
 

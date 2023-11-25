@@ -1081,7 +1081,81 @@ void My::DrawStar(Vec2 center, float radius, float theta, int color) {
 			kFillModeSolid
 		);
 	}
-};
+}
+
+// 中心点から星を描く関数(線)
+/// <summary>
+/// 中心点を基準に星を描く関数(線)
+/// </summary>
+/// <param name="center">中心座標</param>
+/// <param name="radius">三角形の半径</param>
+/// <param name="theta">三角形の角度</param>
+/// <param name="color">三角形の色</param>
+void My::DrawStarWire(Vec2 center, float radius, float theta, int color) {
+
+	Vec2 vertex[5];
+	Vec2 preVertex[5];
+	Vec2 crossPos[5];
+
+	//初期座標
+	for (int i = 0; i < 5; i++) {
+
+		vertex[i].x = center.x + radius * cosf(((((2.0f / 5.0f) * i) - (1.0f / 2.0f)) * float(M_PI)));
+		vertex[i].y = center.y + radius * sinf(((((2.0f / 5.0f) * i) - (1.0f / 2.0f)) * float(M_PI)));
+	}
+
+	//回転
+	for (int i = 0; i < 5; i++) {
+
+		preVertex[i] = vertex[i];
+
+		preVertex[i].x -= center.x;
+		preVertex[i].y -= center.y;
+
+		vertex[i].x = preVertex[i].x * cosf(theta) - preVertex[i].y * sinf(theta);
+		vertex[i].y = preVertex[i].x * sinf(theta) + preVertex[i].y * cosf(theta);
+
+		vertex[i].x += center.x;
+		vertex[i].y += center.y;
+	}
+
+	crossPos[0] = CrossPos(vertex[0], vertex[2], vertex[4], vertex[1]);
+	crossPos[1] = CrossPos(vertex[1], vertex[3], vertex[0], vertex[2]);
+	crossPos[2] = CrossPos(vertex[2], vertex[4], vertex[1], vertex[3]);
+	crossPos[3] = CrossPos(vertex[3], vertex[0], vertex[2], vertex[4]);
+	crossPos[4] = CrossPos(vertex[4], vertex[1], vertex[3], vertex[0]);
+
+	//描画
+	for (int i = 0; i < 5; i++) {
+		Novice::DrawLine(
+			int(vertex[i].x),
+			int(vertex[i].y),
+			int(crossPos[i].x),
+			int(crossPos[i].y),
+			color
+		);
+
+		if (i != 0) {
+			Novice::DrawLine(
+				int(vertex[i].x),
+				int(vertex[i].y),
+				int(crossPos[i - 1].x),
+				int(crossPos[i - 1].y),
+				color
+			);
+		} else {
+			Novice::DrawLine(
+				int(vertex[0].x),
+				int(vertex[0].y),
+				int(crossPos[4].x),
+				int(crossPos[4].y),
+				color
+			);
+		}
+	}
+
+}
+;
 
 
 //================================================================
