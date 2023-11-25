@@ -9,13 +9,14 @@ public:
 	std::string screenCsv_[8];
 	int whiteGH_;
 	int doorGH_;
-	int blockGH_[6] = {
+	int blockGH_[7] = {
 	Novice::LoadTexture("./Resources/images/block_normal.png"),
 	Novice::LoadTexture("./Resources/images/block_high.png"),
 	Novice::LoadTexture("./Resources/images/hole.png"),
 	Novice::LoadTexture("./Resources/images/switch_off.png"),
 	Novice::LoadTexture("./Resources/images/switch_on.png"),
 	Novice::LoadTexture("./Resources/images/ground.png"),
+	Novice::LoadTexture("./Resources/images/light.png"),
 	};
 
 	Resources();

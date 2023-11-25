@@ -126,7 +126,7 @@ void Light::Update(char* keys, const ChangeScene& cs, Map map, float rangeTheta)
 
 
 //====================================================描画=============================================================
-void Light::Draw(Map map, ChangeScene CS) {
+void Light::Draw(const Resources& rs,Map map, ChangeScene CS) {
 
 	switch (Scene::sceneNum_) {
 		//====================================================================================
@@ -166,12 +166,21 @@ void Light::Draw(Map map, ChangeScene CS) {
 				);
 			}
 		}
-		Novice::DrawEllipse(
-			int(emitPos_.x),
-			int(emitPos_.y),
-			32, 32, 0.0f,
-			0xffffffff,
-			kFillModeSolid
+
+
+		Novice::DrawQuad(
+			int(emitPos_.x - 32),
+			int(emitPos_.y - 48),
+			int(emitPos_.x + 32),
+			int(emitPos_.y - 48),
+			int(emitPos_.x - 32),
+			int(emitPos_.y + 16),
+			int(emitPos_.x + 32),
+			int(emitPos_.y + 16),
+			0, 0,
+			64, 64,
+			rs.blockGH_[6],
+			0xffffffff
 		);
 
 		break;

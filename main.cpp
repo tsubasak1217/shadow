@@ -117,7 +117,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			particle[i].Draw();
 		}
 
-		light.Draw(map,cs);
+		light.Draw(rs,map,cs);
 		map.Draw(rs);
 		player.Draw(rs);
 
