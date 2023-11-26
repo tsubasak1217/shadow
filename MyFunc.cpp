@@ -183,6 +183,29 @@ Vec2 CrossPos(Vec2 line1Pos1, Vec2 line1Pos2, Vec2 line2Pos1, Vec2 line2Pos2) {
 	return crossPos;
 }
 
+Vec2 CrossPos2(Vec2 line1Pos1, Vec2 line1Pos2, Vec2 line2Pos1, Vec2 line2Pos2) {
+	float s1 =
+		((line2Pos2.x - line2Pos1.x) * (line1Pos1.y - line2Pos1.y) -
+			(line2Pos2.y - line2Pos1.y) * (line1Pos1.x - line2Pos1.x)) / 2.0f;
+
+	float s2 =
+		((line2Pos2.x - line2Pos1.x) * (line2Pos1.y - line1Pos2.y) -
+			(line2Pos2.y - line2Pos1.y) * (line2Pos1.x - line1Pos2.x)) / 2.0f;
+
+	Vec2 crossPos = { 0.0f,0.0f };
+
+	if (s1 != 0 && s2 != 0) {
+		crossPos = {
+			line1Pos1.x + (line1Pos2.x - line1Pos1.x) * s1 / (s1 + s2),
+			line1Pos1.y + (line1Pos2.y - line1Pos1.y) * s1 / (s1 + s2)
+		};
+	} else {
+		crossPos = line1Pos1;
+	}
+
+	return crossPos;
+}
+
 //内積で角度を計算する関数
 float CalcAngle(Vec2 pos1, Vec2 pos2, Vec2 pos3) {
 	// ベクトルAとBの内積
@@ -1045,9 +1068,6 @@ void My::DrawStar(Vec2 center, float radius, float theta, int color) {
 		vertex[i].y = center.y + radius * sinf(((((2.0f / 5.0f) * i) - (1.0f / 2.0f)) * float(M_PI)));
 	}
 
-	crossPos[0] = CrossPos(vertex[2], vertex[4], vertex[3], vertex[0]);
-	crossPos[1] = CrossPos(vertex[3], vertex[0], vertex[4], vertex[1]);
-	crossPos[2] = CrossPos(vertex[4], vertex[1], vertex[0], vertex[2]);
 
 	//回転
 	for (int i = 0; i < 5; i++) {
@@ -1067,6 +1087,54 @@ void My::DrawStar(Vec2 center, float radius, float theta, int color) {
 	crossPos[0] = CrossPos(vertex[2], vertex[4], vertex[3], vertex[0]);
 	crossPos[1] = CrossPos(vertex[3], vertex[0], vertex[4], vertex[1]);
 	crossPos[2] = CrossPos(vertex[4], vertex[1], vertex[0], vertex[2]);
+
+	//描画
+	for (int i = 0; i < 3; i++) {
+		Novice::DrawTriangle(
+			int(vertex[i].x),
+			int(vertex[i].y),
+			int(vertex[i + 2].x),
+			int(vertex[i + 2].y),
+			int(crossPos[i].x),
+			int(crossPos[i].y),
+			color,
+			kFillModeSolid
+		);
+	}
+}
+
+void My::DrawStar(Vec2 center, float radius, Vec2 scale, float theta, int color) {
+
+	Vec2 vertex[5];
+	Vec2 preVertex[5];
+	Vec2 crossPos[3];
+
+	//初期座標
+	for (int i = 0; i < 5; i++) {
+
+		vertex[i].x = center.x + (radius * scale.x) * cosf(((((2.0f / 5.0f) * i) - (1.0f / 2.0f)) * float(M_PI)));
+		vertex[i].y = center.y + (radius * scale.y) * sinf(((((2.0f / 5.0f) * i) - (1.0f / 2.0f)) * float(M_PI)));
+	}
+
+
+	//回転
+	for (int i = 0; i < 5; i++) {
+
+		preVertex[i] = vertex[i];
+
+		preVertex[i].x -= center.x;
+		preVertex[i].y -= center.y;
+
+		vertex[i].x = preVertex[i].x * cosf(theta) - preVertex[i].y * sinf(theta);
+		vertex[i].y = preVertex[i].x * sinf(theta) + preVertex[i].y * cosf(theta);
+
+		vertex[i].x += center.x;
+		vertex[i].y += center.y;
+	}
+
+	crossPos[0] = CrossPos2(vertex[2], vertex[4], vertex[3], vertex[0]);
+	crossPos[1] = CrossPos2(vertex[3], vertex[0], vertex[4], vertex[1]);
+	crossPos[2] = CrossPos2(vertex[4], vertex[1], vertex[0], vertex[2]);
 
 	//描画
 	for (int i = 0; i < 3; i++) {
