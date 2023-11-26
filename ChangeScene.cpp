@@ -311,7 +311,7 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 
 		Reset();
 
-#pragma region"ゲーム本編の開始処理（ステージからゲーム画面）"
+#pragma region"ゲーム本編の開始処理（ステージからゲーム画面とステージリセット）"
 
 
 #pragma region"暗幕を上げる"
@@ -336,9 +336,7 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 							isChangeColor_ = false;//暗幕の透明度を変化させるフラグを下す
 						}
 						BCEaseDir_ *= -1;
-						//for (int i = 0; i < 8; i++) {
-						//	isDraw_[i] = false;//描画されている他の扉を消す//扉の上のレイヤーに暗幕を下すので必要ないかも
-						//}
+
 					}
 					if (BCT_ <= 0.0f) {
 						BCT_ = 0.0f;
