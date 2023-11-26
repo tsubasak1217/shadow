@@ -39,9 +39,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// キー入力結果を受け取る箱
 	char keys[256] = { 0 };
 	char preKeys[256] = { 0 };
-	/*座標を見るため*/
-	Vector2 <int>mousePos;
-
 
 
 	Resources rs;
@@ -196,14 +193,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		default:
 			break;
 		}
-		Novice::ScreenPrintf(200, 0, "Mouse X : %d", mousePos.x);
-		Novice::ScreenPrintf(200, 20, "Mouse Y : %d", mousePos.y);
-		if (Novice::IsTriggerMouse(0)) {
 
-			Novice::GetMousePosition(&mousePos.x, &mousePos.y);
 
-		}
-		Novice::DrawEllipse(mousePos.x, mousePos.y, 2, 2, 0.0f, 0xFF0000FF, kFillModeSolid);
 		//ImGui::Begin("window");
 		//ImGui::End();
 
