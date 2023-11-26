@@ -39,6 +39,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// キー入力結果を受け取る箱
 	char keys[256] = { 0 };
 	char preKeys[256] = { 0 };
+	/*座標を見るため*/
+	Vector2 <int>mousePos;
+
 
 
 	Resources rs;
@@ -77,7 +80,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓更新処理ここから
 		///
 		Novice::ScreenPrintf(0, 0, "StageNum=%d", Map::stageNum_);
-		cs.UpDate(keys, preKeys, door.isChangeScene_, door.CPos_, door.selectNum_, SCE.canSceneChange, shadow.GetGoalPos(), shadow.GetGoalSize(), pause.isSelect_, title.isPush_);
+		cs.UpDate(keys, preKeys, door.isChangeScene_, door.CPos_, door.selectNum_, stageClear.canSceneChange,
+			shadow.GetGoalPos(), shadow.GetGoalSize(), pause.isSelect_, title.isPush_);
 
 
 		map.Update(keys, rs, cs);
@@ -88,7 +92,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		shadow.Update(keys, cs, rs, screen, map);
 
 		SCE.Update(stageClear, playerShadow.GetstarCount());
-		playerShadow.Update(keys, rs, cs, screen, shadow, player, map, light, pause.isPause_);
+		playerShadow.Update(keys, preKeys, rs, cs, screen, shadow, player, map, light, pause.isPause_);
 		for (int i = 0; i < 120; i++) {
 			particle[i].Update(emitter, playerShadow, shadow, screen);
 		}
@@ -105,7 +109,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 
 
-		stageClear.Debug(keys, preKeys);
+		//stageClear.Debug(keys, preKeys);
 
 		//デバックでのみ操作可能
 #if _DEBUG
@@ -192,7 +196,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		default:
 			break;
 		}
+		Novice::ScreenPrintf(200, 0, "Mouse X : %d", mousePos.x);
+		Novice::ScreenPrintf(200, 20, "Mouse Y : %d", mousePos.y);
+		if (Novice::IsTriggerMouse(0)) {
 
+			Novice::GetMousePosition(&mousePos.x, &mousePos.y);
+
+		}
+		Novice::DrawEllipse(mousePos.x, mousePos.y, 2, 2, 0.0f, 0xFF0000FF, kFillModeSolid);
 		//ImGui::Begin("window");
 		//ImGui::End();
 

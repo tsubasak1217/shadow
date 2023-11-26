@@ -81,7 +81,7 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause) {
 			Init(Scene::sceneNum_, map);
 		}
 
-		if (!isPause) {
+		if (!isPause && !cs.isEndChange_ && !cs.isStartChange_) {
 			//毎フレームの初期化
 			isSwappped_ = false;
 

@@ -19,8 +19,7 @@ class SCE {
 
 
 public:
-	/*このフラグが立っているときシーンチェンジできるようになる*/
-	bool canSceneChange;
+
 
 	SCE() {
 		for (int i = 0; i < STAR_MAX; i++) {
@@ -36,7 +35,6 @@ public:
 				popTimer_ = kPopTimer_;
 			}
 		}
-		canSceneChange = false;
 
 	}
 	void Init(int i ,int j,StageClear stageColor);

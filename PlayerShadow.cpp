@@ -80,7 +80,7 @@ void PlayerShadow::Init(int sceneNum, Screen screen, Shadow shadow) {
 	}
 }
 
-void PlayerShadow::Update(char* keys, const Resources& rs, ChangeScene& cs, Screen& screen, Shadow& shadow, Player& player, Map& map, Light& light, bool isPause) {
+void PlayerShadow::Update(char* keys,char* Prekeys, const Resources& rs, ChangeScene& cs, Screen& screen, Shadow& shadow, Player& player, Map& map, Light& light, bool isPause) {
 
 	//シーン遷移の始まった瞬間にシーンに合わせて初期化
 	if (cs.isStartChange_ && cs.preIsEndChange_) {
@@ -105,7 +105,7 @@ void PlayerShadow::Update(char* keys, const Resources& rs, ChangeScene& cs, Scre
 		if (keys[DIK_R]) {
 			Init(Scene::sceneNum_, screen, shadow);
 		}
-		if (!isPause) {
+		if (!isPause&&!cs.isEndChange_&&!cs.isStartChange_) {
 			//前のフレームの情報保存に関するもの
 			prePos_ = pos_;
 			prePosCopy_ = prePos_;
@@ -965,7 +965,7 @@ void PlayerShadow::Update(char* keys, const Resources& rs, ChangeScene& cs, Scre
 
 				//ゴールと当たったらクリアに移動
 				if (ColisionBox_Ball(shadow.GetGoalLT(), shadow.GetGoalRT(), shadow.GetGoalLB(), shadow.GetGoalRB(), pos_, (size_.x / 10))) {
-					if (keys[DIK_SPACE]) {
+					if (keys[DIK_SPACE]&&!Prekeys[DIK_SPACE]) {
 						cs.isEndChange_ = true;
 					}
 				}
@@ -1020,6 +1020,7 @@ void PlayerShadow::Draw(Screen screen) {
 				0x000000ff,
 				kFillModeSolid
 			);
+			DrawCat(pos_, size_.x, size_.y, 0x000000ff);
 		}
 
 		Novice::ScreenPrintf(0, 20, "%f", pos_.y);

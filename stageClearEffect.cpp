@@ -3,7 +3,7 @@
 void SCE::Init(int i, int j, StageClear stageColor) {
 
 	CPos_[i][j] = stageColor.starPos_[i];
-	size_[i][j] = float(rand() % 1000) / 100;
+	size_[i][j] = float(rand() % 500/*1000*/) / 100 * (stageColor.starSize_ / 25);
 	alpha_[i][j] = 0xFF;
 	color_[i][j] = 0x00000000;
 	MoveTheta_[i][j] = float(rand() % 200 - 100) / 100;

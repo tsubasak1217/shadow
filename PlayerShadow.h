@@ -110,7 +110,7 @@ public:
 
 	void Init(int sceneNum, Screen screen, Shadow shadow);
 
-	void Update(char* keys, const Resources& rs, ChangeScene& cs, Screen& screen, Shadow& shadow, Player& player, Map& map, Light& light, bool isPause);
+	void Update(char* keys, char* Prekeys, const Resources& rs, ChangeScene& cs, Screen& screen, Shadow& shadow, Player& player, Map& map, Light& light, bool isPause);
 
 	void Draw(Screen screen);
 

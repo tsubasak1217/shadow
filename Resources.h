@@ -26,6 +26,8 @@ Novice::LoadTexture("./Resources/images/ground.png"),
 	int stageClearFontGH_;
 	int stageClearFont2GH_;
 	int selectFontGH_;
+	int WindowGH_;
+
 	Resources();
 	~Resources();
 
