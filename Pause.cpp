@@ -51,6 +51,8 @@ void Pause::Draw(Resources rs) {
 	}
 }
 void Pause::Update(ChangeScene& cs, char* keys, char* preKeys) {
+
+
 	switch (Scene::sceneNum_) {
 		//====================================================================================
 	case TITLE://							   タイトル画面
@@ -68,6 +70,12 @@ void Pause::Update(ChangeScene& cs, char* keys, char* preKeys) {
 		//====================================================================================
 	case GAME://								ゲーム本編
 		//====================================================================================
+		if (cs.isStartChange_ && cs.preIsEndChange_) {
+			Reset();
+		}
+
+
+
 #pragma region"ESCAPEキーでポーズ切り替え"
 
 		/*ESCAPEキーでPAUSEのONOFFを可能にする*/
@@ -193,10 +201,12 @@ void Pause::Update(ChangeScene& cs, char* keys, char* preKeys) {
 					}
 					break;
 				case 1://ステージをリセット
-					if (isStageReset_) {
-						isStageReset_ = false;
+					if (!cs.isStartChange_ && !cs.isEndChange_) {//クリア画面で全ての処理が終わったとき
+						cs.isEndChange_ = true;
+						isStageReset_ = true;
 					}
-					isStageReset_ = true;
+
+
 					break;
 
 				case 2://ゲーム画面へ戻る
@@ -295,7 +305,7 @@ void Pause::Reset() {
 	isPause_ = false;//PAUSE画面か否か
 	isStartPause_ = false;//PAUSE画面か否か
 	isEndPause_ = false;//PAUSE画面か否か
-	isStageReset_ = false;
+	//isStageReset_ = false;
 #pragma endregion
 
 };

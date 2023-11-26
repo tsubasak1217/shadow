@@ -1,7 +1,7 @@
 ﻿#include "ChangeScene.h"
 
 void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CPos[],
-	int selectNum, bool& CanCS, Vec2 goalPos, Vec2 goalSize, bool& isPauseSelect, bool& isTitlePush) {
+	int selectNum, bool& CanCS, Vec2 goalPos, Vec2 goalSize, bool& isPauseSelect, bool& isTitlePush, bool& stageReset) {
 
 	preIsStartChange_ = isStartChange_;
 	preIsEndChange_ = isEndChange_;
@@ -317,37 +317,59 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 #pragma region"暗幕を上げる"
 
 		if (!isEndChange_ && isStartChange_) {
-			//足す透明度をイージング
-			if (isChangeColor_) {
-				BCT_ += (1.0f / BCEaseTimer_) * BCEaseDir_;
-				//BCAddT_ = EaseInOutBounce(BCT_);
-				if (BCEaseDir_ > 0) {
-					BCAddT_ = EaseInBounce(BCT_);
-				} else {
-					BCAddT_ = EaseInOutCubic(BCT_);
-				}
-
-				addBCColor_ = (1 - BCAddT_) * minBCColor_ + BCAddT_ * maxBCColor_;
-				if (BCT_ >= 1.0f) {
-					BCT_ = 1.0f;
-					isEaseSC_ = true;//状態遷移用の扉を中心へもっていくフラグを立てる（sceneChange）
-					if (!isEaseO_) {
-						isChangeColor_ = false;//暗幕の透明度を変化させるフラグを下す
+			if (!stageReset) {
+				//足す透明度をイージング
+				if (isChangeColor_) {
+					BCT_ += (1.0f / BCEaseTimer_) * BCEaseDir_;
+					//BCAddT_ = EaseInOutBounce(BCT_);
+					if (BCEaseDir_ > 0) {
+						BCAddT_ = EaseInBounce(BCT_);
+					} else {
+						BCAddT_ = EaseInOutCubic(BCT_);
 					}
-					BCEaseDir_ *= -1;
-					//for (int i = 0; i < 8; i++) {
-					//	isDraw_[i] = false;//描画されている他の扉を消す//扉の上のレイヤーに暗幕を下すので必要ないかも
-					//}
+
+					addBCColor_ = (1 - BCAddT_) * minBCColor_ + BCAddT_ * maxBCColor_;
+					if (BCT_ >= 1.0f) {
+						BCT_ = 1.0f;
+						isEaseSC_ = true;//状態遷移用の扉を中心へもっていくフラグを立てる（sceneChange）
+						if (!isEaseO_) {
+							isChangeColor_ = false;//暗幕の透明度を変化させるフラグを下す
+						}
+						BCEaseDir_ *= -1;
+						//for (int i = 0; i < 8; i++) {
+						//	isDraw_[i] = false;//描画されている他の扉を消す//扉の上のレイヤーに暗幕を下すので必要ないかも
+						//}
+					}
+					if (BCT_ <= 0.0f) {
+						BCT_ = 0.0f;
+						isChangeColor_ = false;//暗幕の透明度を変化させるフラグを下す
+						isChangeScene = false;
+						isStartChange_ = false;
+						isEaseO_ = false;
+						BCEaseDir_ *= -1;
+					}
+
+
+					if (addBCColor_ >= 0xFF) {
+						addBCColor_ = 0xFF;//バウンドで色がオーバーフローしないように上限で無理やり止める
+					}
+					if (addBCColor_ <= 0x10) {
+						addBCColor_ = 0x00;//バウンドで色がオーバーフローしないように上限で無理やり止める
+					}
+
+					BCColor_ = 0x00000000 + int(addBCColor_);//ここで透明度を足す
+					SCColor_ = 0xFFFFFF00 + int(addBCColor_);//ここで透明度を足す
 				}
+			} else {
+				//足す透明度をイージング
+				BCT_ += (1.0f / BCEaseTimer_) * BCEaseDir_;
+				BCAddT_ = EaseInOutBounce(BCT_);
+				addBCColor_ = (1 - BCAddT_) * minBCColor_ + BCAddT_ * maxBCColor_;
 				if (BCT_ <= 0.0f) {
 					BCT_ = 0.0f;
-					isChangeColor_ = false;//暗幕の透明度を変化させるフラグを下す
-					isChangeScene = false;
-					isStartChange_ = false;
-					isEaseO_ = false;
-					BCEaseDir_ *= -1;
+					isStartChange_ = false;//暗幕の透明度を変化させるフラグを下す
+					stageReset = false;
 				}
-
 
 				if (addBCColor_ >= 0xFF) {
 					addBCColor_ = 0xFF;//バウンドで色がオーバーフローしないように上限で無理やり止める
@@ -355,11 +377,11 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 				if (addBCColor_ <= 0x10) {
 					addBCColor_ = 0x00;//バウンドで色がオーバーフローしないように上限で無理やり止める
 				}
-
 				BCColor_ = 0x00000000 + int(addBCColor_);//ここで透明度を足す
-				SCColor_ = 0xFFFFFF00 + int(addBCColor_);//ここで透明度を足す
+
 			}
 		}
+
 
 #pragma endregion
 
@@ -401,7 +423,12 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 						isStartChange_ = true;//暗幕の透明度を変化させるフラグを下す
 						isPauseSelect = false;
 						BCEaseDir_ *= -1;
-						Scene::sceneNum_ = SELECT;
+						if (stageReset) {
+							Scene::sceneNum_ = GAME;
+
+						} else {
+							Scene::sceneNum_ = SELECT;
+						}
 					}
 				}
 				if (addBCColor_ >= 0xFF) {
