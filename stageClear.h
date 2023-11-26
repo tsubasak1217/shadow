@@ -10,7 +10,7 @@ class StageClear {
 	/*星の変数*/
 
 	float starSize_;
-	unsigned int starColor_;
+	unsigned int starColor_[3];
 	Vec2 starOriginPos_;
 	float starTheta_[3];
 	Vec2 length_;
@@ -72,7 +72,9 @@ public:
 
 	StageClear() {
 		starSize_ = 32;
-		starColor_ = 0xFFFFFFFF;
+		starColor_[0] = 0xFFFFFFFF;
+		starColor_[1] = 0xFFFFFFFF;
+		starColor_[2] = 0xFFFFFFFF;
 		starOriginPos_ = { float(Global::windowSize_.x / 2),300 };
 
 		/*星の変数*/

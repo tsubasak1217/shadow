@@ -614,20 +614,37 @@ void Map::DrawBG(const Resources& rs) {
 					if (mapChipCopy_[row][col] == -2) {
 
 						//スイッチ
-						Novice::DrawQuad(
-							int(posCopy_[row][col].x - size_.x * 0.5f),
-							int(posCopy_[row][col].y - size_.y * 0.5f),
-							int(posCopy_[row][col].x + size_.x * 0.5f),
-							int(posCopy_[row][col].y - size_.y * 0.5f),
-							int(posCopy_[row][col].x - size_.x * 0.5f),
-							int(posCopy_[row][col].y + size_.y * 0.5f),
-							int(posCopy_[row][col].x + size_.x * 0.5f),
-							int(posCopy_[row][col].y + size_.y * 0.5f),
-							0, 0,
-							64, 64,
-							rs.blockGH_[3],
-							0xffffffff
-						);
+						if (isPressSwitch_) {
+							Novice::DrawQuad(
+								int(posCopy_[row][col].x - size_.x * 0.5f),
+								int(posCopy_[row][col].y - size_.y * 0.5f),
+								int(posCopy_[row][col].x + size_.x * 0.5f),
+								int(posCopy_[row][col].y - size_.y * 0.5f),
+								int(posCopy_[row][col].x - size_.x * 0.5f),
+								int(posCopy_[row][col].y + size_.y * 0.5f),
+								int(posCopy_[row][col].x + size_.x * 0.5f),
+								int(posCopy_[row][col].y + size_.y * 0.5f),
+								0, 0,
+								64, 64,
+								rs.blockGH_[3],
+								0xffffffff
+							);
+						} else {
+							Novice::DrawQuad(
+								int(posCopy_[row][col].x - size_.x * 0.5f),
+								int(posCopy_[row][col].y - size_.y * 0.5f),
+								int(posCopy_[row][col].x + size_.x * 0.5f),
+								int(posCopy_[row][col].y - size_.y * 0.5f),
+								int(posCopy_[row][col].x - size_.x * 0.5f),
+								int(posCopy_[row][col].y + size_.y * 0.5f),
+								int(posCopy_[row][col].x + size_.x * 0.5f),
+								int(posCopy_[row][col].y + size_.y * 0.5f),
+								0, 0,
+								64, 64,
+								rs.blockGH_[4],
+								0xffffffff
+							);
+						}
 					}
 				}
 			}
