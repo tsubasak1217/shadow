@@ -41,7 +41,7 @@ public:
 
 	void Update(char* keys,const ChangeScene& cs,Map map, float rangeTheta,bool isPause);
 
-	void Draw(Map map, ChangeScene CS);
+	void Draw(const Resources& rs, Map map, ChangeScene CS);
 
 	//アクセッサ
 	Vec2 GetEmitPos() { return emitPos_; }

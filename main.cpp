@@ -147,7 +147,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		}
 
-		light.Draw(map, cs);
+		light.Draw(rs,map,cs);
 		map.Draw(rs);
 		player.Draw(rs);
 

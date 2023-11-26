@@ -345,9 +345,12 @@ void Shadow::Draw(const Resources& rs) {
 
 				} else if (mapChip_[i][j] == 8) {
 
+					//星アイテム
 					My::DrawStar(
-						pos_[i][j],
+						{ pos_[i][j].x,
+						pos_[i][j].y + cosf((float(Global::timeCount_) / 120.0f) * float(M_PI)) * 5.0f},
 						size_.x * 0.3f,
+						{cosf((float(Global::timeCount_)/120.0f) * float(M_PI)),1.0f},
 						0.0f,
 						0x000000ff
 					);
