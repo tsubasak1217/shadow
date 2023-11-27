@@ -40,6 +40,7 @@ void Player::Init(int sceneNum, Map map) {
 		moveStartPos_ = { 0.0f,0.0f };
 		savedPlayerPos_ = { 0.0f,0.0f };
 		isSwappped_ = false;
+		swapTimeCount_ = 1;
 
 		isHitMapChip_ = 0;
 
@@ -87,6 +88,10 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause) {
 
 			//前のフレームの情報保存に関するもの
 			prePos_ = pos_;
+
+			if (swapTimeCount_>0) {
+				swapTimeCount_--;
+			}
 
 			/*------------------------------ブロックを動かすフラグを立てる-------------------------------*/
 			if (!isMoveBlock_) {
@@ -804,6 +809,7 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause) {
 					//Global::isMoveShadow_ = false;
 					isMoveBlock_ = false;
 					blockMoveT_ = 0.0f;
+					swapTimeCount_ = 3;
 
 					//ブロック番号を更新して座標を戻す
 					switch (moveDirection_) {

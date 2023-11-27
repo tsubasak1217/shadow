@@ -101,6 +101,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AudioPlayer.cpp" />
     <ClCompile Include="C:\KamataEngine\DirectXGame\base\DirectXCommon.cpp" />
     <ClCompile Include="C:\KamataEngine\DirectXGame\base\WinApp.cpp" />
     <ClCompile Include="C:\KamataEngine\DirectXGame\scene\GameScene.cpp" />
@@ -133,6 +134,7 @@
     <ClCompile Include="Title.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AudioPlayer.h" />
     <ClInclude Include="C:\KamataEngine\DirectXGame\3d\CircleShadow.h" />
     <ClInclude Include="C:\KamataEngine\DirectXGame\3d\DebugCamera.h" />
     <ClInclude Include="C:\KamataEngine\DirectXGame\3d\DirectionalLight.h" />

@@ -1,5 +1,19 @@
 ﻿#include "LocalFunc.h"
 
+//void DrawCat(Vec2 pos, Vec2 size, Vec2 scale, int color) {
+//
+//	Novice::DrawEllipse(
+//	int(pos.x),
+//	int(pos.y),
+//		int(size.x),
+//		int(size.y),
+//
+//
+//	)
+//
+//}
+
+
 void NormalizeMikami(Vec2& vec2) {
 	float length = sqrtf(vec2.x * vec2.x + vec2.y * vec2.y);
 	if (length != 0.0f) {
@@ -7,6 +21,7 @@ void NormalizeMikami(Vec2& vec2) {
 		vec2.y /= length;
 	}
 };
+
 Vec2 TransformMikami(Vec2 vector, Matrix3x3 matrix) {
 	Vec2 result;//w=1がデカルト座標系であるので(x,y,1)のベクトルとしてmatrixの積をとる
 	result.x = vector.x * matrix.m[0][0] + vector.y * matrix.m[1][0] + 1.0f * matrix.m[2][0];
@@ -111,6 +126,37 @@ void CalcAddress(Vector2<int>* address, Vec2 pos, Vec2 size, float radius, int r
 
 	address[RightBottom].x = int(int(pos.x + radius - 1) / size.x);
 	address[RightBottom].y = int(int(pos.y + radius - 1) / size.y);
+
+	for (int i = 0; i < 4; i++) {
+		if (address[i].x >= colIndex) {
+			address[i].x = colIndex - 1;
+
+		} else if (address[i].x < 0) {
+			address[i].x = 0;
+		}
+
+		if (address[i].y >= rowIndex) {
+			address[i].y = rowIndex - 1;
+
+		} else if (address[i].x < 0) {
+			address[i].y = 0;
+		}
+	}
+}
+
+void CalcAddress2(Vector2<int>* address, Vec2 pos, Vec2 size, float radius, int rowIndex, int colIndex) {
+
+	address[LeftTop].x = int(int(pos.x - radius) / size.x);
+	address[LeftTop].y = int(int(pos.y - radius) / size.y);
+
+	address[RightTop].x = int(int(pos.x + radius) / size.x);
+	address[RightTop].y = int(int(pos.y - radius) / size.y);
+
+	address[LeftBottom].x = int(int(pos.x - radius) / size.x);
+	address[LeftBottom].y = int(int(pos.y + radius) / size.y);
+
+	address[RightBottom].x = int(int(pos.x + radius) / size.x);
+	address[RightBottom].y = int(int(pos.y + radius) / size.y);
 
 	for (int i = 0; i < 4; i++) {
 		if (address[i].x >= colIndex) {

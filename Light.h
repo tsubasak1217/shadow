@@ -45,6 +45,7 @@ public:
 
 	//アクセッサ
 	Vec2 GetEmitPos() { return emitPos_; }
-
+	Vec2 GetRightVec() { return rightVec_; }
+	Vec2 GetLeftVec() { return leftVec_; }
 };
 
