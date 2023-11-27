@@ -27,6 +27,12 @@ public:
 	int stageClearFontGH_;
 	int stageClearFont2GH_;
 	int selectFontGH_;
+
+	//sounds
+	int BGM[1] = {
+		Novice::LoadAudio("./Resources/sounds/stageBGM.mp3"),
+	};
+
 	Resources();
 	~Resources();
 

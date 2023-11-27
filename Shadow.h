@@ -16,6 +16,8 @@ class Shadow {
 
 public:
 
+	int pressTimeCount_;
+
 	//マップチップから取得したプレイヤーの初期座標を格納する変数		
 	Vec2 firstPlayerPos_;
 

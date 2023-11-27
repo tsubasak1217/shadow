@@ -32,18 +32,8 @@ void StageClear::Update(bool isStartScene, int starGetCount) {
 		for (int i = 0; i < 3; i++) {
 			starTheta_[i] += (1.0f / 60.0f);//回転させる	
 			rotateLength_[i] = rotateVect(length_, sinf(starTheta_[i]), cosf(starTheta_[i]));
-			//rotateLength_[i].x *= cosf((float(Global::timeCount_) / 256.0f) * float(M_PI));
-			rotateLength_[i].y *= 0.5f * sinf((float(Global::timeCount_)/128.0f) * float(M_PI));
-
-			int color = 0x3f;
-			color = int(float(color) *	((rotateLength_[i].y / fabsf(rotateLength_[i].y)) + 1.0f));
-			starColor_[i] = 0x7f7f7fff + (color<<8) + (color << 16) + (color << 24);
-			//rotateLength_[i].y *= -cosf(starTheta_[i]);
 			starPos_[i] = getVectAdd(rotateLength_[i], starOriginPos_);
-		
 		}
-
-
 		if (!isStartScene) {
 
 			//文字が完全に出現したら動く
@@ -146,7 +136,7 @@ void StageClear::Draw(Resources rs) {
 
 		/*星*/
 		for (int i = 0; i < starGet_; i++) {
-			My::DrawStar(starPos_[i], starSize_, 0.0f, starColor_[i]);
+			My::DrawStar(starPos_[i], starSize_, 0.0f, starColor_);
 		}
 		/*ゲットできなかった星（ワイヤーフレームにする）*/
 		for (int i = starGet_; i < (3 - starGet_); i++) {
@@ -155,10 +145,10 @@ void StageClear::Draw(Resources rs) {
 
 
 		if (starGet_ >= 2) {
-			Novice::DrawLine(int(starPos_[0].x), int(starPos_[0].y), int(starPos_[1].x), int(starPos_[1].y), starColor_[0]);
+			Novice::DrawLine(int(starPos_[0].x), int(starPos_[0].y), int(starPos_[1].x), int(starPos_[1].y), starColor_);
 			if (starGet_ >= 3) {
-				Novice::DrawLine(int(starPos_[0].x), int(starPos_[0].y), int(starPos_[2].x), int(starPos_[2].y), starColor_[1]);
-				Novice::DrawLine(int(starPos_[1].x), int(starPos_[1].y), int(starPos_[2].x), int(starPos_[2].y), starColor_[2]);
+				Novice::DrawLine(int(starPos_[0].x), int(starPos_[0].y), int(starPos_[2].x), int(starPos_[2].y), starColor_);
+				Novice::DrawLine(int(starPos_[1].x), int(starPos_[1].y), int(starPos_[2].x), int(starPos_[2].y), starColor_);
 			}
 		}
 

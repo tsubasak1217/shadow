@@ -190,9 +190,7 @@ void PlayerShadow::Update(char* keys, const Resources& rs, ChangeScene& cs, Scre
 
 				if (pos_.y < (screen.GetScreenLeftTop().y + screen.GetSize().y) - size_.y * 0.5f) {
 
-					if (!isInsideLightLB_ && !isInsideLightRB_) {
-						isDrop_ = true;
-					}
+					isDrop_ = true;
 				}
 
 				if (address_[LeftBottom].y + 1 < shadow.GetMapChip().size()) {
@@ -223,32 +221,31 @@ void PlayerShadow::Update(char* keys, const Resources& rs, ChangeScene& cs, Scre
 										}
 
 									} else {
-										if (!isInsideLightLB_ && !isInsideLightRB_) {
-											isDrop_ = true;
-										}
+										isDrop_ = true;
 									}
 
 								} else {
-									if (!isInsideLightLB_ && !isInsideLightRB_) {
-										isDrop_ = true;
-									}
-								}
-							} else {
-								if (!isInsideLightLB_ && !isInsideLightRB_) {
 									isDrop_ = true;
 								}
-							}
-						} else {
-							if (!isInsideLightLB_ && !isInsideLightRB_) {
+							} else {
 								isDrop_ = true;
 							}
-						}
-					} else {
-						if (!isInsideLightLB_ && !isInsideLightRB_) {
+						} else {
 							isDrop_ = true;
 						}
+					} else {
+						isDrop_ = true;
 					}
 
+				}
+
+				if (address_[2].y >= 0 && address_[2].y + 1 < shadow.GetMapChip().size()) {
+					if ((shadow.GetMapChip()[address_[2].y + 1][address_[2].x] == 7 &&
+						shadow.GetMapChip()[address_[3].y + 1][address_[3].x] == 7) or
+						(shadow.GetMapChip()[address_[2].y][address_[2].x] == 7 or
+							shadow.GetMapChip()[address_[3].y][address_[3].x] == 7)) {
+						isDrop_ = true;
+					}
 				}
 
 				//ジャンプ
@@ -324,17 +321,14 @@ void PlayerShadow::Update(char* keys, const Resources& rs, ChangeScene& cs, Scre
 
 						if (boadingVecRatio_ >= 0.0f &&
 							boadingVecRatio_ <= CheckLength(screen.GetPos(boardingBlock_, 0), screen.GetPos(boardingBlock_, 1))) {
-							if (Global::isMoveShadow_) {
+							if (Global::isMoveShadow_ && player.swapTimeCount_ == 0) {
 								pos_.x = screen.GetPos(boardingBlock_, 0).x +
 									Normalize(screen.GetPos(boardingBlock_, 1), screen.GetPos(boardingBlock_, 0)).x * preBoadingVecRatio_;
-								pos_.y = screen.GetPos(boardingBlock_, 0).y +
-									Normalize(screen.GetPos(boardingBlock_, 1), screen.GetPos(boardingBlock_, 0)).y * preBoadingVecRatio_
-									- (size_.y * 0.5f);
 
 								isDrop_ = false;
+							} else {
+								boardingBlock_ = -1;
 							}
-
-							Novice::ScreenPrintf(0, 100, "%f", boadingVecRatio_);
 
 						} else {
 							boardingBlock_ = -1;
@@ -392,7 +386,7 @@ void PlayerShadow::Update(char* keys, const Resources& rs, ChangeScene& cs, Scre
 				}
 
 				//プレイヤーの番地計算
-				CalcAddress(
+				CalcAddress2(
 					address_,
 					{ pos_.x - screen.GetScreenLeftTop().x + 1,pos_.y - screen.GetScreenLeftTop().y + 1 },
 					{ shadow.GetSize().x,shadow.GetSize().y },
@@ -401,10 +395,10 @@ void PlayerShadow::Update(char* keys, const Resources& rs, ChangeScene& cs, Scre
 				);
 
 
-				isInsideLightLB_ = false;
+				/*isInsideLightLB_ = false;
 				isInsideLightRB_ = false;
 				isInsideLightLT_ = false;
-				isInsideLightRT_ = false;
+				isInsideLightRT_ = false;*/
 
 				if (address_[2].y < shadow.GetMapChip().size()) {
 
@@ -431,12 +425,8 @@ void PlayerShadow::Update(char* keys, const Resources& rs, ChangeScene& cs, Scre
 					} else {
 						isInsideLightRB_ = false;
 					}
-
-					if (shadow.GetMapChip()[address_[2].y][address_[2].x] == 7 &&
-						shadow.GetMapChip()[address_[3].y][address_[3].x] == 7) {
-						return;
-					}
 				}
+
 
 				//光が照らされて影が映らない場所の処理
 				for (int i = 0; i < screen.GetPos().size(); i++) {
@@ -445,6 +435,22 @@ void PlayerShadow::Update(char* keys, const Resources& rs, ChangeScene& cs, Scre
 						break;
 					}
 					int loop = 0;
+					int outCount = 0;
+
+					for (int j = 0; j < 4; j++) {
+
+						if (preAddress_[j].y < 0 or preAddress_[j].y >= shadow.GetMapChip().size()) { continue; }
+						if (preAddress_[j].x < 0 or preAddress_[j].x >= shadow.GetMapChip()[0].size()) { continue; }
+						if (address_[j].y < 0 or address_[j].y >= shadow.GetMapChip().size()) { continue; }
+						if (address_[j].x < 0 or address_[j].x >= shadow.GetMapChip()[0].size()) { continue; }
+
+						if (shadow.GetMapChip()[preAddress_[j].y][preAddress_[j].x] == 7) {
+							if (shadow.GetMapChip()[address_[j].y][address_[j].x] != 7) {
+								outCount++;
+							}
+						}
+					}
+
 
 					//左上頂点が光から外れた時--------------------------------------------------------------------------------------------------------
 					if (!isInsideLightLT_ && preIsInsideLightLT_) {
@@ -458,7 +464,7 @@ void PlayerShadow::Update(char* keys, const Resources& rs, ChangeScene& cs, Scre
 							//当たらなくなるまで押し戻す
 							Vec2 pushBackVec = Normalize(prePos_, pos_);
 
-							if (address_[0].x != preAddress_[0].x && address_[0].y == preAddress_[0].y) {
+							if ((address_[0].x != preAddress_[0].x && address_[0].y == preAddress_[0].y)) {
 								if (pos_.x > prePos_.x) {
 									pushBackVec = { -1.0f,0.0f };
 								} else {
@@ -483,7 +489,7 @@ void PlayerShadow::Update(char* keys, const Resources& rs, ChangeScene& cs, Scre
 
 								pos_ = pos_.operator+(pushBackVec);
 
-								CalcAddress(
+								CalcAddress2(
 									address_,
 									{ pos_.x - screen.GetScreenLeftTop().x,pos_.y - screen.GetScreenLeftTop().y },
 									{ shadow.GetSize().x,shadow.GetSize().y },
@@ -502,6 +508,7 @@ void PlayerShadow::Update(char* keys, const Resources& rs, ChangeScene& cs, Scre
 								}
 
 							}
+							isInsideLightLT_ = true;
 						}
 					}
 
@@ -540,7 +547,7 @@ void PlayerShadow::Update(char* keys, const Resources& rs, ChangeScene& cs, Scre
 
 								pos_ = pos_.operator+(pushBackVec);
 
-								CalcAddress(
+								CalcAddress2(
 									address_,
 									{ pos_.x - screen.GetScreenLeftTop().x + 1,pos_.y - screen.GetScreenLeftTop().y },
 									{ shadow.GetSize().x,shadow.GetSize().y },
@@ -558,66 +565,69 @@ void PlayerShadow::Update(char* keys, const Resources& rs, ChangeScene& cs, Scre
 									break;
 								}
 							}
+
+							isInsideLightRT_ = true;
 						}
 					}
 
-					//左下頂点が光から外れた時--------------------------------------------------------------------------------------------------------
-					if (!isInsideLightLB_ && preIsInsideLightLB_) {
+					////左下頂点が光から外れた時--------------------------------------------------------------------------------------------------------
+					//if (!isInsideLightLB_ && preIsInsideLightLB_) {
 
-						//矩形に当たっていれば
-						if (ColisionBox_Ball(screen.GetPos(i, 0), screen.GetPos(i, 1), screen.GetPos(i, 2), screen.GetPos(i, 7),
-							{ pos_.x - size_.x * 0.5f,pos_.y + size_.y * 0.5f },
-							0
-						)) {
+					//	//矩形に当たっていれば
+					//	if (ColisionBox_Ball(screen.GetPos(i, 0), screen.GetPos(i, 1), screen.GetPos(i, 2), screen.GetPos(i, 7),
+					//		{ pos_.x - size_.x * 0.5f,pos_.y + size_.y * 0.5f },
+					//		0
+					//	)) {
 
-							//当たらなくなるまで押し戻す
-							Vec2 pushBackVec = Normalize(prePos_, pos_);
-							if (address_[2].x != preAddress_[2].x && address_[2].y == preAddress_[2].y) {
-								if (pos_.x > prePos_.x) {
-									pushBackVec = { -1.0f,0.0f };
-								} else {
-									pushBackVec = { 1.0f,0.0f };
-								}
+					//		//当たらなくなるまで押し戻す
+					//		Vec2 pushBackVec = Normalize(prePos_, pos_);
+					//		if (address_[2].x != preAddress_[2].x && address_[2].y == preAddress_[2].y) {
+					//			if (pos_.x > prePos_.x) {
+					//				pushBackVec = { -1.0f,0.0f };
+					//			} else {
+					//				pushBackVec = { 1.0f,0.0f };
+					//			}
 
-							} else if (address_[2].x == preAddress_[2].x && address_[2].y != preAddress_[2].y) {
-								if (pos_.y > prePos_.y) {
-									pushBackVec = { 0.0f,-1.0f };
-									isDrop_ = false;
-									isJump_ = false;
-									jumpSpeed_ = 0.0f;
-									dropSpeed_ = 0.0f;
-								} else {
-									pushBackVec = { 0.0f,1.0f };
-								}
-							} else {
-								pushBackVec = Normalize(prePos_, pos_);
-							}
+					//		} else if (address_[2].x == preAddress_[2].x && address_[2].y != preAddress_[2].y) {
+					//			if (pos_.y > prePos_.y) {
+					//				pushBackVec = { 0.0f,-1.0f };
+					//				isDrop_ = false;
+					//				isJump_ = false;
+					//				jumpSpeed_ = 0.0f;
+					//				dropSpeed_ = 0.0f;
+					//			} else {
+					//				pushBackVec = { 0.0f,1.0f };
+					//			}
+					//		} else {
+					//			pushBackVec = Normalize(prePos_, pos_);
+					//		}
 
-							while (shadow.GetMapChip()[address_[2].y][address_[2].x] != 7) {
+					//		while (shadow.GetMapChip()[address_[2].y][address_[2].x] != 7) {
 
-								pos_ = pos_.operator+(pushBackVec);
+					//			pos_ = pos_.operator+(pushBackVec);
 
-								CalcAddress(
-									address_,
-									{ pos_.x - screen.GetScreenLeftTop().x,pos_.y - screen.GetScreenLeftTop().y + 1 },
-									{ shadow.GetSize().x,shadow.GetSize().y },
-									size_.x * 0.5f,
-									int(shadow.GetPos().size()), int(shadow.GetPos()[0].size())
-								);
+					//			CalcAddress2(
+					//				address_,
+					//				{ pos_.x - screen.GetScreenLeftTop().x,pos_.y - screen.GetScreenLeftTop().y + 1 },
+					//				{ shadow.GetSize().x,shadow.GetSize().y },
+					//				size_.x * 0.5f,
+					//				int(shadow.GetPos().size()), int(shadow.GetPos()[0].size())
+					//			);
 
-								loop++;
-								if (loop > 640) {
-									break;
-								}
+					//			loop++;
+					//			if (loop > 640) {
+					//				break;
+					//			}
 
-								if ((address_[2].x < 0 or address_[2].x >= shadow.GetPos()[0].size()) or
-									(address_[2].y < 0 or address_[2].y >= shadow.GetPos().size())) {
-									break;
-								}
+					//			if ((address_[2].x < 0 or address_[2].x >= shadow.GetPos()[0].size()) or
+					//				(address_[2].y < 0 or address_[2].y >= shadow.GetPos().size())) {
+					//				break;
+					//			}
 
-							}
-						}
-					}
+					//		}
+					//		isInsideLightLB_ = true;
+					//	}
+					//}
 
 					//右下頂点が光から外れた時--------------------------------------------------------------------------------------------------------
 					if (!isInsideLightRB_ && preIsInsideLightRB_) {
@@ -654,7 +664,7 @@ void PlayerShadow::Update(char* keys, const Resources& rs, ChangeScene& cs, Scre
 
 								pos_ = pos_.operator+(pushBackVec);
 
-								CalcAddress(
+								CalcAddress2(
 									address_,
 									{ pos_.x - screen.GetScreenLeftTop().x + 1,pos_.y - screen.GetScreenLeftTop().y + 1 },
 									{ shadow.GetSize().x,shadow.GetSize().y },
@@ -672,10 +682,17 @@ void PlayerShadow::Update(char* keys, const Resources& rs, ChangeScene& cs, Scre
 									break;
 								}
 							}
+							isInsideLightRB_ = true;
 						}
 					}
 				}
 
+				if (address_[2].y >= 0 && address_[2].y + 1 < shadow.GetMapChip().size()) {
+					if (shadow.GetMapChip()[address_[2].y][address_[2].x] == 7 &&
+						shadow.GetMapChip()[address_[3].y][address_[3].x] == 7) {
+						return;
+					}
+				}
 
 				for (int i = 0; i < screen.GetPos().size(); i++) {
 
@@ -942,7 +959,10 @@ void PlayerShadow::Update(char* keys, const Resources& rs, ChangeScene& cs, Scre
 						if (loopCount > 64) {//無限ループになりそうなときにブレイク
 							loopCount = 0;
 							isHitRect_ = false;
-							isAlive_ = false;
+
+							if (!isInsideLightLT_ && !isInsideLightRT_ && !isInsideLightLB_ && !isInsideLightRB_) {
+								isAlive_ = false;
+							}
 							break;
 						}
 
@@ -1017,9 +1037,21 @@ void PlayerShadow::Draw(Screen screen) {
 				int(size_.x * 0.5f),
 				int(size_.y * 0.5f),
 				0.0f,
-				0x000000ff,
+				0x222222ff,
 				kFillModeSolid
 			);
+
+			for (int i = 1; i < 5; i++) {
+				Novice::DrawEllipse(
+					int(pos_.x),
+					int(pos_.y),
+					int(size_.x * 0.5f + i * 0.5f),
+					int(size_.y * 0.5f + i * 0.5f),
+					0.0f,
+					0x3f3f3f55,
+					kFillModeSolid
+				);
+			}
 		}
 
 		Novice::ScreenPrintf(0, 20, "%f", pos_.y);

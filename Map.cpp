@@ -5,7 +5,7 @@ int Map::stageNum_ = 0;
 //コンストラクタ============================================================================================
 Map::Map(const Resources& rs) {
 
-	stageNum_ = 0;
+	stageNum_ = 7;
 
 	//要素を消去
 	pos_.clear();
@@ -614,7 +614,7 @@ void Map::DrawBG(const Resources& rs) {
 					if (mapChipCopy_[row][col] == -2) {
 
 						//スイッチ
-						if (isPressSwitch_) {
+						if (!isPressSwitch_) {
 							Novice::DrawQuad(
 								int(posCopy_[row][col].x - size_.x * 0.5f),
 								int(posCopy_[row][col].y - size_.y * 0.5f),
