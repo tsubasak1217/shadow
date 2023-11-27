@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "selectDoor.h"
+#include "Light.h"
 
 class SelectLightParticle {
 	static const int kLifeTime_ = 120;
@@ -54,6 +55,6 @@ public:
 
 
 	void Init(float theta, Vec2 pos, float radius, float speed);
-	void Update(const SelectDoor& Door);
+	void Update(const SelectDoor& Door, Light light);
 	void Draw(char* keys);
 };

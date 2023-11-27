@@ -151,7 +151,7 @@ void Light::Draw(const Resources& rs,Map map, ChangeScene CS) {
 				int(leftVec_.y),
 				int(rightVec_.x),
 				int(rightVec_.y),
-				0xffffff00 + (18 - (((Global::timeCount_ % 4 )/2) * 1)),
+				0xffffff01,
 				kFillModeSolid
 			);
 
@@ -163,7 +163,7 @@ void Light::Draw(const Resources& rs,Map map, ChangeScene CS) {
 					int(leftVec_.y),
 					int(rightVec_.x + i * 48.0f),
 					int(rightVec_.y),
-					0xffffff02,
+					0xffffff01,
 					kFillModeSolid
 				);
 			}

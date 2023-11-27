@@ -2,6 +2,8 @@
 
 Shadow::Shadow(const Resources& rs, Screen screen) {
 
+	pressTimeCount_ = 0;
+
 	//要素を消去
 	pos_.clear();
 	mapChip_.clear();
@@ -92,6 +94,8 @@ void Shadow::Init(const Resources& rs, Screen screen, int sceneNum) {
 		//====================================================================================
 	case GAME://								ゲーム本編
 		//====================================================================================
+
+		pressTimeCount_ = 0;
 
 		//要素を消去
 		pos_.clear();
@@ -204,6 +208,22 @@ void Shadow::Update(char* keys, const ChangeScene& cs, const Resources& rs, cons
 			Init(rs, screen, Scene::sceneNum_);
 		}
 
+
+		//影の明るさ変更のためのタイムカウント
+		if (map.GetIsPressSwitch()) {
+			pressTimeCount_++;
+		} else {
+			pressTimeCount_--;
+		}
+
+		if (pressTimeCount_ > 32) {
+			pressTimeCount_ = 32;
+		}else if(pressTimeCount_ < 0){
+			pressTimeCount_ = 0;
+		}
+
+
+
 		for (int i = 0; i < mapChip_.size(); i++) {
 			for (int j = 0; j < mapChip_[0].size(); j++) {
 
@@ -242,20 +262,38 @@ void Shadow::Draw(const Resources& rs) {
 			if (touchable_[i][j]) {
 
 				if (mapChip_[i][j] == 1) {
+
 					Novice::DrawQuad(
 						int(pos_[i][j].x - size_.x * 0.5f),
-						int(pos_[i][j].y + size_.y * 0.5f),
+						int(pos_[i][j].y - size_.y * 0.5f),
 						int(pos_[i][j].x + size_.x * 0.5f + 1),
-						int(pos_[i][j].y + size_.y * 0.5f),
+						int(pos_[i][j].y - size_.y * 0.5f),
 						int(pos_[i][j].x - size_.x * 0.5f),
-						int(pos_[i][j].y - size_.y * 0.5f),
+						int(pos_[i][j].y + size_.y * 0.5f),
 						int(pos_[i][j].x + size_.x * 0.5f + 1),
-						int(pos_[i][j].y - size_.y * 0.5f),
+						int(pos_[i][j].y + size_.y * 0.5f),
 						0, 0,
 						1, 1,
 						rs.whiteGH_,
-						0x000000ff
+						0x222222ff
 					);
+
+					for (int k = 1; k < 5; k++) {
+						Novice::DrawQuad(
+							int((pos_[i][j].x - size_.x * 0.5f) - k * 1),
+							int((pos_[i][j].y - size_.y * 0.5f) - k * 1),
+							int((pos_[i][j].x + size_.x * 0.5f + 1) + k * 1),
+							int((pos_[i][j].y - size_.y * 0.5f) - k * 1),
+							int((pos_[i][j].x - size_.x * 0.5f) - k * 1),
+							int((pos_[i][j].y + size_.y * 0.5f) + k * 1),
+							int((pos_[i][j].x + size_.x * 0.5f + 1) + k * 1),
+							int((pos_[i][j].y + size_.y * 0.5f) + k * 1),
+							0, 0,
+							1, 1,
+							rs.whiteGH_,
+							0x3f3f3f55
+						);
+					}
 
 				} else if (mapChip_[i][j] == 2) {//トゲトゲ
 
@@ -277,7 +315,7 @@ void Shadow::Draw(const Resources& rs) {
 						0, 0,
 						1, 1,
 						rs.whiteGH_,
-						0x000000ff
+						0x222222ff
 					);
 
 					//周りのトゲトゲ
@@ -289,7 +327,7 @@ void Shadow::Draw(const Resources& rs) {
 							int(pos_[i][j].y - size_.y * 0.5f),
 							int(inSideLT.x + (k + 1) * (size_.x / 6)),
 							int(inSideLT.y),
-							0x000000ff,
+							0x222222ff,
 							kFillModeSolid
 						);
 
@@ -300,7 +338,7 @@ void Shadow::Draw(const Resources& rs) {
 							int(inSideRT.y + k * (size_.y / 6) + size_.y / 12),
 							int(inSideRT.x),
 							int(inSideRT.y + (k + 1) * (size_.y / 6)),
-							0x000000ff,
+							0x222222ff,
 							kFillModeSolid
 						);
 
@@ -311,7 +349,7 @@ void Shadow::Draw(const Resources& rs) {
 							int(pos_[i][j].y + size_.y * 0.5f),
 							int(inSideLB.x + (k + 1) * (size_.x / 6)),
 							int(inSideLB.y),
-							0x000000ff,
+							0x222222ff,
 							kFillModeSolid
 						);
 
@@ -322,38 +360,87 @@ void Shadow::Draw(const Resources& rs) {
 							int(inSideLT.y + k * (size_.y / 6) + size_.y / 12),
 							int(inSideLT.x),
 							int(inSideLT.y + (k + 1) * (size_.y / 6)),
-							0x000000ff,
+							0x222222ff,
 							kFillModeSolid
 						);
-					}
 
-				} else if (mapChip_[i][j] == 11) {
-					Novice::DrawQuad(//スイッチを踏むと現れるブロック
-						int(pos_[i][j].x - size_.x * 0.5f),
-						int(pos_[i][j].y + size_.y * 0.5f),
-						int(pos_[i][j].x + size_.x * 0.5f + 1),
-						int(pos_[i][j].y + size_.y * 0.5f),
-						int(pos_[i][j].x - size_.x * 0.5f),
-						int(pos_[i][j].y - size_.y * 0.5f),
-						int(pos_[i][j].x + size_.x * 0.5f + 1),
-						int(pos_[i][j].y - size_.y * 0.5f),
-						0, 0,
-						1, 1,
-						rs.whiteGH_,
-						0x000000ff
-					);
+						for (int l = 1; l < 5; l++) {//とげの薄い影
+
+							//中心の矩形
+							Novice::DrawQuad(
+								int(inSideLT.x),
+								int(inSideLT.y),
+								int(inSideRT.x),
+								int(inSideRT.y),
+								int(inSideLB.x),
+								int(inSideLB.y),
+								int(inSideRB.x),
+								int(inSideRB.y),
+								0, 0,
+								1, 1,
+								rs.whiteGH_,
+								0x3f3f3f55
+							);
+
+							Novice::DrawTriangle(
+								int(inSideLT.x + k * (size_.x / 6)) - l * 1,
+								int(inSideLT.y) + l * 1,
+								int(inSideLT.x + k * (size_.x / 6) + size_.x / 12),
+								int(pos_[i][j].y - size_.y * 0.5f) - l * 1,
+								int(inSideLT.x + (k + 1) * (size_.x / 6)) + l * 1,
+								int(inSideLT.y) + l * 1,
+								0x3f3f3f55,
+								kFillModeSolid
+							);
+
+							Novice::DrawTriangle(
+								int(inSideRT.x) - l * 1,
+								int(inSideRT.y + k * (size_.y / 6)) - l * 1,
+								int(pos_[i][j].x + size_.x * 0.5f) + l * 1,
+								int(inSideRT.y + k * (size_.y / 6) + size_.y / 12),
+								int(inSideRT.x) - l * 1,
+								int(inSideRT.y + (k + 1) * (size_.y / 6)) + l * 1,
+								0x3f3f3f55,
+								kFillModeSolid
+							);
+
+							Novice::DrawTriangle(
+								int(inSideLB.x + k * (size_.x / 6)) - l * 1,
+								int(inSideLB.y)- l * 1,
+								int(inSideLB.x + k * (size_.x / 6) + size_.x / 12),
+								int(pos_[i][j].y + size_.y * 0.5f) + l * 1,
+								int(inSideLB.x + (k + 1) * (size_.x / 6)) + l * 1,
+								int(inSideLB.y) - l * 1,
+								0x3f3f3f55,
+								kFillModeSolid
+							);
+
+							Novice::DrawTriangle(
+								int(inSideLT.x) + l * 1,
+								int(inSideLT.y + k * (size_.y / 6)) - l * 1,
+								int(pos_[i][j].x - size_.x * 0.5f) - l * 1,
+								int(inSideLT.y + k * (size_.y / 6) + size_.y / 12),
+								int(inSideLT.x) + l * 1,
+								int(inSideLT.y + (k + 1) * (size_.y / 6)) + l * 1,
+								0x3f3f3f55,
+								kFillModeSolid
+							);
+						}
+					}
 
 				} else if (mapChip_[i][j] == 8) {
 
 					//星アイテム
 					My::DrawStar(
 						{ pos_[i][j].x,
-						pos_[i][j].y + cosf((float(Global::timeCount_) / 120.0f) * float(M_PI)) * 5.0f},
+						pos_[i][j].y + cosf((float(Global::timeCount_) / 120.0f) * float(M_PI)) * 5.0f },
 						size_.x * 0.3f,
-						{cosf((float(Global::timeCount_)/120.0f) * float(M_PI)),1.0f},
+						{ cosf((float(Global::timeCount_) / 120.0f) * float(M_PI)),1.0f },
 						0.0f,
-						0x000000ff
+						0x3f3f3fff
 					);
+
+
 
 				} else if (mapChip_[i][j] == 7) {
 					Novice::DrawQuad(
@@ -372,22 +459,38 @@ void Shadow::Draw(const Resources& rs) {
 					);
 
 				}
-			} else {
+			}
 
-				if (mapChip_[i][j] == 11) {
-					Novice::DrawQuad(//スイッチを踏むと現れるブロック(スイッチが踏まれていないとき)
-						int(pos_[i][j].x - size_.x * 0.5f),
-						int(pos_[i][j].y + size_.y * 0.5f),
-						int(pos_[i][j].x + size_.x * 0.5f),
-						int(pos_[i][j].y + size_.y * 0.5f),
-						int(pos_[i][j].x - size_.x * 0.5f),
-						int(pos_[i][j].y - size_.y * 0.5f),
-						int(pos_[i][j].x + size_.x * 0.5f),
-						int(pos_[i][j].y - size_.y * 0.5f),
+			if (mapChip_[i][j] == 11) {
+				Novice::DrawQuad(
+					int(pos_[i][j].x - size_.x * 0.5f),
+					int(pos_[i][j].y - size_.y * 0.5f),
+					int(pos_[i][j].x + size_.x * 0.5f + 1),
+					int(pos_[i][j].y - size_.y * 0.5f),
+					int(pos_[i][j].x - size_.x * 0.5f),
+					int(pos_[i][j].y + size_.y * 0.5f),
+					int(pos_[i][j].x + size_.x * 0.5f + 1),
+					int(pos_[i][j].y + size_.y * 0.5f),
+					0, 0,
+					1, 1,
+					rs.whiteGH_,
+					0x22222255 + int(float(0xaa) * EaseInOutExpo(float(pressTimeCount_) / 32.0f))
+				);
+
+				for (int k = 1; k < 5; k++) {
+					Novice::DrawQuad(
+						int((pos_[i][j].x - size_.x * 0.5f) - k * 1),
+						int((pos_[i][j].y - size_.y * 0.5f) - k * 1),
+						int((pos_[i][j].x + size_.x * 0.5f + 1) + k * 1),
+						int((pos_[i][j].y - size_.y * 0.5f) - k * 1),
+						int((pos_[i][j].x - size_.x * 0.5f) - k * 1),
+						int((pos_[i][j].y + size_.y * 0.5f) + k * 1),
+						int((pos_[i][j].x + size_.x * 0.5f + 1) + k * 1),
+						int((pos_[i][j].y + size_.y * 0.5f) + k * 1),
 						0, 0,
 						1, 1,
 						rs.whiteGH_,
-						0x0000007f
+						0x3f3f3f1f + int(float(0x20) * EaseInOutExpo(float(pressTimeCount_) / 32.0f))
 					);
 				}
 			}

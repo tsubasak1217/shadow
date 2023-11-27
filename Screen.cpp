@@ -184,6 +184,23 @@ void Screen::Update(char* keys, const ChangeScene& cs, Map map, Light light) {
 	}
 };
 
+void Screen::DrawBG(const Resources& rs) {
+	Novice::DrawQuad(
+		int(LRTB_.x),
+		int(LRTB_.z),
+		int(LRTB_.y),
+		int(LRTB_.z),
+		int(LRTB_.x),
+		int(LRTB_.w),
+		int(LRTB_.y),
+		int(LRTB_.w),
+		0, 0,
+		1, 1,
+		rs.whiteGH_,
+		0xbbbbbbff
+	);
+}
+
 void Screen::Draw(Map map, const Resources& rs, Light light) {
 
 	switch (Scene::sceneNum_) {
@@ -199,22 +216,7 @@ void Screen::Draw(Map map, const Resources& rs, Light light) {
 	case GAME://								ゲーム本編
 		//====================================================================================
 
-		Novice::DrawQuad(
-			int(LRTB_.x),
-			int(LRTB_.z),
-			int(LRTB_.y),
-			int(LRTB_.z),
-			int(LRTB_.x),
-			int(LRTB_.w),
-			int(LRTB_.y),
-			int(LRTB_.w),
-			0, 0,
-			1, 1,
-			rs.whiteGH_,
-			0xbbbbbbff
-		);
-
-
+		
 		for (int i = 0; i < boxPos_.size(); i++) {
 
 
@@ -244,8 +246,27 @@ void Screen::Draw(Map map, const Resources& rs, Light light) {
 				0, 0,
 				1, 1,
 				rs.whiteGH_,
-				0x000000ff
+				0x222222ff
 			);
+
+			for (int j = 1; j < 5; j++) {
+
+				Novice::DrawQuad(
+					int(boxPos_[i][0].x - j * 1),
+					int(boxPos_[i][0].y - j * 1),
+					int(boxPos_[i][1].x + j * 1),
+					int(boxPos_[i][1].y - j * 1),
+					int(drawScreenUnderShadowPos[0].x - j * 1),
+					int(drawScreenUnderShadowPos[0].y + j * 1),
+					int(drawScreenUnderShadowPos[1].x + j * 1),
+					int(drawScreenUnderShadowPos[1].y + j * 1),
+					0, 0,
+					1, 1,
+					rs.whiteGH_,
+					0x3f3f3f55
+				);
+
+			}
 
 			//=======================================================================
 			//                          地面に落ちる影
@@ -286,7 +307,25 @@ void Screen::Draw(Map map, const Resources& rs, Light light) {
 			);
 		}
 
+		Novice::DrawBox(
+			int(LRTB_.x),
+			0,
+			-200,
+			Global::windowSize_.y,
+			0.0f,
+			0x000000ff,
+			kFillModeSolid
+		);
 
+		Novice::DrawBox(
+			int(LRTB_.y),
+			0,
+			200,
+			Global::windowSize_.y,
+			0.0f,
+			0x000000ff,
+			kFillModeSolid
+		);
 
 		break;
 		//====================================================================================

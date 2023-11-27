@@ -30,6 +30,8 @@ class Player {
 
 public:
 
+	int swapTimeCount_;
+	
 	Player(Map map) {
 		pos_ = {
 			map.firstPlayerPos_.x + map.GetPuzzleLeftTop().x,
@@ -55,6 +57,7 @@ public:
 		moveStartPos_ = { 0.0f,0.0f };
 		savedPlayerPos_ = { 0.0f,0.0f };
 		isSwappped_ = false;
+		swapTimeCount_ = 2;
 
 		isHitMapChip_ = 0;
 

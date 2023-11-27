@@ -7,7 +7,7 @@
 #include"stageClear.h"
 #include"Pause.h"
 #include "ImGuiManager.h"
-
+#include "AudioPlayer.h"
 
 //======================================================
 //					グローバル変数/定数
@@ -42,6 +42,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 
 	Resources rs;
+	AudioPlayer audio;
 
 	Scene scene;
 	ChangeScene cs;
@@ -76,10 +77,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		/// ↓更新処理ここから
 		///
+		global.Update();
+		
+		cs.UpDate(keys, preKeys, door.isChangeScene_, door.CPos_, door.selectNum_, SCE.canSceneChange, shadow.GetGoalPos(), shadow.GetGoalSize(), pause.isSelect_, title.isPush_);
 		Novice::ScreenPrintf(0, 0, "StageNum=%d", Map::stageNum_);
 		cs.UpDate(keys, preKeys, door.isChangeScene_, door.CPos_, door.selectNum_, stageClear.canSceneChange,
 			shadow.GetGoalPos(), shadow.GetGoalSize(), pause.isSelect_, title.isPush_,pause.isStageReset_);
-
 
 		map.Update(keys, rs, cs);
 		player.Update(keys, cs, map, pause.isPause_);
@@ -102,11 +105,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		for (int i = 0; i < 120; i++)
 		{
-			SLParticle[i].Update(door);
+			SLParticle[i].Update(door,light);
 		}
 
-
-		//stageClear.Debug(keys, preKeys);
+		stageClear.Debug(keys, preKeys);
 
 		//デバックでのみ操作可能
 #if _DEBUG
@@ -132,11 +134,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓描画処理ここから
 		///
 
-		global.Update();
+		Novice::ScreenPrintf(0, 0, "StageNum=%d", Map::stageNum_);
 
 		map.DrawBG(rs);
-		screen.Draw(map, rs, light);
+		screen.DrawBG(rs);
+
 		shadow.Draw(rs);
+		screen.Draw(map, rs, light);
 		playerShadow.Draw(screen);
 
 		for (int i = 0; i < 120; i++) {
@@ -162,6 +166,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		SCE.Draw(playerShadow.GetstarCount());
 
 		pause.Draw(rs);
+
+		audio.Draw(rs);
+		
 		/*シーンチェンジ一番前*/
 		cs.Draw(door.GH_, door.color_, shadow.GetGoalPos(), shadow.GetGoalSize(), pause.isSelect_);
 
