@@ -763,6 +763,7 @@ void PlayerShadow::Update(char* keys,char* Prekeys, const Resources& rs, ChangeS
 								size_.x * 0.25f
 							)) {
 								starGetCount_++;
+								itemGetSEHandle_ = Novice::PlayAudio(rs.itemGetSE_, 0, 0.4f);
 								shadow.SetMapChip(i2, j2, 0);
 							}
 						}
@@ -824,7 +825,7 @@ void PlayerShadow::Update(char* keys,char* Prekeys, const Resources& rs, ChangeS
 					}
 				}
 
-				Novice::ScreenPrintf(0, 40, "%d", isDrop_);
+//				Novice::ScreenPrintf(0, 40, "%d", isDrop_);
 
 				blockCount = 0;
 
@@ -984,7 +985,8 @@ void PlayerShadow::Update(char* keys,char* Prekeys, const Resources& rs, ChangeS
 
 
 				//ゴールと当たったらクリアに移動
-				if (ColisionBox_Ball(shadow.GetGoalLT(), shadow.GetGoalRT(), shadow.GetGoalLB(), shadow.GetGoalRB(), pos_, (size_.x / 10))) {
+				if (ColisionBox_Ball(shadow.GetGoalLT(), shadow.GetGoalRT(), shadow.GetGoalLB(), shadow.GetGoalRB(), pos_, (size_.x / 10))&&
+					!isDrop_) {
 					if (keys[DIK_SPACE]&&!Prekeys[DIK_SPACE]) {
 						cs.isEndChange_ = true;
 					}
@@ -1000,7 +1002,7 @@ void PlayerShadow::Update(char* keys,char* Prekeys, const Resources& rs, ChangeS
 				);
 			}
 
-			Novice::ScreenPrintf(0, 60, "%d", boardingBlock_);
+		//	Novice::ScreenPrintf(0, 60, "%d", boardingBlock_);
 
 			break;
 			//====================================================================================
@@ -1031,6 +1033,7 @@ void PlayerShadow::Draw(Screen screen) {
 		//====================================================================================
 
 		if (isAlive_) {
+			/*
 			Novice::DrawEllipse(
 				int(pos_.x),
 				int(pos_.y),
@@ -1052,9 +1055,23 @@ void PlayerShadow::Draw(Screen screen) {
 					kFillModeSolid
 				);
 			}
+			*/
+
+		DrawCat(pos_, size_.x, size_.y, 0x222222ff);
+
+		for (int i = 1; i < 5; i++) {
+			DrawCat(pos_,
+				size_.x + i *0.6f,
+				size_.y + i *0.6f,
+				0x3f3f3f55);
+		}
 		}
 
-		Novice::ScreenPrintf(0, 20, "%f", pos_.y);
+
+
+
+
+		//Novice::ScreenPrintf(0, 20, "%f", pos_.y);
 
 		break;
 

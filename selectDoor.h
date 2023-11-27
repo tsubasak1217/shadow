@@ -82,6 +82,8 @@ public:
 	Vec2 	selectFontCPos_;
 	Vec2 	selectFontSize_;
 	unsigned int FColor_;
+	
+	int lightSEHandle_;
 
 	SelectDoor() {
 		//ドア本体の変数
@@ -122,7 +124,7 @@ public:
 
 		NumlightEllCPos_ = { 240,535 };
 		NumlightEllSize_ = { 170,140 };
-		isDrawNL_=false;
+		isDrawNL_ = false;
 		/*イージングDrawLight*/
 		DLT_ = { 0 };
 		DLAddT_ = { 0 };
@@ -144,17 +146,19 @@ public:
 		}
 		NumGH_ = Novice::LoadTexture("./Resources/images/number.png");
 		GHSize_ = 25;
-		NumColor_=0x444444FF;
+		NumColor_ = 0x444444FF;
 
 		selectFontCPos_ = { 240,145 };
 		selectFontSize_ = { 440,110 };
 		FColor_ = 0xFFFFFFFF;
 		isChangeScene_ = false;
+
+		lightSEHandle_=-1;
 	};
 
 	void Draw(Resources rs);
 
-	void Update(char* keys, char* preKeys);
+	void Update(char* keys, char* preKeys, const Resources& rs);
 	void Debug(char* keys, char* preKeys);
 	void Reset();
 };

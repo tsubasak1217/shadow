@@ -109,6 +109,9 @@ void StageClear::Draw(Resources rs) {
 		//====================================================================================
 	case TITLE://							   タイトル画面
 		//====================================================================================
+
+		//Novice::DrawBox(int(TitlefontPos_.x - TitlefontSize_.x / 2), int(TitlefontPos_.y - TitlefontSize_.y / 2), int(TitlefontSize_.x), int(TitlefontSize_.y), 0.0f, 0xFFFFFFFF, kFillModeWireFrame);
+
 		break;
 		//====================================================================================
 	case SELECT://							   ステージ選択
@@ -208,6 +211,9 @@ void StageClear::Draw(Resources rs) {
 		Novice::DrawSprite(int(PressKeyFontCPos_.x - PressKeyFontSize_.x / 2), int(PressKeyFontCPos_.y - PressKeyFontSize_.y / 2), rs.pressSpaceFontGH_, 0.5f, 0.5f, 0.0f, FColor_);
 
 
+
+
+
 		break;
 
 	default:
@@ -222,7 +228,7 @@ void StageClear::Debug(char* keys, char* preKeys) {
 	keys, preKeys;
 	switch (Scene::sceneNum_) {
 
-	case CLEAR:
+	case TITLE:
 
 #if _DEBUG
 #pragma region"デバック用"
@@ -235,7 +241,7 @@ void StageClear::Debug(char* keys, char* preKeys) {
 		}
 
 		//操作したい番号選択
-		if (keys[DIK_SPACE] && !preKeys[DIK_SPACE]) {
+		if (keys[DIK_RETURN] && !preKeys[DIK_RETURN]) {
 			debugNum += 1;
 			//[1]=originPos_
 			//[2]=size_
@@ -248,33 +254,37 @@ void StageClear::Debug(char* keys, char* preKeys) {
 		switch (debugNum)
 		{
 		case 0:
+			/*
 			if (keys[DIK_W]) {
-				length_.x -= 1;
+				TitlefontPos_.y -= 1;
 			}
 			if (keys[DIK_S]) {
-				length_.x += 1;
+				TitlefontPos_.y += 1;
 			}
 			if (keys[DIK_A]) {
-				PressKeyFontCPos_.x -= 1;
+				TitlefontPos_.x -= 1;
 			}
 			if (keys[DIK_D]) {
-				PressKeyFontCPos_.x += 1;
+				TitlefontPos_.x += 1;
 			}
+			*/
 			break;
 
 		case 1:
+			/*
 			if (keys[DIK_W]) {
-				maxLength_.y -= 1;
+				TitlefontSize_.y -= 1;
 			}
 			if (keys[DIK_S]) {
-				maxLength_.y += 1;
+				TitlefontSize_.y += 1;
 			}
 			if (keys[DIK_A]) {
-				maxLength_.x -= 1;
+				TitlefontSize_.x -= 1;
 			}
 			if (keys[DIK_D]) {
-				maxLength_.x += 1;
+				TitlefontSize_.x += 1;
 			}
+			*/
 			break;
 
 		case 2:
@@ -312,8 +322,8 @@ void StageClear::Debug(char* keys, char* preKeys) {
 		}
 
 		//		Novice::ScreenPrintf(0, 20, "debugNum=%d", debugNum);
-		//		Novice::ScreenPrintf(0, 40, "length x=%f,y=%f", length_.x, length_.y);
-		//		Novice::ScreenPrintf(0, 60, "maxLength_ x=%f,y=%f", maxLength_.x, maxLength_.y);
+		//Novice::ScreenPrintf(0, 40, "titleFont x=%f,y=%f", TitlefontPos_.x, TitlefontPos_.y);
+		//Novice::ScreenPrintf(0, 60, "size x=%f,y=%f", TitlefontSize_.x, TitlefontSize_.y);
 		//		Novice::ScreenPrintf(0, 80, "StageClearFontCPos_ x=%f,y=%f", StageClearFontCPos_.x, StageClearFontCPos_.y);
 		//		Novice::ScreenPrintf(0, 100, "StageClearFontSize_x = %f, y = %f", CatCPos_.x, CatCPos_.y);
 

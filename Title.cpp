@@ -9,6 +9,7 @@ void Title::Draw(Resources rs) {
 		/*背景*/
 
 		Novice::DrawSprite(0, 0, rs.titleBGGH_, 1, 1, 0.0f, 0xFFFFFFFF);
+
 		Novice::DrawBox(0, 0, int(Global::windowSize_.x), int(Global::windowSize_.y), 0.0f, 0x000000FD, kFillModeSolid);
 		//ライト
 		for (int i = 0; i < 2; i++) {
@@ -46,6 +47,9 @@ void Title::Draw(Resources rs) {
 			int(spaceFontPos_.x), int(spaceFontPos_.y),
 			rs.pressSpaceFontGH_, 0.5f, 0.5f, 0.0f, spaceFontColor_);
 
+
+		Novice::DrawSprite(int(TitlefontPos_.x - TitlefontSize_.x / 2), int(TitlefontPos_.y - TitlefontSize_.y / 2), rs.creditFontGH_, 0.5f, 0.5f, 0.0f, 0xFFFFFFFF);
+
 		break;
 		//====================================================================================
 	case SELECT://							   ステージ選択
@@ -67,7 +71,7 @@ void Title::Draw(Resources rs) {
 }
 
 
-void Title::Update(char* keys, char* preKeys) {
+void Title::Update(char* keys, char* preKeys ,const Resources& rs) {
 	switch (Scene::sceneNum_) {
 		//====================================================================================
 	case TITLE://							   タイトル画面
@@ -76,6 +80,7 @@ void Title::Update(char* keys, char* preKeys) {
 			if (!isTMove&&!isPush_) {
 				isTMove = true;//タイトルロゴを移動
 				isPush_ = true;//スペースキーの透明度低下
+				titlePushSEHandle_ = Novice::PlayAudio(rs.titlePushSE_, 0, 0.4f);
 			}
 		}
 
@@ -279,7 +284,7 @@ void Title::Reset() {
 	isTMove = true;
 
 	//スペースの文字
-	spaceFontPos_ = { 120.0f,550.0f };
+	spaceFontPos_ = { 120.0f,400.0f };
 	opacity_ = 0xFF;
 	endOpacity_ = 0x00;
 	startOpacity_ = 0xFF;

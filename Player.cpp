@@ -1053,7 +1053,7 @@ void Player::Draw(const Resources& rs) {
 		//====================================================================================
 	case GAME://								ゲーム本編
 		//====================================================================================
-
+		/*
 		Novice::DrawQuad(
 			int(pos_.x - size_.x * 0.5f),
 			int(pos_.y + size_.y * 0.5f),
@@ -1065,9 +1065,12 @@ void Player::Draw(const Resources& rs) {
 			int(pos_.y - size_.y * 0.5f),
 			0, 0,
 			1, 1,
-			rs.whiteGH_,
+	
 			0xff0000ff
 		);
+		*/
+		rs.whiteGH_;
+		DrawCat(pos_,size_.x*1.4f,size_.y * 1.4f,0xddddddff);
 		break;
 
 		//====================================================================================

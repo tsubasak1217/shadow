@@ -61,6 +61,10 @@ public:
 	float addWallColor_[2];
 	unsigned int WallColor_[2];
 
+	Vec2 TitlefontPos_ = { 380,20 };
+	Vec2 TitlefontSize_ = { 300,40 };
+
+	int titlePushSEHandle_;
 
 	Title() {
 		timeCount_ = 0;
@@ -122,7 +126,7 @@ public:
 		isTMove = true;
 
 		//スペースの文字
-		spaceFontPos_ = { 120.0f,550.0f };
+		spaceFontPos_ = { 120.0f,400.0f };
 		opacity_ = 0xFF;
 		endOpacity_ = 0x00;
 		startOpacity_ = 0xFF;
@@ -144,10 +148,10 @@ public:
 			WallColor_[i] = 0xFFFFFF00;
 		}
 
-
+		titlePushSEHandle_ = -1;
 	}
 
 	void Draw(Resources rs);
-	void Update(char* keys, char* preKeys);
+	void Update(char* keys, char* preKeys, const Resources& rs);
 	void Reset();
 };
