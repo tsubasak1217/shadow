@@ -987,7 +987,7 @@ void PlayerShadow::Update(char* keys,char* Prekeys, const Resources& rs, ChangeS
 				//ゴールと当たったらクリアに移動
 				if (ColisionBox_Ball(shadow.GetGoalLT(), shadow.GetGoalRT(), shadow.GetGoalLB(), shadow.GetGoalRB(), pos_, (size_.x / 10))&&
 					!isDrop_) {
-					if (keys[DIK_SPACE]&&!Prekeys[DIK_SPACE]) {
+					if (keys[DIK_RETURN]&&!Prekeys[DIK_RETURN]) {
 						cs.isEndChange_ = true;
 					}
 				}
