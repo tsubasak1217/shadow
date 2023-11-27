@@ -148,7 +148,7 @@ void Particle::Draw() {
 			pos_,
 			size_.x,
 			theta_,
-			0x00000000 + alpha_
+			0x3f3f3f00 + alpha_
 		);
 	//}
 }

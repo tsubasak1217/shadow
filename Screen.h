@@ -71,6 +71,7 @@ public:
 
 	void Update(char* keys, const ChangeScene& cs, Map map, Light light);
 
+	void DrawBG(const Resources& rs);
 	void Draw(Map map, const Resources& rs, Light light);
 
 	Vec2 GetScreenLeftTop() { return leftTop_; }
