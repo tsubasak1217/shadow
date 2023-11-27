@@ -79,8 +79,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		global.Update();
 		
-		cs.UpDate(keys, preKeys, door.isChangeScene_, door.CPos_, door.selectNum_, SCE.canSceneChange, shadow.GetGoalPos(), shadow.GetGoalSize(), pause.isSelect_, title.isPush_);
-		Novice::ScreenPrintf(0, 0, "StageNum=%d", Map::stageNum_);
 		cs.UpDate(keys, preKeys, door.isChangeScene_, door.CPos_, door.selectNum_, stageClear.canSceneChange,
 			shadow.GetGoalPos(), shadow.GetGoalSize(), pause.isSelect_, title.isPush_,pause.isStageReset_);
 
