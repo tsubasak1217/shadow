@@ -66,7 +66,7 @@ class Pause {
 
 	int SelectSEHandle_;
 	int PushSEHandle_;
-
+	float maxVolume_;
 
 public:
 
@@ -144,10 +144,10 @@ public:
 
 		SelectSEHandle_ = -1;
 		PushSEHandle_ = -1;
-
+		maxVolume_ = 0.12f;;
 	}
 	void Draw(Resources rs);
-	void Update(ChangeScene& cs, char* keys, char* preKeys, const Resources& rs);
+	void Update(ChangeScene& cs, char* keys, char* preKeys, const Resources& rs, int& BGMHandle, float& soundVolume);
 	void Debug(char* keys, char* preKeys);
 	void Reset();
 };

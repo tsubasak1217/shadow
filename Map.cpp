@@ -175,6 +175,7 @@ Map::Map(const Resources& rs) {
 	//スイッチが押されたかのフラグ
 	isPressSwitch_ = false;
 
+
 	mapChipCopy_ = mapChip_;
 	posCopy_ = pos_;
 }

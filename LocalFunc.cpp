@@ -80,14 +80,14 @@ void DrawCat(Vec2 CPos, float Width, float Height, unsigned int color) {
 	{
 		{CPos.x - SizeX * 0.5f,CPos.y - SizeY * 1.55f},//頂点
 		{CPos.x + SizeX * 0.1f,CPos.y - SizeY * 0.6f},//右
-		{CPos.x - SizeX * 0.9f,CPos.y - SizeY * 0.4f} //左
+		{CPos.x - SizeX * 0.85f,CPos.y - SizeY * 0.4f} //左
 
 	};
 
 	Vec2 TriVertexR[3] =
 	{
 	{CPos.x + SizeX * 0.5f,CPos.y - SizeY * 1.55f},//頂点
-		{CPos.x + SizeX * 0.9f,CPos.y - SizeY * 0.4f},//右
+		{CPos.x + SizeX * 0.85f,CPos.y - SizeY * 0.4f},//右
 		{CPos.x - SizeX * 0.1f,CPos.y - SizeY * 0.6f} //左
 
 	};

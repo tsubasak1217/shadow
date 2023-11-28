@@ -17,7 +17,6 @@ class Map
 	Vec2 puzzleMapSize_;//パズル画面の縦横幅
 
 	bool isPressSwitch_;//スイッチが押されたかのフラグ
-
 public:
 
 	static int stageNum_;
