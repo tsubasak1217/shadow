@@ -1070,7 +1070,16 @@ void PlayerShadow::Draw(const Resources& rs, Screen screen) {
 					kFillModeSolid
 				);
 			}
-		
+		*/
+			DrawCat(pos_, size_.x, size_.y, 0x222222ff);
+			for (int i = 1; i < 5; i++) {
+				DrawCat(pos_,
+					size_.x + i * 0.6f,
+					size_.y + i * 0.6f,
+					0x3f3f3f55);
+			}
+
+
 			if (waitTimer_ > 240) {
 
 				//W
@@ -1111,14 +1120,7 @@ void PlayerShadow::Draw(const Resources& rs, Screen screen) {
 				);
 			}
 		}
-				DrawCat(pos_, size_.x, size_.y, 0x222222ff);
-				for (int i = 1; i < 5; i++) {
-			DrawCat(pos_,
-				size_.x + i *0.6f,
-				size_.y + i *0.6f,
-				0x3f3f3f55);
-		}
-	
+
 	//Novice::ScreenPrintf(0, 20, "%f", pos_.y);
 
 		break;

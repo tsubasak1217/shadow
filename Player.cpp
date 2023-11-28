@@ -1150,7 +1150,9 @@ void Player::Draw(const Resources& rs) {
 			1, 1,
 	
 			0xff0000ff
-		);
+		);*/
+		rs.whiteGH_;
+		DrawCat(pos_, size_.x * 1.4f, size_.y * 1.4f, 0xddddddff);
 
 		//ブロックを押す操作説明
 		for (int i = 0; i < 4; i++) {
@@ -1233,8 +1235,7 @@ void Player::Draw(const Resources& rs) {
 			);
 		}
 
-		rs.whiteGH_;
-		DrawCat(pos_,size_.x*1.4f,size_.y * 1.4f,0xddddddff);
+
 		break;
 
 		//====================================================================================
