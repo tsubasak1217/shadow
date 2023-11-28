@@ -63,6 +63,11 @@ class Pause {
 
 	//暗幕の色
 	unsigned int BCColor_;
+
+	int SelectSEHandle_;
+	int PushSEHandle_;
+
+
 public:
 
 	bool isPause_;//PAUSE画面か否か
@@ -136,9 +141,13 @@ public:
 		isEndPause_ = false;//PAUSE画面か否か
 		isStageReset_ = false;
 
+
+		SelectSEHandle_ = -1;
+		PushSEHandle_ = -1;
+
 	}
 	void Draw(Resources rs);
-	void Update(ChangeScene& cs, char* keys, char* preKeys);
+	void Update(ChangeScene& cs, char* keys, char* preKeys, const Resources& rs);
 	void Debug(char* keys, char* preKeys);
 	void Reset();
 };

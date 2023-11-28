@@ -25,6 +25,7 @@ void SCE::Update(StageClear stageColor, int starGetCount) {
 		//====================================================================================
 	case GAME://								ゲーム本編
 		//====================================================================================
+
 		break;
 		//====================================================================================
 	case CLEAR://								クリア画面
@@ -66,9 +67,13 @@ void SCE::Update(StageClear stageColor, int starGetCount) {
 
 		break;
 	}
-
-
-
+	if (Scene::sceneNum_ != CLEAR) {
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < EFP_MAX; j++) {
+				isAlive_[i][j] = false;
+			}
+		}
+	}
 }
 
 
@@ -93,8 +98,9 @@ void SCE::Draw(int starGetCount) {
 #pragma region"描画"
 		for (int i = 0; i < starGetCount; i++) {
 			for (int j = 0; j < EFP_MAX; j++) {
-				My::DrawTriangle(CPos_[i][j], size_[i][j], float(theta_[i][j]), color_[i][j]);
-
+				if (isAlive_[i][j]) {
+					My::DrawTriangle(CPos_[i][j], size_[i][j], float(theta_[i][j]), color_[i][j]);
+				}
 			}
 		}
 #pragma endregion

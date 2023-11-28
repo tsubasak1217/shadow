@@ -116,12 +116,17 @@ class ChangeScene {
 	///------------------
 #pragma endregion
 
+
+
 	/*----------------------------------セレクトからゲーム画面ここまで--------------------------------*/
 public:
 	bool isStartChange_;
 	bool isEndChange_;
 	bool preIsStartChange_;
 	bool preIsEndChange_;
+
+	int SEHandle_;
+	int SECount_ ;
 
 	ChangeScene() {
 
@@ -238,11 +243,14 @@ public:
 #pragma endregion
 
 
+		SEHandle_=-1;
+
+		SECount_ = 0;
 	}
 
 	void UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CPos[],
 		int selectNum, bool& CanCS, Vec2 goalPos, Vec2 goalSize, bool& isPauseSelect,bool& isTitlePush
-		,bool& stageReset);
+		,bool& stageReset, const Resources& rs,int& selectLightSEHandle);
 	void Draw(int GH, unsigned int DoorColor, Vec2 goalPos, Vec2 goalSize, bool& isPauseSelect);
 	void Reset();
 	//bool GetIsStart() { return isStartChange_; }

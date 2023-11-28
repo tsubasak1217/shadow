@@ -78,7 +78,6 @@ class StageClear {
 
 	int starGet_;
 
-
 	int debugNum;
 public:
 	Vec2 starPos_[3];
@@ -112,8 +111,8 @@ public:
 
 
 
-		windowColor_=0x444444FF;
-		skyColor_=0x222222FF;
+		windowColor_ = 0x444444FF;
+		skyColor_ = 0x222222FF;
 
 
 		/*ステージクリアの文字*/
