@@ -82,8 +82,9 @@ public:
 	Vec2 	selectFontCPos_;
 	Vec2 	selectFontSize_;
 	unsigned int FColor_;
-	
+
 	int lightSEHandle_;
+	int selectCursorSEHandle_;
 
 	SelectDoor() {
 		//ドア本体の変数
@@ -153,7 +154,8 @@ public:
 		FColor_ = 0xFFFFFFFF;
 		isChangeScene_ = false;
 
-		lightSEHandle_=-1;
+		lightSEHandle_ = -1;
+		selectCursorSEHandle_ = -1;
 	};
 
 	void Draw(Resources rs);

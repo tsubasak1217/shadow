@@ -6,6 +6,7 @@ void SelectDoor::Draw(Resources rs) {
 		//====================================================================================
 	case TITLE://							   タイトル画面
 		//====================================================================================
+		Novice::StopAudio(lightSEHandle_);
 		break;
 		//====================================================================================
 	case SELECT://							   ステージ選択
@@ -16,8 +17,8 @@ void SelectDoor::Draw(Resources rs) {
 		//size_に応じてSpriteの表示サイズを変更
 		Drawsize_.x = size_.x / 100;
 		Drawsize_.y = size_.y / 200;
-		for (int i = 0; i < 10; i++){
-			Novice::DrawEllipse(int(NumlightEllCPos_.x), 0, 60+(i*2), 5 + (i * 2), 0.0f, DLColor_, kFillModeSolid);
+		for (int i = 0; i < 10; i++) {
+			Novice::DrawEllipse(int(NumlightEllCPos_.x), 0, 60 + (i * 2), 5 + (i * 2), 0.0f, DLColor_, kFillModeSolid);
 		}
 
 		/*ステージの文字*/
@@ -33,7 +34,7 @@ void SelectDoor::Draw(Resources rs) {
 				static_cast<int>(NumlightEllSize_.x + (i * 5)), static_cast<int>(NumlightEllSize_.y + (i * 5)), 0.0f, DLColor_, kFillModeSolid);
 		}
 		Novice::DrawQuad(static_cast<int>(NumVertex_[0].x), static_cast<int>(NumVertex_[0].y), static_cast<int>(NumVertex_[1].x), static_cast<int>(NumVertex_[1].y),
-			static_cast<int>(NumVertex_[2].x), static_cast<int>(NumVertex_[2].y), static_cast<int>(NumVertex_[3].x), static_cast<int>(NumVertex_[3].y), (GHSize_*(selectNum_+1)), 0, GHSize_, GHSize_, NumGH_, NumColor_);
+			static_cast<int>(NumVertex_[2].x), static_cast<int>(NumVertex_[2].y), static_cast<int>(NumVertex_[3].x), static_cast<int>(NumVertex_[3].y), (GHSize_ * (selectNum_ + 1)), 0, GHSize_, GHSize_, NumGH_, NumColor_);
 
 
 		/*------------------------------選択する扉の描画------------------------------*/
@@ -100,7 +101,7 @@ void SelectDoor::Draw(Resources rs) {
 		//====================================================================================
 	case GAME://								ゲーム本編
 		//====================================================================================
-
+		Novice::StopAudio(lightSEHandle_);
 
 		break;
 		//====================================================================================
@@ -138,23 +139,25 @@ void SelectDoor::Update(char* keys, char* preKeys, const Resources& rs) {
 		if (!isChangeScene_ ||
 			!isEaseS_) {
 			//左方向に移動
-			if (keys[DIK_A] && !preKeys[DIK_A]||
+			if (keys[DIK_A] && !preKeys[DIK_A] ||
 				keys[DIK_LEFT] && !preKeys[DIK_LEFT]) {
 				selectNum_--;
 				selectT_ = 0.0f;
 				selectAddT_ = 0.0f;
-
+				selectCursorSEHandle_ = Novice::PlayAudio(rs.selectCursorSE_, 0, 0.12f);
 				isEaseS_ = true;//イージングで移動するフラグ(select)
 			}
 			//右方向に移動
-			if (keys[DIK_D] && !preKeys[DIK_D]||
+			if (keys[DIK_D] && !preKeys[DIK_D] ||
 				keys[DIK_RIGHT] && !preKeys[DIK_RIGHT]) {
 				selectNum_++;
 				selectT_ = 0.0f;
 				selectAddT_ = 0.0f;
-
+				selectCursorSEHandle_ = Novice::PlayAudio(rs.selectCursorSE_, 0, 0.12f);
 				isEaseS_ = true;//イージングで移動するフラグ(select)
 			}
+		} else {
+			selectPos_ = CPos_[selectNum_];
 		}
 
 		//Numを範囲内に収める
@@ -199,37 +202,38 @@ void SelectDoor::Update(char* keys, char* preKeys, const Resources& rs) {
 
 #pragma region"ステージ番号表示用のライトの点滅イージング"
 		//足す透明度をイージング
+		if (!isChangeScene_ ||
+			!isEaseS_) {
+			DLT_ += (1.0f / DLEaseTimer_) * DLEaseDir_;
+			DLAddT_ = EaseInOutBounce(DLT_);
+			addDLColor_ = (1 - DLAddT_) * minDLColor_ + DLAddT_ * maxDLColor_;
 
-		DLT_ += (1.0f / DLEaseTimer_) * DLEaseDir_;
-		DLAddT_ = EaseInOutBounce(DLT_);
-		addDLColor_ = (1 - DLAddT_) * minDLColor_ + DLAddT_ * maxDLColor_;
-
-		if (DLT_ >= 1.0f) {
-			DLT_ = 1.0f;
-			DLWaitTimer_ -= 1;
-			if (DLWaitTimer_ == 0) {
-				DLEaseDir_ *= -1;
-				DLWaitTimer_ = DLWaitTimerMax_;
-				lightSEHandle_ = Novice::PlayAudio(rs.selectLightSE_, 0, 0.4f);
+			if (DLT_ >= 1.0f) {
+				DLT_ = 1.0f;
+				DLWaitTimer_ -= 1;
+				if (DLWaitTimer_ == 0) {
+					DLEaseDir_ *= -1;
+					DLWaitTimer_ = DLWaitTimerMax_;
+					lightSEHandle_ = Novice::PlayAudio(rs.selectLightSE_, 0, 0.4f);
+				}
 			}
-		}
 
-		if (DLT_ <= 0.0f) {
-			DLT_ = 0.0f;
-			DLEaseDir_ *= -1;
+			if (DLT_ <= 0.0f) {
+				DLT_ = 0.0f;
+				DLEaseDir_ *= -1;
 
-		}
+			}
 
-		if (addDLColor_ >= maxDLColor_) {
-			addDLColor_ = maxDLColor_;//バウンドで色がオーバーフローしないように上限で無理やり止める
+			if (addDLColor_ >= maxDLColor_) {
+				addDLColor_ = maxDLColor_;//バウンドで色がオーバーフローしないように上限で無理やり止める
+			}
+			if (addDLColor_ <= minDLColor_) {
+				addDLColor_ = minDLColor_;//バウンドで色がオーバーフローしないように上限で無理やり止める
+			}
+			//Novice::ScreenPrintf(0, 150, "SCColor=%x", SCColor_);
+			DLColor_ = 0xFFFFFF00 + int(addDLColor_);//で透明度を足す
+			NumColor_ = 0x44444400 + int(addDLColor_ + 55);//文字も色変更
 		}
-		if (addDLColor_ <= minDLColor_) {
-			addDLColor_ = minDLColor_;//バウンドで色がオーバーフローしないように上限で無理やり止める
-		}
-		//Novice::ScreenPrintf(0, 150, "SCColor=%x", SCColor_);
-		DLColor_ = 0xFFFFFF00 + int(addDLColor_);//で透明度を足す
-		NumColor_ = 0x44444400 + int(addDLColor_+55);//文字も色変更
-
 #pragma endregion
 
 		break;
@@ -495,8 +499,12 @@ void SelectDoor::Reset() {
 	length_ = { 215,0 };
 
 	//選択範囲の変数
-	selectNum_ = 0;
-	selectPos_ = { 0 };
+	if (Scene::sceneNum_ == TITLE) {
+		selectNum_ = 0;
+		selectPos_ = { 0 };
+		selectMinPos_ = CPos_[0];
+		selectMaxPos_ = CPos_[0];
+	}
 	selectColor_ = 0xFF0000FF;
 	isSelectDraw_ = false;
 	isEaseS_ = false;
@@ -505,8 +513,7 @@ void SelectDoor::Reset() {
 	easeTimerS_ = 2.0f;
 	selectT_ = 0.0f;
 	selectAddT_ = 0.0f;
-	selectMinPos_ = CPos_[0];
-	selectMaxPos_ = CPos_[0];
+
 	//床の円
 	EllSize_ = { 260,276 };
 	EllPos_ = { 240,615 };
@@ -529,7 +536,7 @@ void SelectDoor::Reset() {
 
 
 	//*-------------------------------選択範囲の座標-------------------------------------*//
-	selectPos_ = CPos_[0];//CPos_[0]が決定したのでここでselectPos_に代入
+	selectPos_ = CPos_[selectNum_];//CPos_[0]が決定したのでここでselectPos_に代入
 
 
 #pragma endregion

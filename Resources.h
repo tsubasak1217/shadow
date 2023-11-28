@@ -43,22 +43,36 @@ public:
 
 	//sounds
 	int BGM[3] = {
-		Novice::LoadAudio("./Resources/sounds/stageBGM.mp3"),
-		Novice::LoadAudio("./Resources/sounds/clearBGM.mp3"),
-		Novice::LoadAudio("./Resources/sounds/titleBGM.mp3"),
+		Novice::LoadAudio("./Resources/sounds/BGM/stageBGM.mp3"),
+		Novice::LoadAudio("./Resources/sounds/BGM/clearBGM.mp3"),
+		Novice::LoadAudio("./Resources/sounds/BGM/titleBGM.mp3"),
 	};
 
 	/*ドアの開閉*/
 	int openDoorSE_ = Novice::LoadAudio("./Resources/sounds/SE/openTheDoorSE.mp3");
 	//pause画面の操作音
-	int pauseSelectSE_ = Novice::LoadAudio("./Resources/sounds/SE/pauseSelectSE.mp3");
+	int pauseSelectSE_ = Novice::LoadAudio("./Resources/sounds/SE/pauseSelectCursorSE.mp3");
 	int pausePushSE_ = Novice::LoadAudio("./Resources/sounds/SE/pausePushSE.mp3");
+
 	//アイテム入手
 	int itemGetSE_ = Novice::LoadAudio("./Resources/sounds/SE/itemGetSE.mp3");
+	//タイトルプレスキー
+	int titlePushSE_ = Novice::LoadAudio("./Resources/sounds/SE/titleScenePushSE.mp3");
+	//セレクトのライト点滅音
+	int selectLightSE_ = Novice::LoadAudio("./Resources/sounds/SE/selectSceneLightSE.mp3");
+	//パズルの自機が木箱を押す引きする音
+	int moveBoxSE_= Novice::LoadAudio("./Resources/sounds/SE/moveBoxSE.mp3");
+	//スイッチのON
+	int swicthOnSE_= Novice::LoadAudio("./Resources/sounds/SE/swicthOnSE.mp3");
+	//クリアプレスキー
+	int clearPushSE_ = Novice::LoadAudio("./Resources/sounds/SE/clearScenePushSE.mp3");
 
-	int titlePushSE_ = Novice::LoadAudio("./Resources/sounds/SE/titlePushSE.mp3");
+	//select画面の操作音
+	int selectCursorSE_ = Novice::LoadAudio("./Resources/sounds/SE/selectSceneCursor.mp3");
+	int selectPushSE_ = Novice::LoadAudio("./Resources/sounds/SE/selectScenePushSE.mp3");
 
-	int selectLightSE_ = Novice::LoadAudio("./Resources/sounds/SE/selectLightSE.mp3");
+	//自機が死亡する
+	int playerKilledSE_ = Novice::LoadAudio("./Resources/sounds/SE/playerKilledSE.mp3");
 
 	Resources();
 	~Resources();

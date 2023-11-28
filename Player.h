@@ -34,6 +34,8 @@ class Player {
 	//操作説明画像の透明度
 	int tutorialSpriteAlpha_;
 
+	int moveBoxSEHandle_;
+	int switchSEHandle_ ;
 public:
 
 	int swapTimeCount_;
@@ -74,11 +76,13 @@ public:
 		waitTimer_ = 0;
 		tutorialSpriteAlpha_ = 0;
 		killSwitch_ = false;
+		moveBoxSEHandle_ = -1;
+		switchSEHandle_ = -1;
 	}
 
 	void Init(int sceneNum, Map map);
 
-	void Update(char* keys, const ChangeScene& cs, Map& map,bool isPause);
+	void Update(char* keys, const ChangeScene& cs, Map& map,bool isPause,const Resources& rs);
 
 	void Draw(const Resources& rs);
 

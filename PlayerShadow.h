@@ -57,6 +57,8 @@ class PlayerShadow {
 	int starGetCount_;
 
 	int itemGetSEHandle_;
+	int killedSEHandle_;
+	int pushSEHandle_;
 
 public:
 
@@ -114,6 +116,8 @@ public:
 
 		starGetCount_ = 0;
 		itemGetSEHandle_=-1;
+		killedSEHandle_=-1;
+		pushSEHandle_=-1;
 	}
 
 	void Init(int sceneNum, Screen screen, Shadow shadow);

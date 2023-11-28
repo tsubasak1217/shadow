@@ -63,7 +63,7 @@ void Player::Init(int sceneNum, Map map) {
 }
 
 //====================================================アップデート=============================================================
-void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause) {
+void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, const Resources& rs) {
 
 	//シーン遷移の始まった瞬間にシーンに合わせて初期化
 	if (cs.isStartChange_ && cs.preIsEndChange_) {
@@ -208,7 +208,7 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause) {
 																	//動かすブロックのアドレスを保存
 																	moveBlockAddress_ = { address_[i].x - 1,address_[i].y };
 																	moveStartPos_ = map.GetPos()[address_[i].y][address_[i].x - 1];
-
+																	moveBoxSEHandle_ = Novice::PlayAudio(rs.moveBoxSE_, 0, 0.1f);
 																	//プレイヤーの座標を保存
 																	savedPlayerPos_ = pos_;
 																}
@@ -242,7 +242,7 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause) {
 																	//動かすブロックのアドレスを保存
 																	moveBlockAddress_ = { address_[i].x - 1,address_[i].y };
 																	moveStartPos_ = map.GetPos()[address_[i].y][address_[i].x - 1];
-
+																	moveBoxSEHandle_ = Novice::PlayAudio(rs.moveBoxSE_, 0, 0.1f);
 																	//プレイヤーの座標を保存
 																	savedPlayerPos_ = pos_;
 																}
@@ -278,7 +278,7 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause) {
 																	//動かすブロックのアドレスを保存
 																	moveBlockAddress_ = { address_[i].x,address_[i].y - 1 };
 																	moveStartPos_ = map.GetPos()[address_[i].y - 1][address_[i].x];
-
+																	moveBoxSEHandle_ = Novice::PlayAudio(rs.moveBoxSE_, 0, 0.1f);
 																	//プレイヤーの座標を保存
 																	savedPlayerPos_ = pos_;
 																}
@@ -312,7 +312,7 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause) {
 																	//動かすブロックのアドレスを保存
 																	moveBlockAddress_ = { address_[i].x,address_[i].y - 1 };
 																	moveStartPos_ = map.GetPos()[address_[i].y - 1][address_[i].x];
-
+																	moveBoxSEHandle_ = Novice::PlayAudio(rs.moveBoxSE_, 0, 0.1f);
 																	//プレイヤーの座標を保存
 																	savedPlayerPos_ = pos_;
 																}
@@ -355,7 +355,7 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause) {
 																	//動かすブロックのアドレスを保存
 																	moveBlockAddress_ = { address_[i].x + 1,address_[i].y };
 																	moveStartPos_ = map.GetPos()[address_[i].y][address_[i].x + 1];
-
+																	moveBoxSEHandle_ = Novice::PlayAudio(rs.moveBoxSE_, 0, 0.1f);
 																	//プレイヤーの座標を保存
 																	savedPlayerPos_ = pos_;
 																}
@@ -389,7 +389,7 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause) {
 																	//動かすブロックのアドレスを保存
 																	moveBlockAddress_ = { address_[i].x + 1,address_[i].y };
 																	moveStartPos_ = map.GetPos()[address_[i].y][address_[i].x + 1];
-
+																	moveBoxSEHandle_ = Novice::PlayAudio(rs.moveBoxSE_, 0, 0.1f);
 																	//プレイヤーの座標を保存
 																	savedPlayerPos_ = pos_;
 																}
@@ -425,7 +425,7 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause) {
 																	//動かすブロックのアドレスを保存
 																	moveBlockAddress_ = { address_[i].x,address_[i].y - 1 };
 																	moveStartPos_ = map.GetPos()[address_[i].y - 1][address_[i].x];
-
+																	moveBoxSEHandle_ = Novice::PlayAudio(rs.moveBoxSE_, 0, 0.1f);
 																	//プレイヤーの座標を保存
 																	savedPlayerPos_ = pos_;
 																}
@@ -459,7 +459,7 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause) {
 																	//動かすブロックのアドレスを保存
 																	moveBlockAddress_ = { address_[i].x,address_[i].y - 1 };
 																	moveStartPos_ = map.GetPos()[address_[i].y - 1][address_[i].x];
-
+																	moveBoxSEHandle_ = Novice::PlayAudio(rs.moveBoxSE_, 0, 0.1f);
 																	//プレイヤーの座標を保存
 																	savedPlayerPos_ = pos_;
 																}
@@ -501,7 +501,7 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause) {
 																	//動かすブロックのアドレスを保存
 																	moveBlockAddress_ = { address_[i].x - 1,address_[i].y };
 																	moveStartPos_ = map.GetPos()[address_[i].y][address_[i].x - 1];
-
+																	moveBoxSEHandle_ = Novice::PlayAudio(rs.moveBoxSE_, 0, 0.1f);
 																	//プレイヤーの座標を保存
 																	savedPlayerPos_ = pos_;
 																}
@@ -535,7 +535,7 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause) {
 																	//動かすブロックのアドレスを保存
 																	moveBlockAddress_ = { address_[i].x - 1,address_[i].y };
 																	moveStartPos_ = map.GetPos()[address_[i].y][address_[i].x - 1];
-
+																	moveBoxSEHandle_ = Novice::PlayAudio(rs.moveBoxSE_, 0, 0.1f);
 																	//プレイヤーの座標を保存
 																	savedPlayerPos_ = pos_;
 																}
@@ -571,7 +571,7 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause) {
 																	//動かすブロックのアドレスを保存
 																	moveBlockAddress_ = { address_[i].x,address_[i].y + 1 };
 																	moveStartPos_ = map.GetPos()[address_[i].y + 1][address_[i].x];
-
+																	moveBoxSEHandle_ = Novice::PlayAudio(rs.moveBoxSE_, 0, 0.1f);
 																	//プレイヤーの座標を保存
 																	savedPlayerPos_ = pos_;
 																}
@@ -605,7 +605,7 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause) {
 																	//動かすブロックのアドレスを保存
 																	moveBlockAddress_ = { address_[i].x,address_[i].y + 1 };
 																	moveStartPos_ = map.GetPos()[address_[i].y + 1][address_[i].x];
-
+																	moveBoxSEHandle_ = Novice::PlayAudio(rs.moveBoxSE_, 0, 0.1f);
 																	//プレイヤーの座標を保存
 																	savedPlayerPos_ = pos_;
 																}
@@ -649,7 +649,7 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause) {
 																	//動かすブロックのアドレスを保存
 																	moveBlockAddress_ = { address_[i].x + 1,address_[i].y };
 																	moveStartPos_ = map.GetPos()[address_[i].y][address_[i].x + 1];
-
+																	moveBoxSEHandle_ = Novice::PlayAudio(rs.moveBoxSE_, 0, 0.1f);
 																	//プレイヤーの座標を保存
 																	savedPlayerPos_ = pos_;
 																}
@@ -683,7 +683,7 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause) {
 																	//動かすブロックのアドレスを保存
 																	moveBlockAddress_ = { address_[i].x + 1,address_[i].y };
 																	moveStartPos_ = map.GetPos()[address_[i].y][address_[i].x + 1];
-
+																	moveBoxSEHandle_ = Novice::PlayAudio(rs.moveBoxSE_, 0, 0.1f);
 																	//プレイヤーの座標を保存
 																	savedPlayerPos_ = pos_;
 
@@ -720,7 +720,7 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause) {
 																	//動かすブロックのアドレスを保存
 																	moveBlockAddress_ = { address_[i].x,address_[i].y + 1 };
 																	moveStartPos_ = map.GetPos()[address_[i].y + 1][address_[i].x];
-
+																	moveBoxSEHandle_ = Novice::PlayAudio(rs.moveBoxSE_, 0, 0.1f);
 																	//プレイヤーの座標を保存
 																	savedPlayerPos_ = pos_;
 																}
@@ -754,7 +754,7 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause) {
 																	//動かすブロックのアドレスを保存
 																	moveBlockAddress_ = { address_[i].x,address_[i].y + 1 };
 																	moveStartPos_ = map.GetPos()[address_[i].y + 1][address_[i].x];
-
+																	moveBoxSEHandle_ = Novice::PlayAudio(rs.moveBoxSE_, 0, 0.1f);
 																	//プレイヤーの座標を保存
 																	savedPlayerPos_ = pos_;
 																}
@@ -1081,10 +1081,11 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause) {
 			for (int i = 0; i < 4; i++) {
 				//プレイヤーが直接踏んで起動させる場合
 				if (map.GetMapChipCopy()[address_[i].y][address_[i].x] == -2) {
-
+					switchSEHandle_ = Novice::PlayAudio(rs.swicthOnSE_, 0, 0.12f);
 					map.SetIsPressSwitch(true);
 					if (!isSwitchPushable_) {
 						killSwitch_ = true;
+						
 					}
 
 					break;
@@ -1096,10 +1097,11 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause) {
 					//ブロックを置いて起動させる場合
 					if (map.GetMapChip()[i][j] == 1 or map.GetMapChip()[i][j] == 2) {
 						if (map.GetMapChipCopy()[i][j] == -2) {
-
+							switchSEHandle_ = Novice::PlayAudio(rs.swicthOnSE_, 0, 0.12f);
 								map.SetIsPressSwitch(true);
 							if (!isSwitchPushable_) {
-								killSwitch_ = true;
+								killSwitch_ = true;	
+							
 							}
 							break;
 						}

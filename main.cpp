@@ -13,7 +13,7 @@
 //					グローバル変数/定数
 //======================================================
 
-const char kWindowTitle[] = "LC1A_14_クロカワツバサ_";
+const char kWindowTitle[] = "1207_迷暗";
 
 //======================================================
 //					  構造体など
@@ -80,10 +80,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		global.Update();
 		
 		cs.UpDate(keys, preKeys, door.isChangeScene_, door.CPos_, door.selectNum_, stageClear.canSceneChange,
-			shadow.GetGoalPos(), shadow.GetGoalSize(), pause.isSelect_, title.isPush_,pause.isStageReset_,rs,door.lightSEHandle_);
+			shadow.GetGoalPos(), shadow.GetGoalSize(), pause.isSelect_, title.isPush_,pause.isStageReset_,rs,door.lightSEHandle_,audio.BGMHandle_, audio.soundVolume_);
 
 		map.Update(keys, rs, cs);
-		player.Update(keys, cs, map, pause.isPause_);
+		player.Update(keys, cs, map, pause.isPause_,rs);
 		light.Update(keys, cs, map, ((3.0f / 4.0f) * float(M_PI)), pause.isPause_);
 
 		screen.Update(keys, cs, map, light);
@@ -99,7 +99,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		door.Update(keys, preKeys,rs);
 		stageClear.Update(cs.isStartChange_, playerShadow.GetstarCount());
 
-		pause.Update(cs, keys, preKeys,rs);
+		pause.Update(cs, keys, preKeys,rs,audio.BGMHandle_[0],audio.soundVolume_[0]);
 
 		for (int i = 0; i < 120; i++)
 		{
@@ -164,7 +164,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		pause.Draw(rs);
 
-		audio.Draw(rs,pause.isPause_);
+		audio.Draw(rs);
 		
 		/*シーンチェンジ一番前*/
 		cs.Draw(door.GH_, door.color_, shadow.GetGoalPos(), shadow.GetGoalSize(), pause.isSelect_);

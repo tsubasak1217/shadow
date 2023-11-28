@@ -135,7 +135,6 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 				if (respawnTimeCount_ < 80) {
 
 					if (respawnTimeCount_ == 79) {
-
 						map.Init(rs, Scene::sceneNum_);
 						player.Init(Scene::sceneNum_, map);
 						light.Init(Scene::sceneNum_, map);
@@ -835,6 +834,8 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 							)) {
 
 								isAlive_ = false;
+								//効果音
+								killedSEHandle_ = Novice::PlayAudio(rs.playerKilledSE_, 0, 0.5f);
 							}
 						}
 					}
@@ -978,6 +979,8 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 
 							if (!isInsideLightLT_ && !isInsideLightRT_ && !isInsideLightLB_ && !isInsideLightRB_) {
 								isAlive_ = false;
+								//効果音
+								killedSEHandle_ = Novice::PlayAudio(rs.playerKilledSE_, 0, 0.5f);
 							}
 							break;
 						}
@@ -1004,6 +1007,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 					!isDrop_) {
 					if (keys[DIK_RETURN] && !Prekeys[DIK_RETURN]) {
 						cs.isEndChange_ = true;
+						pushSEHandle_ = Novice::PlayAudio(rs.selectPushSE_, 0, 0.5f);
 					}
 				}
 

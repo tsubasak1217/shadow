@@ -1,8 +1,9 @@
 ﻿#include "ChangeScene.h"
 
 void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CPos[],
-	int selectNum, bool& CanCS, Vec2 goalPos, Vec2 goalSize, bool& isPauseSelect, bool& isTitlePush, bool& stageReset,const Resources &rs,int& selectLightSEHandle) {
-
+	int selectNum, bool& CanCS, Vec2 goalPos, Vec2 goalSize, bool& isPauseSelect, bool& isTitlePush, bool& stageReset,const Resources &rs,int& selectLightSEHandle,
+	int BGMHandle_[3],float soundVolume_[3]) {
+	
 	preIsStartChange_ = isStartChange_;
 	preIsEndChange_ = isEndChange_;
 
@@ -18,8 +19,12 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 			BCT_ += (1.0f / BCEaseTimer_) * BCEaseDir_;
 			BCAddT_ = EaseInOutBounce(BCT_);
 			addBCColor_ = (1 - BCAddT_) * minBCColor_ + BCAddT_ * maxBCColor_;
+			soundVolume_[2]= (1 - BCAddT_) * 0.12f + BCAddT_ * 0;
+			Novice::SetAudioVolume(BGMHandle_[2], soundVolume_[2]);
+
 			if (BCT_ <= 0.0f) {
 				BCT_ = 0.0f;
+				soundVolume_[2]=0.12f;
 				isStartChange_ = false;//暗幕の透明度を変化させるフラグを下す
 				isChangeScene = false;
 			}
@@ -37,8 +42,6 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 
 
 
-
-
 #pragma region"タイトルからセレクトへの状態遷移"
 
 
@@ -50,6 +53,8 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 			BCT_ += (1.0f / (BCEaseTimer_ / 1.0f)) * BCEaseDir_;
 			BCAddT_ = EaseInCubic(BCT_);
 			addBCColor_ = (1 - BCAddT_) * minBCColor_ + BCAddT_ * maxBCColor_;
+			soundVolume_[2] = (1 - BCAddT_) * 0.12f + BCAddT_ * 0;
+			Novice::SetAudioVolume(BGMHandle_[2], soundVolume_[2]);
 			if (BCT_ >= 1.0f) {
 				BCT_ = 1.0f;
 				BCWaitTimer_ -= 1;
@@ -57,6 +62,7 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 					isEndChange_ = false;//暗幕の透明度を変化させるフラグを下す
 					isStartChange_ = true;//暗幕の透明度を変化させるフラグを下す
 					isTitlePush = false;
+					Novice::StopAudio(BGMHandle_[2]);
 					BCEaseDir_ *= -1;
 					Scene::sceneNum_ = SELECT;
 				}
@@ -83,8 +89,12 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 			BCT_ += (1.0f / BCEaseTimer_) * BCEaseDir_;
 			BCAddT_ = EaseInOutBounce(BCT_);
 			addBCColor_ = (1 - BCAddT_) * minBCColor_ + BCAddT_ * maxBCColor_;
+			soundVolume_[0] = (1 - BCAddT_) * 0.12f + BCAddT_ * 0;
+			Novice::SetAudioVolume(BGMHandle_[0], soundVolume_[0]);
+
 			if (BCT_ <= 0.0f) {
 				BCT_ = 0.0f;
+				
 				isStartChange_ = false;//暗幕の透明度を変化させるフラグを下す
 			}
 
@@ -100,10 +110,9 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 
 #pragma endregion
 
-#pragma region"ステージ画面の終了処理(ステージからゲーム画面)"
+#pragma region"ステージ画面の終了処理(ステージからゲーム画面||ステージからタイトル画面)"
 
 		/*-------------------------------シーンチェンジフラグが立つと開始--------------------------------*/
-
 
 #pragma region"シーンチェンジで開始"
 
@@ -115,6 +124,8 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 					isEndChange_ = true;
 					isSetSCPos_ = true;
 					isChangeColor_ = true;
+					pushSEHandle_ = Novice::PlayAudio(rs.selectPushSE_, 0, 0.5f);
+					Novice::StopAudio(selectLightSEHandle);
 				}
 			}
 		}
@@ -136,12 +147,16 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 #pragma endregion
 		if (isEndChange_) {
 
+
+			//タイトルに戻る処理
 			if (isPushEscape_) {
 				//足す透明度をイージング
 				if (!isStartChange_ && isEndChange_) {
 					BCT_ += (1.0f / (BCEaseTimer_ / 1.0f)) * BCEaseDir_;
 					BCAddT_ = EaseInCubic(BCT_);
 					addBCColor_ = (1 - BCAddT_) * minBCColor_ + BCAddT_ * maxBCColor_;
+					soundVolume_[0] = (1 - BCAddT_) * 0.12f + BCAddT_ * 0;
+					Novice::SetAudioVolume(BGMHandle_[0], soundVolume_[0]);
 					if (BCT_ >= 1.0f) {
 						BCT_ = 1.0f;
 						BCWaitTimer_ -= 1;
@@ -372,6 +387,8 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 				BCT_ += (1.0f / BCEaseTimer_) * BCEaseDir_;
 				BCAddT_ = EaseInOutBounce(BCT_);
 				addBCColor_ = (1 - BCAddT_) * minBCColor_ + BCAddT_ * maxBCColor_;
+				soundVolume_[0] = (1 - BCAddT_) * 0.12f + BCAddT_ * 0;
+				Novice::SetAudioVolume(BGMHandle_[0], soundVolume_[0]);
 				if (BCT_ <= 0.0f) {
 					BCT_ = 0.0f;
 					isStartChange_ = false;//暗幕の透明度を変化させるフラグを下す
@@ -422,6 +439,7 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 				BCT_ += (1.0f / (BCEaseTimer_ / 2.0f)) * BCEaseDir_;
 				BCAddT_ = EaseInCubic(BCT_);
 				addBCColor_ = (1 - BCAddT_) * minBCColor_ + BCAddT_ * maxBCColor_;
+				
 				if (BCT_ >= 1.0f) {
 					BCT_ = 1.0f;
 					BCWaitTimer_ -= 1;
@@ -432,7 +450,7 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 						BCEaseDir_ *= -1;
 						if (stageReset) {
 							Scene::sceneNum_ = GAME;
-
+							
 						} else {
 							Scene::sceneNum_ = SELECT;
 						}
@@ -455,24 +473,33 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 				changeTime_ += 1;
 				if (changeTime_ >= 60) {
 					for (int i = 0; i < kMaxWall; i++) {
-						//wall[i].Update();
+					
 						if (wallT_ < 1.0f) {
 							wallT_ += (1.0f / wallMoveTime_);
+
 						} else {
 							wallT_ = 1.0f;
 						}
 						wallPos_[i].x = (1 - wallT_) * wallStartPos_[i].x + wallT_ * wallEndPos_[i].x;
 						wallPos_[i].y = (1 - wallT_) * wallStartPos_[i].y + wallT_ * wallEndPos_[i].y;
-
+						soundVolume_[0] = (1 - wallT_) * 0.12f + wallT_ * 0;
+						Novice::SetAudioVolume(BGMHandle_[0], soundVolume_[0]);
 
 					}
 				}
 			}
 			if (changeTime_ >= 120) {
+				/*ドアの開く効果音*/
+				if (!Novice::IsPlayingAudio(SEHandle_) || SEHandle_ == -1) {
+					if (SECount_ == 0) {
+						SEHandle_ = Novice::PlayAudio(rs.openDoorSE_, 0, 0.12f);
+						SECount_++;
+					}
+				}
 				//goal.UpDate();
 				GopenT_ += (1.0f / 120) * easeDirGO_;
 				if (easeDirGO_ > 0) {
-					GopenAddT_ = EaseInOutCubic(GopenT_);
+					GopenAddT_ = EaseOutQuad(GopenT_);
 				}
 				if (GopenT_ >= 1.0f) {
 					GopenT_ = 1.0f;
@@ -530,6 +557,8 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 				WST_ += (1.0f / WSEaseTimer_) * WSEaseDir_;
 				WSAddT_ = EaseInOutBounce(WST_);
 				addWSColor_ = (1 - WSAddT_) * minWSColor_ + WSAddT_ * maxWSColor_;
+				soundVolume_[1] = (1 - WSAddT_) * 0 + WSAddT_ * 0.12f;
+				Novice::SetAudioVolume(BGMHandle_[1], soundVolume_[1]);
 				if (WST_ >= 1.0f) {
 					WST_ = 1.0f;
 					isStartChange_ = false;
@@ -555,6 +584,7 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 		if (keys[DIK_SPACE] && !preKeys[DIK_SPACE]) {
 			if (CanCS && !isStartChange_ && !isEndChange_) {//クリア画面で全ての処理が終わったとき
 				isEndChange_ = true;
+				clearPushSEHandle_ = Novice::PlayAudio(rs.clearPushSE_, 0, soundVolume_[1]);
 			}
 		}
 
@@ -563,6 +593,8 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 			BCT_ += (1.0f / (BCEaseTimer_ / 1.5f)) * BCEaseDir_;
 			BCAddT_ = EaseInCubic(BCT_);
 			addBCColor_ = (1 - BCAddT_) * minBCColor_ + BCAddT_ * maxBCColor_;
+			soundVolume_[1] = (1 - BCAddT_) * 0.12f + BCAddT_ * 0;
+			Novice::SetAudioVolume(BGMHandle_[1], soundVolume_[1]);
 			if (BCT_ >= 1.0f) {
 				BCT_ = 1.0f;
 				BCWaitTimer_ -= 1;

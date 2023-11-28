@@ -10,11 +10,11 @@ class ChangeScene {
 #pragma region"セレクトからゲームで使う変数の宣言"
 	/*セレクト画面のシーン遷移フラグ*/
 	//bool isChangeSelect_;
-	
+
 	//escapeでタイトルに戻るフラグ
 	bool isPushEscape_;
 
-	 
+
 	//状態遷移イージング用
 	//SCはSceneChangeの略
 	Vec2 SCCPos_;//状態遷移の扉の中心座標
@@ -126,7 +126,10 @@ public:
 	bool preIsEndChange_;
 
 	int SEHandle_;
-	int SECount_ ;
+	int SECount_;
+
+	int clearPushSEHandle_;
+	int pushSEHandle_;
 
 	ChangeScene() {
 
@@ -204,23 +207,23 @@ public:
 		isEaseGO_ = false;
 
 		/*迫ってくる壁*/
-		
-		wallWidth_=float(Global::windowSize_.x);
+
+		wallWidth_ = float(Global::windowSize_.x);
 		wallHeight_ = float(Global::windowSize_.y);
 
 		//EndScene以外の時
 		for (int i = 0; i < 4; i++) {
 			wallPos_[i] = { 0 };
 			wallStartPos_[i] = { 0 };
-			wallEndPos_[i] = {0};
+			wallEndPos_[i] = { 0 };
 		}
-		wallT_=0;
-		wallMoveTime_=120;
+		wallT_ = 0;
+		wallMoveTime_ = 120;
 
 		/*階段*/
 
-		stairsWidth_=41.2f;
-		stairsHeight_=18.5f;
+		stairsWidth_ = 41.2f;
+		stairsHeight_ = 18.5f;
 		for (int i = 0; i < 5; i++) {
 			stairsPos_[i] = { 0 };
 			stairsStartPos_[i] = { 0 };
@@ -243,14 +246,19 @@ public:
 #pragma endregion
 
 
-		SEHandle_=-1;
+		SEHandle_ = -1;
 
 		SECount_ = 0;
+
+		clearPushSEHandle_ = -1;
+		pushSEHandle_ = -1;
 	}
 
+
 	void UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CPos[],
-		int selectNum, bool& CanCS, Vec2 goalPos, Vec2 goalSize, bool& isPauseSelect,bool& isTitlePush
-		,bool& stageReset, const Resources& rs,int& selectLightSEHandle);
+		int selectNum, bool& CanCS, Vec2 goalPos, Vec2 goalSize, bool& isPauseSelect, bool& isTitlePush
+		, bool& stageReset, const Resources& rs, int& selectLightSEHandle,
+		int BGMHandle_[3], float soundVolume_[3]);
 	void Draw(int GH, unsigned int DoorColor, Vec2 goalPos, Vec2 goalSize, bool& isPauseSelect);
 	void Reset();
 	//bool GetIsStart() { return isStartChange_; }

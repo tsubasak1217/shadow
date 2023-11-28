@@ -14,7 +14,7 @@ public:
 	float SEsoundVolume_[kSEHandleMax_] = { 0 };
 
 
-	void Draw(const Resources& rs, const bool& isPause);
+	void Draw(const Resources& rs);
 
 	AudioPlayer();
 

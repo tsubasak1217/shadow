@@ -1,6 +1,6 @@
 ﻿#include "AudioPlayer.h"
 
-void AudioPlayer::Draw(const Resources& rs, const bool& isPause) {
+void AudioPlayer::Draw(const Resources& rs) {
 
 	switch (Scene::sceneNum_) {
 
@@ -31,11 +31,7 @@ void AudioPlayer::Draw(const Resources& rs, const bool& isPause) {
 		Novice::StopAudio(BGMHandle_[1]);
 		Novice::StopAudio(BGMHandle_[2]);
 
-		if (isPause) {
-			Novice::PauseAudio(BGMHandle_[0]);
-		} else {
-			Novice::ResumeAudio(BGMHandle_[0]);
-		}
+
 
 		break;
 	case CLEAR:
@@ -58,10 +54,12 @@ AudioPlayer::AudioPlayer() {
 
 	for (int i = 0; i < kBGMHandleMax_; i++) {
 		BGMHandle_[i] = -1;
-		soundVolume_[i] = 0.12f;
+		soundVolume_[i] = 0;
 	}
-
-	for (int i = 0; i < kSEHandleMax_; i++) {
+	//タイトルなので最初から音が出るようにする
+	soundVolume_[2] = 0.12f;
+	
+		for (int i = 0; i < kSEHandleMax_; i++) {
 		SEHandle_[i] = -1;
 		SEsoundVolume_[i] = 0.12f;
 	}

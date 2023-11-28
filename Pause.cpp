@@ -51,7 +51,7 @@ void Pause::Draw(Resources rs) {
 		break;
 	}
 }
-void Pause::Update(ChangeScene& cs, char* keys, char* preKeys, const Resources& rs) {
+void Pause::Update(ChangeScene& cs, char* keys, char* preKeys, const Resources& rs, int& BGMHandle, float& soundVolume) {
 
 
 	switch (Scene::sceneNum_) {
@@ -104,6 +104,9 @@ void Pause::Update(ChangeScene& cs, char* keys, char* preKeys, const Resources& 
 
 			addBCColor_ = (1 - BCAddT_) * minColor_ + BCAddT_ * maxBCColor_;
 			addElseColor_ = (1 - BCAddT_) * minColor_ + BCAddT_ * maxElseColor_;
+			soundVolume= (1 - BCAddT_) * maxVolume_ + BCAddT_ * 0;
+			Novice::SetAudioVolume(BGMHandle,soundVolume);
+
 			//イージング
 			theta_ = (1 - BCAddT_) * minTheta_ + BCAddT_ * maxTheta_;
 
@@ -205,6 +208,8 @@ void Pause::Update(ChangeScene& cs, char* keys, char* preKeys, const Resources& 
 				case 0://セレクト画面へ戻る
 					if (!cs.isStartChange_ && !cs.isEndChange_) {//クリア画面で全ての処理が終わったとき
 						cs.isEndChange_ = true;
+						Novice::StopAudio(BGMHandle);
+						soundVolume = 0.12f;
 					}
 					break;
 				case 1://ステージをリセット
