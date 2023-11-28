@@ -64,7 +64,7 @@ public:
 	Vec2 TitlefontPos_ = { 380,20 };
 	Vec2 TitlefontSize_ = { 300,40 };
 
-	int titlePushSEHandle_;
+	int titlePushSEHandle_;//タイトル画面でプレスキーを押したときの音
 
 	Title() {
 		timeCount_ = 0;

@@ -83,8 +83,9 @@ public:
 	Vec2 	selectFontSize_;
 	unsigned int FColor_;
 
-	int lightSEHandle_;
-	int selectCursorSEHandle_;
+	/*効果音*/
+	int lightSEHandle_;//ライトの点滅
+	int selectCursorSEHandle_;//扉選択のカーソル音
 
 	SelectDoor() {
 		//ドア本体の変数

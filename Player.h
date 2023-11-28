@@ -34,8 +34,9 @@ class Player {
 	//操作説明画像の透明度
 	int tutorialSpriteAlpha_;
 
-	int moveBoxSEHandle_;
-	int switchSEHandle_ ;
+	int moveBoxSEHandle_;//木箱を押すときの音
+	int switchSEHandle_ ;//スイッチを押すときの音
+
 public:
 
 	int swapTimeCount_;

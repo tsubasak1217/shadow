@@ -125,11 +125,12 @@ public:
 	bool preIsStartChange_;
 	bool preIsEndChange_;
 
-	int SEHandle_;
+	
+	int openDoorSEHandle_;//扉が開く音
 	int SECount_;
 
-	int clearPushSEHandle_;
-	int pushSEHandle_;
+	int clearPushSEHandle_;//クリア画面のプレスキー音
+	int pushSEHandle_;//セレクト画面のドア選択時ノック音
 
 	ChangeScene() {
 
@@ -246,7 +247,7 @@ public:
 #pragma endregion
 
 
-		SEHandle_ = -1;
+		openDoorSEHandle_ = -1;
 
 		SECount_ = 0;
 

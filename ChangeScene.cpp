@@ -257,9 +257,9 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 					if (SCT_ >= 0.3f) {
 						isSetVertexO_ = true;//扉を開けるイージングで使う変数の値を入れる
 						
-						if (!Novice::IsPlayingAudio(SEHandle_) || SEHandle_ == -1){
+						if (!Novice::IsPlayingAudio(openDoorSEHandle_) || openDoorSEHandle_ == -1){
 							if (SECount_ == 0) {
-								SEHandle_ = Novice::PlayAudio(rs.openDoorSE_, 0, 0.12f);
+								openDoorSEHandle_ = Novice::PlayAudio(rs.openDoorSE_, 0, 0.12f);
 								SECount_++;
 							}
 						}
@@ -490,9 +490,9 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 			}
 			if (changeTime_ >= 120) {
 				/*ドアの開く効果音*/
-				if (!Novice::IsPlayingAudio(SEHandle_) || SEHandle_ == -1) {
+				if (!Novice::IsPlayingAudio(openDoorSEHandle_) || openDoorSEHandle_ == -1) {
 					if (SECount_ == 0) {
-						SEHandle_ = Novice::PlayAudio(rs.openDoorSE_, 0, 0.12f);
+						openDoorSEHandle_ = Novice::PlayAudio(rs.openDoorSE_, 0, 0.12f);
 						SECount_++;
 					}
 				}
@@ -938,7 +938,7 @@ void ChangeScene::Reset() {
 			stairsPos_[i] = stairsStartPos_[i];
 			stairsT_[i] = 0;
 		}
-		SEHandle_ = -1;
+		openDoorSEHandle_ = -1;
 
 		SECount_ = 0;
 	}

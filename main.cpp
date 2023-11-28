@@ -170,12 +170,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		cs.Draw(door.GH_, door.color_, shadow.GetGoalPos(), shadow.GetGoalSize(), pause.isSelect_);
 
 		if (keys[DIK_H] && !preKeys[DIK_H]) {
-		//	if (cs.isEndChange_) {
-		//		cs.isEndChange_ = false;
+			if (cs.isEndChange_) {
+				cs.isEndChange_ = false;
 
-	//		} else {
-		//		cs.isEndChange_ = true;
-		//	}
+			} else {
+				cs.isEndChange_ = true;
+			}
 		}
 
 		///
