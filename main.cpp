@@ -135,11 +135,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Novice::ScreenPrintf(0, 0, "StageNum=%d", Map::stageNum_);
 
 		map.DrawBG(rs);
+		map.DrawSwitch(rs);
 		screen.DrawBG(rs);
 
 		shadow.Draw(rs);
 		screen.Draw(map, rs, light);
-		playerShadow.Draw(screen);
+		playerShadow.Draw(rs,screen);
 
 		for (int i = 0; i < 120; i++) {
 			particle[i].Draw();

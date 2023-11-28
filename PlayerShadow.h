@@ -50,6 +50,9 @@ class PlayerShadow {
 	bool preIsInsideLightLT_;
 	bool preIsInsideLightRT_;
 
+	//動いていない時間を計る変数
+	int waitTimer_;
+
 	//クリア
 	int starGetCount_;
 
@@ -107,6 +110,8 @@ public:
 		preIsInsideLightLT_ = false;
 		preIsInsideLightRT_ = false;
 
+		waitTimer_ = 0;
+
 		starGetCount_ = 0;
 		itemGetSEHandle_=-1;
 	}
@@ -115,7 +120,7 @@ public:
 
 	void Update(char* keys, char* Prekeys, const Resources& rs, ChangeScene& cs, Screen& screen, Shadow& shadow, Player& player, Map& map, Light& light, bool isPause);
 
-	void Draw(Screen screen);
+	void Draw(const Resources& rs, Screen screen);
 
 	//アクセッサ
 	Vec2 GetPos() { return pos_; }

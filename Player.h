@@ -24,14 +24,21 @@ class Player {
 
 	//スイッチを押せるかどうか
 	bool isSwitchPushable_;
-
+	//ブロックを押せるかどうか
+	bool isBlockPushable_;
 	//当たった回数
 	bool isHitMapChip_;
+
+	//動いていない時間を取得
+	int waitTimer_;
+	//操作説明画像の透明度
+	int tutorialSpriteAlpha_;
 
 public:
 
 	int swapTimeCount_;
-	
+	bool killSwitch_;
+
 	Player(Map map) {
 		pos_ = {
 			map.firstPlayerPos_.x + map.GetPuzzleLeftTop().x,
@@ -47,7 +54,8 @@ public:
 			address_[i] = { 0,0 };
 			preAddress_[i] = address_[i];
 		}
-		centerAddress_ = { 0,0 };
+		centerAddress_.x = int((pos_.x - map.GetPuzzleLeftTop().x) / map.GetSize().x);
+		centerAddress_.y = int((pos_.y - map.GetPuzzleLeftTop().y) / map.GetSize().y);
 
 		isMoveBlock_ = false;
 		blockMoveT_ = 0.0f;
@@ -62,6 +70,10 @@ public:
 		isHitMapChip_ = 0;
 
 		isSwitchPushable_ = true;
+		isBlockPushable_ = false;
+		waitTimer_ = 0;
+		tutorialSpriteAlpha_ = 0;
+		killSwitch_ = false;
 	}
 
 	void Init(int sceneNum, Map map);

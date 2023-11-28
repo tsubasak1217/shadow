@@ -1,6 +1,6 @@
 ﻿#include "AudioPlayer.h"
 
-void AudioPlayer::Draw(const Resources& rs,const bool& isPause ) {
+void AudioPlayer::Draw(const Resources& rs, const bool& isPause) {
 
 	switch (Scene::sceneNum_) {
 
@@ -16,13 +16,13 @@ void AudioPlayer::Draw(const Resources& rs,const bool& isPause ) {
 	case SELECT:
 		Novice::StopAudio(BGMHandle_[1]);
 		Novice::StopAudio(BGMHandle_[2]);
-	
+
 		//BGMを鳴らす
 		if (!Novice::IsPlayingAudio(BGMHandle_[0]) or BGMHandle_[0] == -1) {
 			BGMHandle_[0] = Novice::PlayAudio(rs.BGM[0], 1, soundVolume_[0]);
 		}
-			Novice::ResumeAudio(BGMHandle_[0]);
-		
+		Novice::ResumeAudio(BGMHandle_[0]);
+
 
 
 

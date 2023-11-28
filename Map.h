@@ -35,6 +35,7 @@ public:
 
 	//
 	void Draw(const Resources& rs);
+	void DrawSwitch(const Resources& rs);
 	void DrawBG(const Resources& rs);
 
 	//アクセッサ

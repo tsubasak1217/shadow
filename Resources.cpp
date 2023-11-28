@@ -13,6 +13,7 @@ Resources::Resources() {
 	stageClearFontGH_ = Novice::LoadTexture("./Resources/images/stageClear.png");
 	stageClearFont2GH_ = Novice::LoadTexture("./Resources/images/stageClear2.png");
 	selectFontGH_ = Novice::LoadTexture("./Resources/images/stageSelect.png");
+	keysGH_ = Novice::LoadTexture("./Resources/images/keys1.png");
 	creditFontGH_ = Novice::LoadTexture("./Resources/images/credit.png");
 
 	mapCsv_[0] = "./Resources/csv/stage1/mapChip.csv";

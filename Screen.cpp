@@ -307,6 +307,25 @@ void Screen::Draw(Map map, const Resources& rs, Light light) {
 			);
 		}
 
+		Novice::SetBlendMode(kBlendModeMultily);
+			Novice::DrawQuad(
+				int(LRTB_.x),
+				int(LRTB_.z),
+				int(LRTB_.y),
+				int(LRTB_.z),
+				int(LRTB_.x),
+				int(LRTB_.w),
+				int(LRTB_.y),
+				int(LRTB_.w),
+				0, 0,
+				333,
+				541,
+				rs.textureGH_[0],
+				0xffffff3f
+			);
+		
+			Novice::SetBlendMode(kBlendModeNormal);
+
 		Novice::DrawBox(
 			int(LRTB_.x),
 			0,

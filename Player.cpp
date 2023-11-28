@@ -30,7 +30,8 @@ void Player::Init(int sceneNum, Map map) {
 			address_[i] = { 0,0 };
 			preAddress_[i] = address_[i];
 		}
-		centerAddress_ = { 0,0 };
+		centerAddress_.x = int((pos_.x - map.GetPuzzleLeftTop().x) / map.GetSize().x);
+		centerAddress_.y = int((pos_.y - map.GetPuzzleLeftTop().y) / map.GetSize().y);
 
 		isMoveBlock_ = false;
 		blockMoveT_ = 0.0f;
@@ -45,6 +46,10 @@ void Player::Init(int sceneNum, Map map) {
 		isHitMapChip_ = 0;
 
 		isSwitchPushable_ = true;
+		isBlockPushable_ = false;
+		waitTimer_ = 0;
+		tutorialSpriteAlpha_ = 0;
+		killSwitch_ = false;
 
 		break;
 		//====================================================================================
@@ -85,17 +90,90 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause) {
 		if (!isPause && !cs.isEndChange_ && !cs.isStartChange_) {
 			//毎フレームの初期化
 			isSwappped_ = false;
+			killSwitch_ = false;
 
 			//前のフレームの情報保存に関するもの
 			prePos_ = pos_;
 
-			if (swapTimeCount_>0) {
+			if (swapTimeCount_ > 0) {
 				swapTimeCount_--;
 			}
 
+			//動いていないとき、動いていない時間タイマーを加算
+			if (!keys[DIK_LEFT] && !keys[DIK_RIGHT] && !keys[DIK_UP] && !keys[DIK_DOWN]) {
+				waitTimer_++;
+			} else {
+				waitTimer_ = 0;
+			}
+
+			if (isBlockPushable_) {
+				tutorialSpriteAlpha_ += 4;
+
+				if (tutorialSpriteAlpha_ > 0x7f) {
+					tutorialSpriteAlpha_ = 0x7f;
+				}
+			} else {
+				tutorialSpriteAlpha_ -= 4;
+				if (tutorialSpriteAlpha_ < 0) {
+					tutorialSpriteAlpha_ = 0;
+				}
+			}
+
 			/*------------------------------ブロックを動かすフラグを立てる-------------------------------*/
+			isBlockPushable_ = false;
+
 			if (!isMoveBlock_) {
 
+				//動かせる状態かどうか取得-------------------------------------------------
+				if (centerAddress_.x - 1 >= 0) {
+					if (map.GetMapChip()[centerAddress_.y][centerAddress_.x - 1] > 0 &&
+						map.GetMapChip()[centerAddress_.y][centerAddress_.x - 1] <= 2) {
+						if (pos_.x - 2 <=
+							map.GetPos()[centerAddress_.y][centerAddress_.x - 1].x
+							+ (map.GetSize().x * 0.5f) + (size_.x * 0.5f)) {
+
+							isBlockPushable_ = true;
+						}
+					}
+				}
+
+				if (centerAddress_.x + 1 < map.GetMapChip()[0].size()) {
+					if (map.GetMapChip()[centerAddress_.y][centerAddress_.x + 1] > 0 &&
+						map.GetMapChip()[centerAddress_.y][centerAddress_.x + 1] <= 2) {
+						if (pos_.x + 2 >=
+							map.GetPos()[centerAddress_.y][centerAddress_.x + 1].x
+							- (map.GetSize().x * 0.5f) - (size_.x * 0.5f)) {
+
+							isBlockPushable_ = true;
+						}
+					}
+				}
+
+				if (centerAddress_.y - 1 >= 0) {
+					if (map.GetMapChip()[centerAddress_.y - 1][centerAddress_.x] > 0 &&
+						map.GetMapChip()[centerAddress_.y - 1][centerAddress_.x] <= 2) {
+						if (pos_.y - 2 <=
+							map.GetPos()[centerAddress_.y - 1][centerAddress_.x].y
+							+ (map.GetSize().y * 0.5f) + (size_.y * 0.5f)) {
+
+							isBlockPushable_ = true;
+						}
+					}
+				}
+
+				if (centerAddress_.y + 1 < map.GetMapChip().size()) {
+					if (map.GetMapChip()[centerAddress_.y + 1][centerAddress_.x] > 0 &&
+						map.GetMapChip()[centerAddress_.y + 1][centerAddress_.x] <= 2) {
+						if (pos_.y + 2 >=
+							map.GetPos()[centerAddress_.y + 1][centerAddress_.x].y
+							- (map.GetSize().y * 0.5f) - (size_.y * 0.5f)) {
+
+							isBlockPushable_ = true;
+						}
+					}
+				}
+
+				//------------------------------------------------------------------------------
 				for (int i = 0; i < 4; i++) {
 
 					if (address_[i].x >= 0 && address_[i].x < map.GetMapChip()[0].size()) {
@@ -805,6 +883,8 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause) {
 
 				} else if (blockMoveT_ >= 1.0f) {//-----------------------------------------------------
 
+					tutorialSpriteAlpha_ = 0;
+
 					//フラグと媒介変数を元に戻す
 					//Global::isMoveShadow_ = false;
 					isMoveBlock_ = false;
@@ -1002,9 +1082,11 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause) {
 				//プレイヤーが直接踏んで起動させる場合
 				if (map.GetMapChipCopy()[address_[i].y][address_[i].x] == -2) {
 
-					if (isSwitchPushable_) {
-						map.SetIsPressSwitch(true);
+					map.SetIsPressSwitch(true);
+					if (!isSwitchPushable_) {
+						killSwitch_ = true;
 					}
+
 					break;
 				}
 			}
@@ -1015,8 +1097,9 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause) {
 					if (map.GetMapChip()[i][j] == 1 or map.GetMapChip()[i][j] == 2) {
 						if (map.GetMapChipCopy()[i][j] == -2) {
 
-							if (isSwitchPushable_) {
 								map.SetIsPressSwitch(true);
+							if (!isSwitchPushable_) {
+								killSwitch_ = true;
 							}
 							break;
 						}
@@ -1068,7 +1151,88 @@ void Player::Draw(const Resources& rs) {
 	
 			0xff0000ff
 		);
-		*/
+
+		//ブロックを押す操作説明
+		for (int i = 0; i < 4; i++) {
+			Novice::DrawQuad(
+				int(pos_.x) - 64 - i * 2,
+				int(pos_.y - size_.y * 0.5f) - 64 - i * 2,
+				int(pos_.x) + 64 + i * 2,
+				int(pos_.y - size_.y * 0.5f) - 64 - i * 2,
+				int(pos_.x) - 64 - i * 2,
+				int(pos_.y - size_.y * 0.5f) + i * 2,
+				int(pos_.x) + 64 + i * 2,
+				int(pos_.y - size_.y * 0.5f) + i * 2,
+				0, 0,
+				1, 1,
+				rs.whiteGH_,
+				int(float(0x00000001f) * (float(tutorialSpriteAlpha_) / float(0x7f)))
+			);
+
+		}
+		Novice::DrawSprite(
+			int(pos_.x) - 64,
+			int(pos_.y - size_.y * 0.5f) - 64,
+			rs.tutorial_[0],
+			0.5f, 0.5f,
+			0.0f,
+			0xffffff00 + tutorialSpriteAlpha_
+		);
+
+		if (isBlockPushable_) {
+
+
+		} else if (waitTimer_ > 240) {
+
+			//←
+			Novice::DrawSpriteRect(
+				int(pos_.x - size_.x * 0.5f - 32) - int(4.0f * fabsf(cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))),
+				int(pos_.y - size_.y * 0.5f - 6),
+				96, 32,
+				32, 32,
+				rs.keysGH_,
+				32.0f / 128.0f, 32.0f / 94.0f,
+				0.0f,
+				0xffffff5f + int(float(0x4f) * cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))
+			);
+
+			//→
+			Novice::DrawSpriteRect(
+				int(pos_.x + size_.x * 0.5f) + int(4.0f * fabsf(cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))),
+				int(pos_.y - size_.y * 0.5f - 6),
+				32, 32,
+				32, 32,
+				rs.keysGH_,
+				32.0f / 128.0f, 32.0f / 94.0f,
+				0.0f,
+				0xffffff5f + int(float(0x4f) * cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))
+			);
+
+			//↑
+			Novice::DrawSpriteRect(
+				int(pos_.x - size_.x * 0.5f - 6),
+				int(pos_.y - size_.y * 0.5f - 32) - int(4.0f * fabsf(cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))),
+				0, 32,
+				32, 32,
+				rs.keysGH_,
+				32.0f / 128.0f, 32.0f / 94.0f,
+				0.0f,
+				0xffffff5f + int(float(0x4f) * cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))
+			);
+
+			//↓
+			Novice::DrawSpriteRect(
+				int(pos_.x - size_.x * 0.5f - 6),
+				int(pos_.y + size_.y * 0.5f) + int(4.0f * fabsf(cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))),
+				64, 32,
+				32, 32,
+				rs.keysGH_,
+				32.0f / 128.0f, 32.0f / 94.0f,
+				0.0f,
+				0xffffff5f + int(float(0x4f) * cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))
+			);
+		}
+
 		rs.whiteGH_;
 		DrawCat(pos_,size_.x*1.4f,size_.y * 1.4f,0xddddddff);
 		break;

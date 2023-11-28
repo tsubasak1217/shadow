@@ -580,6 +580,23 @@ void Map::DrawBG(const Resources& rs) {
 			}
 		}
 
+		Novice::SetBlendMode(kBlendModeMultily);
+		Novice::DrawQuad(
+			int(puzzleLeftTop_.x),
+			int(puzzleLeftTop_.y),
+			int(puzzleLeftTop_.x + puzzleMapSize_.x),
+			int(puzzleLeftTop_.y),
+			int(puzzleLeftTop_.x),
+			int(puzzleLeftTop_.y + puzzleMapSize_.y),
+			int(puzzleLeftTop_.x + puzzleMapSize_.x),
+			int(puzzleLeftTop_.y + puzzleMapSize_.y),
+			0, 0,
+			800, 450,
+			rs.textureGH_[1],
+			0xffffff3f
+		);
+		Novice::SetBlendMode(kBlendModeNormal);
+
 
 			break;
 			//====================================================================================
@@ -607,47 +624,6 @@ void Map::DrawBG(const Resources& rs) {
 			//====================================================================================
 		case GAME://								ゲーム本編
 			//====================================================================================
-
-			for (int row = 0; row < mapChip_.size(); row++) {
-				for (int col = 0; col < mapChip_[0].size(); col++) {
-
-					if (mapChipCopy_[row][col] == -2) {
-
-						//スイッチ
-						if (!isPressSwitch_) {
-							Novice::DrawQuad(
-								int(posCopy_[row][col].x - size_.x * 0.5f),
-								int(posCopy_[row][col].y - size_.y * 0.5f),
-								int(posCopy_[row][col].x + size_.x * 0.5f),
-								int(posCopy_[row][col].y - size_.y * 0.5f),
-								int(posCopy_[row][col].x - size_.x * 0.5f),
-								int(posCopy_[row][col].y + size_.y * 0.5f),
-								int(posCopy_[row][col].x + size_.x * 0.5f),
-								int(posCopy_[row][col].y + size_.y * 0.5f),
-								0, 0,
-								64, 64,
-								rs.blockGH_[3],
-								0xffffffff
-							);
-						} else {
-							Novice::DrawQuad(
-								int(posCopy_[row][col].x - size_.x * 0.5f),
-								int(posCopy_[row][col].y - size_.y * 0.5f),
-								int(posCopy_[row][col].x + size_.x * 0.5f),
-								int(posCopy_[row][col].y - size_.y * 0.5f),
-								int(posCopy_[row][col].x - size_.x * 0.5f),
-								int(posCopy_[row][col].y + size_.y * 0.5f),
-								int(posCopy_[row][col].x + size_.x * 0.5f),
-								int(posCopy_[row][col].y + size_.y * 0.5f),
-								0, 0,
-								64, 64,
-								rs.blockGH_[4],
-								0xffffffff
-							);
-						}
-					}
-				}
-			}
 
 			for (int row = 0; row < mapChip_.size(); row++) {
 				for (int col = 0; col < mapChip_[0].size(); col++) {
@@ -709,28 +685,72 @@ void Map::DrawBG(const Resources& rs) {
 				}
 			}
 
-			//縦横のライン
-			/*for (int row = 0; row < mapChip_.size() + 1; row++) {
+			break;
+			//====================================================================================
+		case CLEAR://								クリア画面
+			//====================================================================================
+			break;
 
-				Novice::DrawLine(
-					int(puzzleLeftTop_.x),
-					int(puzzleLeftTop_.y + size_.y * row),
-					int(puzzleLeftTop_.x + size_.x * mapChip_[0].size()),
-					int(puzzleLeftTop_.y + size_.y * row),
-					0xffffff77
-				);
+		default:
+			break;
+		}
+	}
+
+	void Map::DrawSwitch(const Resources& rs) {
+	
+		switch (Scene::sceneNum_) {
+			//====================================================================================
+		case TITLE://							   タイトル画面
+			//====================================================================================
+			break;
+			//====================================================================================
+		case SELECT://							   ステージ選択
+			//====================================================================================
+			break;
+			//====================================================================================
+		case GAME://								ゲーム本編
+			//====================================================================================
+
+			for (int row = 0; row < mapChip_.size(); row++) {
+				for (int col = 0; col < mapChip_[0].size(); col++) {
+
+					if (mapChipCopy_[row][col] == -2) {
+
+						//スイッチ
+						if (!isPressSwitch_) {
+							Novice::DrawQuad(
+								int(posCopy_[row][col].x - size_.x * 0.5f),
+								int(posCopy_[row][col].y - size_.y * 0.5f),
+								int(posCopy_[row][col].x + size_.x * 0.5f),
+								int(posCopy_[row][col].y - size_.y * 0.5f),
+								int(posCopy_[row][col].x - size_.x * 0.5f),
+								int(posCopy_[row][col].y + size_.y * 0.5f),
+								int(posCopy_[row][col].x + size_.x * 0.5f),
+								int(posCopy_[row][col].y + size_.y * 0.5f),
+								0, 0,
+								64, 64,
+								rs.blockGH_[3],
+								0xffffffff
+							);
+						} else {
+							Novice::DrawQuad(
+								int(posCopy_[row][col].x - size_.x * 0.5f),
+								int(posCopy_[row][col].y - size_.y * 0.5f),
+								int(posCopy_[row][col].x + size_.x * 0.5f),
+								int(posCopy_[row][col].y - size_.y * 0.5f),
+								int(posCopy_[row][col].x - size_.x * 0.5f),
+								int(posCopy_[row][col].y + size_.y * 0.5f),
+								int(posCopy_[row][col].x + size_.x * 0.5f),
+								int(posCopy_[row][col].y + size_.y * 0.5f),
+								0, 0,
+								64, 64,
+								rs.blockGH_[4],
+								0xffffffff
+							);
+						}
+					}
+				}
 			}
-
-			for (int col = 0; col < mapChip_[0].size() + 1; col++) {
-
-				Novice::DrawLine(
-					int(puzzleLeftTop_.x + size_.x * col),
-					int(puzzleLeftTop_.y),
-					int(puzzleLeftTop_.x + size_.x * col),
-					int(puzzleLeftTop_.y + size_.y * mapChip_.size()),
-					0xffffff77
-				);
-			}*/
 
 			break;
 			//====================================================================================

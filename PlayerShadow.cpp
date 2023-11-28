@@ -69,6 +69,8 @@ void PlayerShadow::Init(int sceneNum, Screen screen, Shadow shadow) {
 		preIsInsideLightLT_ = false;
 		preIsInsideLightRT_ = false;
 
+		waitTimer_ = 0;
+
 		starGetCount_ = 0;
 		break;
 
@@ -80,7 +82,7 @@ void PlayerShadow::Init(int sceneNum, Screen screen, Shadow shadow) {
 	}
 }
 
-void PlayerShadow::Update(char* keys,char* Prekeys, const Resources& rs, ChangeScene& cs, Screen& screen, Shadow& shadow, Player& player, Map& map, Light& light, bool isPause) {
+void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, ChangeScene& cs, Screen& screen, Shadow& shadow, Player& player, Map& map, Light& light, bool isPause) {
 
 	//シーン遷移の始まった瞬間にシーンに合わせて初期化
 	if (cs.isStartChange_ && cs.preIsEndChange_) {
@@ -105,7 +107,7 @@ void PlayerShadow::Update(char* keys,char* Prekeys, const Resources& rs, ChangeS
 		if (keys[DIK_R]) {
 			Init(Scene::sceneNum_, screen, shadow);
 		}
-		if (!isPause&&!cs.isEndChange_&&!cs.isStartChange_) {
+		if (!isPause && !cs.isEndChange_ && !cs.isStartChange_) {
 			//前のフレームの情報保存に関するもの
 			prePos_ = pos_;
 			prePosCopy_ = prePos_;
@@ -117,8 +119,16 @@ void PlayerShadow::Update(char* keys,char* Prekeys, const Resources& rs, ChangeS
 			preIsInsideLightLT_ = isInsideLightLT_;
 			preIsInsideLightRT_ = isInsideLightRT_;
 
-			/*----------------------------死んだときの処理-----------------------------*/
+			//動いてないとき、待機時間タイマーを加算
+			//動いていないとき、動いていない時間タイマーを加算
+			if (!keys[DIK_W] && !keys[DIK_A] && !keys[DIK_D]) {
+				waitTimer_++;
+			} else {
+				waitTimer_ = 0;
+			}
 
+
+			/*----------------------------死んだときの処理-----------------------------*/
 			if (!isAlive_) {
 				respawnTimeCount_--;
 
@@ -140,6 +150,11 @@ void PlayerShadow::Update(char* keys,char* Prekeys, const Resources& rs, ChangeS
 					}
 				}
 			} else {
+
+				//殺す
+				if (player.killSwitch_) {
+					isAlive_ = false;
+				}
 
 				//配列数の決定
 				if (hitSurface_.size() != screen.GetPos().size()) {
@@ -985,9 +1000,9 @@ void PlayerShadow::Update(char* keys,char* Prekeys, const Resources& rs, ChangeS
 
 
 				//ゴールと当たったらクリアに移動
-				if (ColisionBox_Ball(shadow.GetGoalLT(), shadow.GetGoalRT(), shadow.GetGoalLB(), shadow.GetGoalRB(), pos_, (size_.x / 10))&&
+				if (ColisionBox_Ball(shadow.GetGoalLT(), shadow.GetGoalRT(), shadow.GetGoalLB(), shadow.GetGoalRB(), pos_, (size_.x / 10)) &&
 					!isDrop_) {
-					if (keys[DIK_RETURN]&&!Prekeys[DIK_RETURN]) {
+					if (keys[DIK_RETURN] && !Prekeys[DIK_RETURN]) {
 						cs.isEndChange_ = true;
 					}
 				}
@@ -1016,7 +1031,7 @@ void PlayerShadow::Update(char* keys,char* Prekeys, const Resources& rs, ChangeS
 	}
 }
 
-void PlayerShadow::Draw(Screen screen) {
+void PlayerShadow::Draw(const Resources& rs, Screen screen) {
 
 	//シーンに応じて処理を分ける
 	switch (Scene::sceneNum_) {
@@ -1055,23 +1070,56 @@ void PlayerShadow::Draw(Screen screen) {
 					kFillModeSolid
 				);
 			}
-			*/
+		
+			if (waitTimer_ > 240) {
 
-		DrawCat(pos_, size_.x, size_.y, 0x222222ff);
+				//W
+				Novice::DrawSpriteRect(
+					int(pos_.x - size_.x * 0.5f),
+					int(pos_.y - size_.y * 0.5f - 32) - int(4.0f * fabsf(cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))),
+					0, 0,
+					32, 32,
+					rs.keysGH_,
+					32.0f / 128.0f, 32.0f / 94.0f,
+					0.0f,
+					0xffffff3f + int(float(0x2f) * cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))
+				);
 
-		for (int i = 1; i < 5; i++) {
+				//A
+				Novice::DrawSpriteRect(
+					int(pos_.x - size_.x * 0.5f - 32) - int(4.0f * fabsf(cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))),
+					int(pos_.y - size_.y * 0.5f),
+					32, 0,
+					32, 32,
+					rs.keysGH_,
+					32.0f / 128.0f, 32.0f / 94.0f,
+					0.0f,
+					0xffffff3f + int(float(0x2f) * cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))
+				);
+
+
+				//D
+				Novice::DrawSpriteRect(
+					int(pos_.x + size_.x * 0.5f) + int(4.0f * fabsf(cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))),
+					int(pos_.y - size_.y * 0.5f),
+					64, 0,
+					32, 32,
+					rs.keysGH_,
+					32.0f / 128.0f, 32.0f / 94.0f,
+					0.0f,
+					0xffffff3f + int(float(0x2f) * cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))
+				);
+			}
+		}
+				DrawCat(pos_, size_.x, size_.y, 0x222222ff);
+				for (int i = 1; i < 5; i++) {
 			DrawCat(pos_,
 				size_.x + i *0.6f,
 				size_.y + i *0.6f,
 				0x3f3f3f55);
 		}
-		}
-
-
-
-
-
-		//Novice::ScreenPrintf(0, 20, "%f", pos_.y);
+	
+	//Novice::ScreenPrintf(0, 20, "%f", pos_.y);
 
 		break;
 
