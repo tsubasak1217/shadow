@@ -132,8 +132,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓描画処理ここから
 		///
 
-		Novice::ScreenPrintf(0, 0, "StageNum=%d", Map::stageNum_);
-
 		map.DrawBG(rs);
 		map.DrawSwitch(rs);
 		screen.DrawBG(rs);
@@ -180,41 +178,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			}
 		}
 
-		//デバッグ
-		switch (Scene::sceneNum_) {
-
-		case TITLE:
-			Novice::ScreenPrintf(20, 20, "Title");
-			break;
-		case SELECT:
-			Novice::ScreenPrintf(20, 20, "Select");
-			break;
-		case GAME:
-			Novice::ScreenPrintf(20, Global::windowSize_.y - 40, "Game");
-			Novice::ScreenPrintf(20, Global::windowSize_.y - 20, "stage %d", map.stageNum_ + 1);
-			break;
-		case CLEAR:
-			Novice::ScreenPrintf(20, 20, "Clear");
-			break;
-		default:
-			break;
-		}
-
-
-		//ImGui::Begin("window");
-		//ImGui::End();
-
 		///
 		/// ↑描画処理ここまで
 		///
 
 		// フレームの終了
 		Novice::EndFrame();
-
-		// ESCキーが押されたらループを抜ける
-		//if (preKeys[DIK_ESCAPE] == 0 && keys[DIK_ESCAPE] != 0) {
-			//break;
-		//}
 	}
 
 	// ライブラリの終了

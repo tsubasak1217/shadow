@@ -839,8 +839,6 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 					}
 				}
 
-				Novice::ScreenPrintf(0, 40, "%d", isDrop_);
-
 				blockCount = 0;
 
 				//一回以上当たっていた時、当たらなくなるまで再計算
@@ -1014,8 +1012,6 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 					int(shadow.GetPos().size()), int(shadow.GetPos()[0].size())
 				);
 			}
-
-			Novice::ScreenPrintf(0, 60, "%d", boardingBlock_);
 
 			break;
 			//====================================================================================
