@@ -1121,7 +1121,7 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause) {
 
 
 //====================================================描画=============================================================
-void Player::Draw(const Resources& rs) {
+void Player::Draw(const char* keys,const Resources& rs) {
 
 	//シーンに応じて処理を分ける
 	switch (Scene::sceneNum_) {
@@ -1152,7 +1152,57 @@ void Player::Draw(const Resources& rs) {
 			0xff0000ff
 		);*/
 		rs.whiteGH_;
-		DrawCat(pos_, size_.x * 1.4f, size_.y * 1.4f, 0xddddddff);
+		if (keys[DIK_SPACE] && isSwitchPushable_) {
+
+			DrawCat(pos_, size_.x * 1.4f, size_.y * 1.4f, 0xddddddff);
+
+		} else if (!keys[DIK_LEFT] && !keys[DIK_RIGHT] && !keys[DIK_UP] && !keys[DIK_DOWN]) {
+			//停止しているとき-------------------------------------
+
+			DrawCat(
+				{
+					pos_.x,
+					(pos_.y + 8.0f) - fabsf(8.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI)))
+				},
+				(size_.x + 8.0f) - fabsf(8.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI))),
+				(size_.y - 8.0f) + fabsf(8.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI))),
+				0xffffffff
+			);
+
+			for (int i = 1; i < 5; i++) {
+				DrawCat(
+					{
+					pos_.x,
+					(pos_.y + 8.0f) - fabsf(8.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI)))
+					},
+					(size_.x + 8.0f) - fabsf(8.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI))) + i * 0.6f,
+					(size_.y + -8.0f) + fabsf(8.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI))) + i * 0.6f,
+					0xdfdfdf55);
+			}
+		}else {//左右移動しているとき-------------------------------------
+
+			DrawCat(
+				{
+					pos_.x,
+					(pos_.y + 8.0f) - fabsf(8.0f * cosf((float(Global::timeCount_) / 24.0f) * float(M_PI)))
+				},
+				size_.x - fabsf(4.0f * cosf((float(Global::timeCount_) / 24.0f) * float(M_PI))),
+				(size_.y - 8.0f) + fabsf(8.0f * cosf((float(Global::timeCount_) / 24.0f) * float(M_PI))),
+				0xdfdfdfff
+			);
+
+			for (int i = 1; i < 5; i++) {
+				DrawCat(
+					{
+						pos_.x,
+						(pos_.y + 8.0f) - fabsf(8.0f * cosf((float(Global::timeCount_) / 24.0f) * float(M_PI)))
+					},
+					size_.x - fabsf(4.0f * cosf((float(Global::timeCount_) / 24.0f) * float(M_PI))) + i * 0.6f,
+					(size_.y - 8.0f) + fabsf(8.0f * cosf((float(Global::timeCount_) / 24.0f) * float(M_PI))) + i * 0.6f,
+					0xdfdfdf55
+				);
+			}
+		}
 
 		//ブロックを押す操作説明
 		for (int i = 0; i < 4; i++) {

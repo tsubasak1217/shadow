@@ -80,7 +80,7 @@ public:
 
 	void Update(char* keys, const ChangeScene& cs, Map& map,bool isPause);
 
-	void Draw(const Resources& rs);
+	void Draw(const char* keys, const Resources& rs);
 
 	//アクセッサ
 	Vec2 GetPos() { return pos_; }

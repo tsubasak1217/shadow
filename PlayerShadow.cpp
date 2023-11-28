@@ -60,11 +60,12 @@ void PlayerShadow::Init(int sceneNum, Screen screen, Shadow shadow) {
 		preHitSurface2_.clear();
 
 		waitTimer_ = 0;
-
 		starGetCount_ = 0;
+
 		break;
 
 	case CLEAR:
+
 		break;
 
 	default:
@@ -72,11 +73,18 @@ void PlayerShadow::Init(int sceneNum, Screen screen, Shadow shadow) {
 	}
 }
 
+void PlayerShadow::InitStar() {
+	starFollowPos_.clear();
+	preStarFollowPos_.clear();
+	starTheta_.clear();
+}
+
 void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, ChangeScene& cs, Screen& screen, Shadow& shadow, Player& player, Map& map, Light& light, bool isPause) {
 
 	//シーン遷移の始まった瞬間にシーンに合わせて初期化
 	if (cs.isStartChange_ && cs.preIsEndChange_) {
 		Init(Scene::sceneNum_, screen, shadow);
+		InitStar();
 		prePos_ = pos_;
 	}
 
@@ -96,6 +104,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 		//Rで初期化
 		if (keys[DIK_R]) {
 			Init(Scene::sceneNum_, screen, shadow);
+			InitStar();
 		}
 		if (!isPause && !cs.isEndChange_ && !cs.isStartChange_) {
 			//前のフレームの情報保存に関するもの
@@ -119,18 +128,21 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 				if (respawnTimeCount_ < 80) {
 
 					if (respawnTimeCount_ == 79) {
-
 						map.Init(rs, Scene::sceneNum_);
 						player.Init(Scene::sceneNum_, map);
 						light.Init(Scene::sceneNum_, map);
 						screen.Init(Scene::sceneNum_, map, light);
-						shadow.Init(rs, screen, Scene::sceneNum_);
 					}
 
 					isBackToRespawnPos_ = true;
 
 					if (respawnTimeCount_ <= 0) {
 						Init(Scene::sceneNum_, screen, shadow);
+
+						for (int i = 0; i < starFollowPos_.size(); i++) {
+
+							starFollowPos_[i] = pos_;
+						}
 					}
 				}
 			} else {
@@ -463,6 +475,9 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 								size_.x * 0.25f
 							)) {
 								starGetCount_++;
+								starFollowPos_.push_back(pos_);
+								preStarFollowPos_.push_back(pos_);
+								starTheta_.push_back(0.0f);
 								itemGetSEHandle_ = Novice::PlayAudio(rs.itemGetSE_, 0, 0.4f);
 								shadow.SetMapChip(i2, j2, 0);
 							}
@@ -700,7 +715,24 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 				);
 			}
 
-			Novice::ScreenPrintf(0, 60, "%d", boardingBlock_);
+
+			//星をプレイヤーに追尾させる
+			for (int i = 0; i < starFollowPos_.size(); i++) {
+
+				preStarFollowPos_[i] = starFollowPos_[i];
+
+				starFollowPos_[i] =
+					starFollowPos_[i].operator+(
+						{
+							(pos_.x - starFollowPos_[i].x) / (i * 16.0f + 8.0f),
+							(pos_.y - starFollowPos_[i].y) / (i * 16.0f + 8.0f) }
+				);
+
+				starTheta_[i] += ((CheckLength(starFollowPos_[i], preStarFollowPos_[i])) / 2.0f) + 1.0f;
+
+				//速度に応じて角度を加算する
+
+			}
 
 
 			break;
@@ -715,7 +747,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 	}
 }
 
-void PlayerShadow::Draw(const Resources& rs, Screen screen) {
+void PlayerShadow::Draw(const char* keys, const Resources& rs, Screen screen) {
 
 	//シーンに応じて処理を分ける
 	switch (Scene::sceneNum_) {
@@ -733,14 +765,77 @@ void PlayerShadow::Draw(const Resources& rs, Screen screen) {
 
 		if (isAlive_) {
 
-			DrawCat(pos_, size_.x, size_.y, 0x222222ff);
-			for (int i = 1; i < 5; i++) {
-				DrawCat(pos_,
-					size_.x + i * 0.6f,
-					size_.y + i * 0.6f,
-					0x3f3f3f55);
+			if (!isJump_) {
+
+				if (!keys[DIK_A] && !keys[DIK_D]) {
+					//停止しているとき-------------------------------------
+
+
+					DrawCat(
+						{
+							pos_.x,
+							(pos_.y + 8.0f) - fabsf(8.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI)))
+						},
+						(size_.x + 8.0f) - fabsf(8.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI))),
+						(size_.y - 8.0f) + fabsf(8.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI))),
+						0x222222ff
+					);
+
+					for (int i = 1; i < 5; i++) {
+						DrawCat(
+							{
+							pos_.x,
+							(pos_.y + 8.0f) - fabsf(8.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI)))
+							},
+							(size_.x + 8.0f) - fabsf(8.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI))) + i * 0.6f,
+							(size_.y + -8.0f) + fabsf(8.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI))) + i * 0.6f,
+							0x3f3f3f55);
+					}
+				} else {//左右移動しているとき-------------------------------------
+
+					DrawCat(
+						{
+							pos_.x,
+							(pos_.y + 8.0f) - fabsf(8.0f * cosf((float(Global::timeCount_) / 24.0f) * float(M_PI)))
+						},
+						size_.x - fabsf(4.0f * cosf((float(Global::timeCount_) / 24.0f) * float(M_PI))),
+						(size_.y - 8.0f) + fabsf(8.0f * cosf((float(Global::timeCount_) / 24.0f) * float(M_PI))),
+						0x222222ff
+					);
+
+					for (int i = 1; i < 5; i++) {
+						DrawCat(
+							{
+								pos_.x,
+								(pos_.y + 8.0f) - fabsf(8.0f * cosf((float(Global::timeCount_) / 24.0f) * float(M_PI)))
+							},
+							size_.x  - fabsf(4.0f * cosf((float(Global::timeCount_) / 24.0f) * float(M_PI))) + i * 0.6f,
+							(size_.y - 8.0f) + fabsf(8.0f * cosf((float(Global::timeCount_) / 24.0f) * float(M_PI))) + i * 0.6f,
+							0x3f3f3f55
+						);
+					}
+				}
+			} else {
+				DrawCat(
+					{ pos_.x,pos_.y + size_.y * 0.2f },
+					size_.x * 0.8f,
+					size_.y * 1.2f,
+					0x222222ff
+				);
+
 			}
 
+			//追尾する星
+			for (int i = 0; i < starFollowPos_.size(); i++) {
+				//星アイテム
+				My::DrawStar(
+					starFollowPos_[i],
+					size_.x * 0.5f + (4.0f * cosf((float(Global::timeCount_) / 64.0f) * float(M_PI))),
+					{ cosf((starTheta_[i] / 120.0f) * float(M_PI)),1.0f },
+					(starTheta_[i] / 120.0f) * float(M_PI),
+					0x3f3f3fff
+				);
+			}
 
 			if (waitTimer_ > 240) {
 
@@ -781,8 +876,6 @@ void PlayerShadow::Draw(const Resources& rs, Screen screen) {
 					0xffffff3f + int(float(0x2f) * cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))
 				);
 			}
-		} else {
-			DrawResetAction(rs, 155 - (respawnTimeCount_), 138);
 		}
 
 		break;
@@ -797,104 +890,129 @@ void PlayerShadow::Draw(const Resources& rs, Screen screen) {
 	}
 }
 
+void PlayerShadow::PlayerShadowManager(const Resources& rs, PlayerShadow playerShadow) {
+	DrawResetAction(rs, 155 - (respawnTimeCount_), 138);
+}
 
 void PlayerShadow::DrawResetAction(const Resources& rs, int timeCount, int kActionTime) {
 
-	const int kRowMax = 2;
-	const int kColMax = 8;
+	switch (Scene::sceneNum_) {
 
-	kActionTime;
-	timeCount;
+	case TITLE:
+		break;
 
-	Vec2 pos[kRowMax][kColMax] = { 0.0f };
-	Vec2 size[kRowMax][kColMax] = { 0.0f };
-	float moveT[kRowMax][kColMax] = { 0.0f };
+	case SELECT:
+		break;
 
-	float devideTime = (float(kActionTime) / kColMax) / 4;
+	case GAME:
 
-	//表示する情報の決定
-	for (int i = 0; i < kRowMax; i++) {
-		for (int j = 0; j < kColMax; j++) {
+		if (!isAlive_) {
 
-			size[i][j] = { float(Global::windowSize_.x) / float(kColMax), float(Global::windowSize_.y) };
-			size[i][j].y += size[i][j].y * i;
-		}
-	}
+			const int kRowMax = 2;
+			const int kColMax = 8;
 
-	for (int i = 0; i < kRowMax; i++) {
-		for (int j = 0; j < kColMax; j++) {
-			//座標の初期化
-			pos[i][j].x = (float(Global::windowSize_.x) / float(kColMax)) * j + (float(Global::windowSize_.x) / float(kColMax * 2));
-			pos[i][j].y = -size[i][j].y / 2.0f;
+			kActionTime;
+			timeCount;
 
-			//媒介へ変数Tの決定
-			moveT[i][j] = (float(timeCount) - devideTime * j) / (float(kActionTime) - devideTime * j);
+			Vec2 pos[kRowMax][kColMax] = { 0.0f };
+			Vec2 size[kRowMax][kColMax] = { 0.0f };
+			float moveT[kRowMax][kColMax] = { 0.0f };
 
-			devideTime;
+			float devideTime = (float(kActionTime) / kColMax) / 4;
 
-			//0~1に収める
-			if (moveT[i][j] > 1.0f) {
-				moveT[i][j] = 1.0f;
-			} else if (moveT[i][j] < 0.0f) {
-				moveT[i][j] = 0.0f;
+			//表示する情報の決定
+			for (int i = 0; i < kRowMax; i++) {
+				for (int j = 0; j < kColMax; j++) {
+
+					size[i][j] = { float(Global::windowSize_.x) / float(kColMax), float(Global::windowSize_.y) };
+					size[i][j].y += size[i][j].y * i;
+				}
+			}
+
+			for (int i = 0; i < kRowMax; i++) {
+				for (int j = 0; j < kColMax; j++) {
+					//座標の初期化
+					pos[i][j].x = (float(Global::windowSize_.x) / float(kColMax)) * j + (float(Global::windowSize_.x) / float(kColMax * 2));
+					pos[i][j].y = -size[i][j].y / 2.0f;
+
+					//媒介へ変数Tの決定
+					moveT[i][j] = (float(timeCount) - devideTime * j) / (float(kActionTime) - devideTime * j);
+
+					devideTime;
+
+					//0~1に収める
+					if (moveT[i][j] > 1.0f) {
+						moveT[i][j] = 1.0f;
+					} else if (moveT[i][j] < 0.0f) {
+						moveT[i][j] = 0.0f;
+					}
+				}
+			}
+
+			for (int i = 0; i < kRowMax; i++) {
+				for (int j = 0; j < kColMax; j++) {
+
+					//媒介変数Tに応じて座標を更新
+					pos[i][j].y = pos[kRowMax - 1][j].y +
+						((-pos[kRowMax - 1][j].y * 2.0f) + Global::windowSize_.y) * EaseInOutExpo(moveT[i][j]);
+
+				}
+			}
+
+			int color = int(float(0x1f) / float(kRowMax));
+
+			//描画
+			for (int i = kRowMax - 1; i >= 0; i--) {
+				for (int j = 0; j < kColMax; j++) {
+
+					Novice::DrawQuad(
+						int(pos[i][j].x - size[i][j].x * 0.5f),
+						int(pos[i][j].y - size[i][j].y * 0.5f + size[i][j].x),
+						int(pos[i][j].x + size[i][j].x * 0.5f),
+						int(pos[i][j].y - size[i][j].y * 0.5f + size[i][j].x),
+						int(pos[i][j].x - size[i][j].x * 0.5f),
+						int(pos[i][j].y + size[i][j].y * 0.5f - size[i][j].x),
+						int(pos[i][j].x + size[i][j].x * 0.5f),
+						int(pos[i][j].y + size[i][j].y * 0.5f - size[i][j].x),
+						0, 0,
+						1, 1,
+						rs.whiteGH_,
+						0xFFFFFFff - ((color * j) << 8) - ((color * j) << 16) - ((color * j) << 24)
+					);
+				}
+			}
+
+			for (int j = 0; j < kColMax; j++) {
+				My::DrawStar(
+					{
+					pos[kRowMax - 1][j].x,
+					pos[kRowMax - 1][j].y + size[kRowMax - 1][j].y * 0.5f - size[0][j].x
+					},
+					size[0][j].x,
+					(float(Global::timeCount_) / 64.0f) * float(M_PI),
+					0xFFFFFFff - ((color * j) << 8) - ((color * j) << 16) - ((color * j) << 24)
+				);
+
+
+				My::DrawStar(
+					{
+					pos[kRowMax - 1][j].x,
+					pos[kRowMax - 1][j].y - size[kRowMax - 1][j].y * 0.5f + size[0][j].x
+					},
+					size[0][j].x,
+					(float(Global::timeCount_) / 64.0f) * float(M_PI),
+					0xFFFFFFff - ((color * j) << 8) - ((color * j) << 16) - ((color * j) << 24)
+				);
+
 			}
 		}
-	}
+		break;
 
-	for (int i = 0; i < kRowMax; i++) {
-		for (int j = 0; j < kColMax; j++) {
+	case CLEAR:
+		break;
 
-			//媒介変数Tに応じて座標を更新
-			pos[i][j].y = pos[kRowMax - 1][j].y +
-				((-pos[kRowMax - 1][j].y * 2.0f) + Global::windowSize_.y) * EaseInOutExpo(moveT[i][j]);
-
-		}
-	}
-
-	int color = int(float(0x1f) / float(kRowMax));
-	
-	//描画
-	for (int i = kRowMax - 1; i >= 0; i--) {
-		for (int j = 0; j < kColMax; j++) {
-
-			Novice::DrawQuad(
-				int(pos[i][j].x - size[i][j].x * 0.5f),
-				int(pos[i][j].y - size[i][j].y * 0.5f + size[i][j].x),
-				int(pos[i][j].x + size[i][j].x * 0.5f),
-				int(pos[i][j].y - size[i][j].y * 0.5f + size[i][j].x),
-				int(pos[i][j].x - size[i][j].x * 0.5f),
-				int(pos[i][j].y + size[i][j].y * 0.5f - size[i][j].x),
-				int(pos[i][j].x + size[i][j].x * 0.5f),
-				int(pos[i][j].y + size[i][j].y * 0.5f - size[i][j].x),
-				0, 0,
-				1, 1,
-				rs.whiteGH_,
-				0xFFFFFFff - ((color * j) << 8) - ((color * j) << 16) - ((color * j) << 24)
-			);
-		}
-	}
-
-	for (int j = 0; j < kColMax; j++) {
-		My::DrawStar(
-			{
-			pos[kRowMax - 1][j].x,
-			pos[kRowMax - 1][j].y + size[kRowMax - 1][j].y * 0.5f - size[0][j].x
-			},
-			size[0][j].x,
-			(float(Global::timeCount_) / 64.0f) * float(M_PI),
-			0xFFFFFFff - ((color * j) << 8) - ((color * j) << 16) - ((color * j) << 24)
-		);
-
-
-		My::DrawStar(
-			{
-			pos[kRowMax - 1][j].x,
-			pos[kRowMax - 1][j].y - size[kRowMax - 1][j].y * 0.5f + size[0][j].x
-			},
-			size[0][j].x,
-			(float(Global::timeCount_) / 64.0f) * float(M_PI),
-			0xFFFFFFff - ((color * j) << 8) - ((color * j) << 16) - ((color * j) << 24)
-		);
+	default:
+		break;
 
 	}
 }

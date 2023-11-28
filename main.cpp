@@ -136,9 +136,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		map.DrawSwitch(rs);
 		screen.DrawBG(rs);
 
+		playerShadow.Draw(keys,rs,screen);
 		shadow.Draw(rs);
 		screen.Draw(map, rs, light);
-		playerShadow.Draw(rs,screen);
 
 		for (int i = 0; i < 120; i++) {
 			particle[i].Draw();
@@ -147,7 +147,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		light.Draw(rs,map,cs);
 		map.Draw(rs);
-		player.Draw(rs);
+		player.Draw(keys,rs);
 
 
 		title.Draw(rs);
@@ -160,13 +160,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			SLParticle[i].Draw(keys);
 		}
 
+		playerShadow.PlayerShadowManager(rs, playerShadow);
+
 		SCE.Draw(playerShadow.GetstarCount());
 
 		pause.Draw(rs);
 
 		audio.Draw(rs,pause.isPause_);
-		
-		playerShadow.Draw(rs, screen);
 
 		/*シーンチェンジ一番前*/
 		cs.Draw(door.GH_, door.color_, shadow.GetGoalPos(), shadow.GetGoalSize(), pause.isSelect_);
