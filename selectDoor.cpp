@@ -115,7 +115,7 @@ void SelectDoor::Draw(Resources rs) {
 
 
 
-void SelectDoor::Update(char* keys, char* preKeys) {
+void SelectDoor::Update(char* keys, char* preKeys, const Resources& rs) {
 
 	switch (Scene::sceneNum_) {
 		//====================================================================================
@@ -138,7 +138,8 @@ void SelectDoor::Update(char* keys, char* preKeys) {
 		if (!isChangeScene_ ||
 			!isEaseS_) {
 			//左方向に移動
-			if (keys[DIK_A] && !preKeys[DIK_A]) {
+			if (keys[DIK_A] && !preKeys[DIK_A]||
+				keys[DIK_LEFT] && !preKeys[DIK_LEFT]) {
 				selectNum_--;
 				selectT_ = 0.0f;
 				selectAddT_ = 0.0f;
@@ -146,7 +147,8 @@ void SelectDoor::Update(char* keys, char* preKeys) {
 				isEaseS_ = true;//イージングで移動するフラグ(select)
 			}
 			//右方向に移動
-			if (keys[DIK_D] && !preKeys[DIK_D]) {
+			if (keys[DIK_D] && !preKeys[DIK_D]||
+				keys[DIK_RIGHT] && !preKeys[DIK_RIGHT]) {
 				selectNum_++;
 				selectT_ = 0.0f;
 				selectAddT_ = 0.0f;
@@ -208,6 +210,7 @@ void SelectDoor::Update(char* keys, char* preKeys) {
 			if (DLWaitTimer_ == 0) {
 				DLEaseDir_ *= -1;
 				DLWaitTimer_ = DLWaitTimerMax_;
+				lightSEHandle_ = Novice::PlayAudio(rs.selectLightSE_, 0, 0.4f);
 			}
 		}
 

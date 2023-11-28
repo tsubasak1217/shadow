@@ -30,14 +30,15 @@ void Pause::Draw(Resources rs) {
 			for (int i = 0; i < 3; i++) {
 				//Novice::DrawBox(int(buttonPos_[i].x - buttonSize_[i].x / 2), int(buttonPos_[i].y - buttonSize_[i].y / 2),
 					//int(buttonSize_[i].x), int(buttonSize_[i].y), 0.0f, buttonColor_[i], kFillModeWireFrame);
-
 				Novice::DrawSpriteRect(int(buttonPos_[i].x - buttonSize_[i].x / 2), int(buttonPos_[i].y - buttonSize_[i].y / 2),
 					int(buttonDrawSize_[i].x * i), 0,
 					int(buttonDrawSize_[i].x), int(buttonDrawSize_[i].y), rs.pauseMenuGH_, 0.33f * buttonDrawScale_[i].x, 1.0f * buttonDrawScale_[i].y, 0.0f, buttonColor_[i]);
 
 			}
 
+
 			DrawCat(catPos_, catSize_.x, catSize_.y, 0xFFFFFFFF);
+
 			Novice::DrawLine(int(lineStart_.x), int(lineStart_.y), int(lineEnd_.x), int(lineEnd_.y), elseColor_);
 		}
 		break;
@@ -50,7 +51,7 @@ void Pause::Draw(Resources rs) {
 		break;
 	}
 }
-void Pause::Update(ChangeScene& cs, char* keys, char* preKeys) {
+void Pause::Update(ChangeScene& cs, char* keys, char* preKeys, const Resources& rs) {
 
 
 	switch (Scene::sceneNum_) {
@@ -171,11 +172,15 @@ void Pause::Update(ChangeScene& cs, char* keys, char* preKeys) {
 				if (!preKeys[DIK_W] && keys[DIK_W] ||
 					keys[DIK_UP] && !preKeys[DIK_UP]) {
 					selectNum_--;
+
+					SelectSEHandle_ = Novice::PlayAudio(rs.pauseSelectSE_, 0, 0.12f);
 				}
 
 				if (!preKeys[DIK_S] && keys[DIK_S] ||
 					keys[DIK_DOWN] && !preKeys[DIK_DOWN]) {
 					selectNum_++;
+
+					SelectSEHandle_ = Novice::PlayAudio(rs.pauseSelectSE_, 0, 0.12f);
 				}
 
 				//clamp
@@ -186,8 +191,10 @@ void Pause::Update(ChangeScene& cs, char* keys, char* preKeys) {
 					selectNum_ = 2;
 				}
 				//SPACEキーで選択できる
-				if (keys[DIK_SPACE] && !preKeys[DIK_SPACE]) {
+				if (keys[DIK_SPACE] && !preKeys[DIK_SPACE]||
+					keys[DIK_RETURN] && !preKeys[DIK_RETURN]) {
 					isSelect_ = true;
+					PushSEHandle_ = Novice::PlayAudio(rs.pausePushSE_, 0, 0.4f);
 				}
 			}
 
@@ -306,6 +313,8 @@ void Pause::Reset() {
 	isStartPause_ = false;//PAUSE画面か否か
 	isEndPause_ = false;//PAUSE画面か否か
 	//isStageReset_ = false;
+	SelectSEHandle_ = -1;
+	PushSEHandle_ = -1;
 #pragma endregion
 
 };

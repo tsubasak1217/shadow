@@ -1,7 +1,7 @@
 ﻿#include "ChangeScene.h"
 
 void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CPos[],
-	int selectNum, bool& CanCS, Vec2 goalPos, Vec2 goalSize, bool& isPauseSelect, bool& isTitlePush, bool& stageReset) {
+	int selectNum, bool& CanCS, Vec2 goalPos, Vec2 goalSize, bool& isPauseSelect, bool& isTitlePush, bool& stageReset,const Resources &rs,int& selectLightSEHandle) {
 
 	preIsStartChange_ = isStartChange_;
 	preIsEndChange_ = isEndChange_;
@@ -107,7 +107,8 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 
 #pragma region"シーンチェンジで開始"
 
-		if (keys[DIK_SPACE] && !preKeys[DIK_SPACE]) {
+		if (keys[DIK_SPACE] && !preKeys[DIK_SPACE]||
+			keys[DIK_RETURN] && !preKeys[DIK_RETURN]) {
 			if (!isPushEscape_) {//ESCAPE押されていないとき
 				if (!isChangeScene && !isEndChange_ && !isStartChange_) {
 					isChangeScene = true;
@@ -124,6 +125,7 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 					isChangeScene = true;
 					isEndChange_ = true;
 					isPushEscape_ = true;
+					Novice::StopAudio(selectLightSEHandle);
 				}
 			}
 		}
@@ -239,7 +241,14 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 
 					if (SCT_ >= 0.3f) {
 						isSetVertexO_ = true;//扉を開けるイージングで使う変数の値を入れる
-						isEaseO_ = true;//扉を空けるフラグを立てる（Open）
+						
+						if (!Novice::IsPlayingAudio(SEHandle_) || SEHandle_ == -1){
+							if (SECount_ == 0) {
+								SEHandle_ = Novice::PlayAudio(rs.openDoorSE_, 0, 0.12f);
+								SECount_++;
+							}
+						}
+		isEaseO_ = true;//扉を空けるフラグを立てる（Open）
 					}
 
 
@@ -410,7 +419,7 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 
 			//足す透明度をイージング
 			if (isEndChange_) {
-				BCT_ += (1.0f / (BCEaseTimer_ / 1.5f)) * BCEaseDir_;
+				BCT_ += (1.0f / (BCEaseTimer_ / 2.0f)) * BCEaseDir_;
 				BCAddT_ = EaseInCubic(BCT_);
 				addBCColor_ = (1 - BCAddT_) * minBCColor_ + BCAddT_ * maxBCColor_;
 				if (BCT_ >= 1.0f) {
@@ -656,7 +665,7 @@ void  ChangeScene::Draw(int GH, unsigned int DoorColor, Vec2 goalPos, Vec2 goalS
 					0.0f, 0x00000000, kFillModeWireFrame);
 				//ドア本体
 				Novice::DrawQuad(static_cast<int>(GCVertex_[0].x), static_cast<int>(GCVertex_[0].y), static_cast<int>(GCVertex_[1].x), static_cast<int>(GCVertex_[1].y),
-					static_cast<int>(GCVertex_[2].x), static_cast<int>(GCVertex_[2].y), static_cast<int>(GCVertex_[3].x), static_cast<int>(GCVertex_[3].y), 0, 0, 100, 200, GH, 0xFFFFFFFF);
+					static_cast<int>(GCVertex_[2].x), static_cast<int>(GCVertex_[2].y), static_cast<int>(GCVertex_[3].x), static_cast<int>(GCVertex_[3].y), 0, 0, 100, 200, GH, 0x000000FF);
 
 				/*迫ってくる壁の描画*/
 				for (int i = 0; i < kMaxWall; i++) {
@@ -897,9 +906,9 @@ void ChangeScene::Reset() {
 			stairsPos_[i] = stairsStartPos_[i];
 			stairsT_[i] = 0;
 		}
+		SEHandle_ = -1;
 
-
-
+		SECount_ = 0;
 	}
 #pragma endregion
 }

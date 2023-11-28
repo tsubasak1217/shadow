@@ -56,6 +56,8 @@ class PlayerShadow {
 	//クリア
 	int starGetCount_;
 
+	int itemGetSEHandle_;
+
 public:
 
 	PlayerShadow(Screen screen, Shadow shadow) {
@@ -111,6 +113,7 @@ public:
 		waitTimer_ = 0;
 
 		starGetCount_ = 0;
+		itemGetSEHandle_=-1;
 	}
 
 	void Init(int sceneNum, Screen screen, Shadow shadow);

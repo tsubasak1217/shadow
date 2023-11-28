@@ -80,7 +80,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		global.Update();
 		
 		cs.UpDate(keys, preKeys, door.isChangeScene_, door.CPos_, door.selectNum_, stageClear.canSceneChange,
-			shadow.GetGoalPos(), shadow.GetGoalSize(), pause.isSelect_, title.isPush_,pause.isStageReset_);
+			shadow.GetGoalPos(), shadow.GetGoalSize(), pause.isSelect_, title.isPush_,pause.isStageReset_,rs,door.lightSEHandle_);
 
 		map.Update(keys, rs, cs);
 		player.Update(keys, cs, map, pause.isPause_);
@@ -95,18 +95,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			particle[i].Update(emitter, playerShadow, shadow, screen);
 		}
 
-		title.Update(keys, preKeys);
-		door.Update(keys, preKeys);
+		title.Update(keys, preKeys,rs);
+		door.Update(keys, preKeys,rs);
 		stageClear.Update(cs.isStartChange_, playerShadow.GetstarCount());
 
-		pause.Update(cs, keys, preKeys);
+		pause.Update(cs, keys, preKeys,rs);
 
 		for (int i = 0; i < 120; i++)
 		{
 			SLParticle[i].Update(door,light);
 		}
 
-		stageClear.Debug(keys, preKeys);
+		//stageClear.Debug(keys, preKeys);
 
 		//デバックでのみ操作可能
 #if _DEBUG
@@ -164,18 +164,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		pause.Draw(rs);
 
-		audio.Draw(rs);
+		audio.Draw(rs,pause.isPause_);
 		
 		/*シーンチェンジ一番前*/
 		cs.Draw(door.GH_, door.color_, shadow.GetGoalPos(), shadow.GetGoalSize(), pause.isSelect_);
 
 		if (keys[DIK_H] && !preKeys[DIK_H]) {
-			if (cs.isEndChange_) {
-				cs.isEndChange_ = false;
+		//	if (cs.isEndChange_) {
+		//		cs.isEndChange_ = false;
 
-			} else {
-				cs.isEndChange_ = true;
-			}
+	//		} else {
+		//		cs.isEndChange_ = true;
+		//	}
 		}
 
 		///
