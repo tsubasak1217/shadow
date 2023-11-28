@@ -5,7 +5,6 @@ class PlayerShadow {
 
 	Vec2 pos_;
 	Vec2 prePos_;
-	Vec2 prePosCopy_;
 	Vec2 size_;
 	Vec2 direction_;
 	Vec2 velocity_;
@@ -41,14 +40,6 @@ class PlayerShadow {
 
 	bool isHitMapChip_;
 	bool isHitRect_;
-	bool isInsideLightLT_;
-	bool isInsideLightRT_;
-	bool isInsideLightLB_;
-	bool isInsideLightRB_;
-	bool preIsInsideLightLB_;
-	bool preIsInsideLightRB_;
-	bool preIsInsideLightLT_;
-	bool preIsInsideLightRT_;
 
 	//動いていない時間を計る変数
 	int waitTimer_;
@@ -66,7 +57,6 @@ public:
 			shadow.firstPlayerPos_.y + screen.GetScreenLeftTop().y,
 		};
 		prePos_ = pos_;
-		prePosCopy_ = prePos_;
 
 		size_ = { 32.0f,32.0f };
 		direction_ = { 0.0f,0.0f };
@@ -101,15 +91,6 @@ public:
 		boadingVecRatio_ = 0.0f;
 		preBoadingVecRatio_ = boadingVecRatio_;
 
-		isInsideLightLB_ = false;
-		isInsideLightRB_ = false;
-		isInsideLightLT_ = false;
-		isInsideLightRT_ = false;
-		preIsInsideLightLB_ = false;
-		preIsInsideLightRB_ = false;
-		preIsInsideLightLT_ = false;
-		preIsInsideLightRT_ = false;
-
 		waitTimer_ = 0;
 
 		starGetCount_ = 0;
@@ -121,6 +102,7 @@ public:
 	void Update(char* keys, char* Prekeys, const Resources& rs, ChangeScene& cs, Screen& screen, Shadow& shadow, Player& player, Map& map, Light& light, bool isPause);
 
 	void Draw(const Resources& rs, Screen screen);
+	void DrawResetAction(const Resources& rs, int timeCount, int kActionTime);
 
 	//アクセッサ
 	Vec2 GetPos() { return pos_; }

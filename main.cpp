@@ -166,6 +166,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		audio.Draw(rs,pause.isPause_);
 		
+		playerShadow.Draw(rs, screen);
+
 		/*シーンチェンジ一番前*/
 		cs.Draw(door.GH_, door.color_, shadow.GetGoalPos(), shadow.GetGoalSize(), pause.isSelect_);
 
