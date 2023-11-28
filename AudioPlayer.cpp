@@ -6,18 +6,30 @@ void AudioPlayer::Draw(const Resources& rs) {
 
 	case TITLE:
 
-		//BGMを鳴らす
+		//鳴っていなければBGMを鳴らす
 		if (!Novice::IsPlayingAudio(BGMHandle_[0]) or BGMHandle_[0] == -1) {
 			BGMHandle_[0] = Novice::PlayAudio(rs.BGM[0], 1, soundVolume_[0]);
 		}
 		break;
 	case SELECT:
+
+		//鳴っていなければBGMを鳴らす
+		if (!Novice::IsPlayingAudio(BGMHandle_[0]) or BGMHandle_[0] == -1) {
+			BGMHandle_[0] = Novice::PlayAudio(rs.BGM[0], 1, soundVolume_[0]);
+		}
+
 		break;
 	case GAME:
+
+		//鳴っていなければBGMを鳴らす
+		if (!Novice::IsPlayingAudio(BGMHandle_[0]) or BGMHandle_[0] == -1) {
+			BGMHandle_[0] = Novice::PlayAudio(rs.BGM[0], 1, soundVolume_[0]);
+		}
+
 		break;
 	case CLEAR:
 
-		//BGMを鳴らす
+		//BGMを止める
 		Novice::StopAudio(BGMHandle_[0]);
 
 		break;

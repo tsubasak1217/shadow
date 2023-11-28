@@ -185,6 +185,32 @@ void Light::Draw(const Resources& rs,Map map, ChangeScene CS) {
 			0xffffffff
 		);
 
+		//←
+		Novice::DrawSpriteRect(
+			int(emitPos_.x - 64 * 0.5f - 32) - int(4.0f * fabsf(cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))),
+			int(emitPos_.y - 64 * 0.5f - 6) - (6 * Novice::CheckHitKey(DIK_Q)),
+			0, 64,
+			32, 32,
+			rs.keysGH_,
+			(32.0f / 128.0f) + ((32.0f / 128.0f) * 0.2f) * Novice::CheckHitKey(DIK_Q),
+			(32.0f / 94.0f) + ((32.0f / 94.0f) * 0.2f) * Novice::CheckHitKey(DIK_Q),
+			0.0f,
+			0xffffff5f + int(float(0x4f) * cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))
+		);
+
+		//→
+		Novice::DrawSpriteRect(
+			int(emitPos_.x + 64 * 0.5f) + int(4.0f * fabsf(cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))),
+			int(emitPos_.y - 64 * 0.5f - 6) - (6 * Novice::CheckHitKey(DIK_E)),
+			32, 64,
+			32, 32,
+			rs.keysGH_,
+			(32.0f / 128.0f) + ((32.0f / 128.0f) *0.2f) * Novice::CheckHitKey(DIK_E),
+			(32.0f / 94.0f) + ((32.0f / 94.0f) * 0.2f) * Novice::CheckHitKey(DIK_E),
+			0.0f,
+			0xffffff5f + int(float(0x4f) * cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))
+		);
+
 		break;
 
 
