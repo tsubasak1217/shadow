@@ -136,7 +136,7 @@ void SelectDoor::Update(char* keys, char* preKeys, const Resources& rs, int star
 #pragma region"選択範囲の移動"
 
 	/*----------------------------選択範囲の移動--------------------------------------*/
-		if (!isChangeScene_ ||
+		if (!isChangeScene_ &&
 			!isEaseS_) {
 			//左方向に移動
 			if (keys[DIK_A] && !preKeys[DIK_A] ||
