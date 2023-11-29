@@ -16,7 +16,7 @@
     <ProjectGuid>{6eb2c7c5-8cb7-4ce4-a3b3-9ffedcc64339}</ProjectGuid>
     <RootNamespace>shadow</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>shadow</ProjectName>
+    <ProjectName>meian</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
