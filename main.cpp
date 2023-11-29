@@ -84,7 +84,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		map.Update(keys, rs, cs);
 		player.Update(keys, cs, map, pause.isPause_,rs);
-		light.Update(keys, cs, map, ((3.0f / 4.0f) * float(M_PI)), pause.isPause_);
+		light.Update(keys, cs, map, ((3.0f / 4.0f) * float(M_PI)), pause.isPause_,playerShadow);
 
 		screen.Update(keys, cs, map, light);
 		shadow.Update(keys, cs, rs, screen, map);

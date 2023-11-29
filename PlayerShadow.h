@@ -53,7 +53,6 @@ class PlayerShadow {
 	int jumpTimer_;
 	int itemGetSEHandle_;
 
-	int itemGetSEHandle_;
 	int killedSEHandle_;
 	int pushSEHandle_;
 	int goalTutorialAlpha_;
