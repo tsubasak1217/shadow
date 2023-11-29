@@ -46,6 +46,7 @@ void Player::Init(int sceneNum, Map map) {
 		isHitMapChip_ = 0;
 
 		isSwitchPushable_ = true;
+		isViewTelop_ = false;
 		isBlockPushable_ = false;
 		waitTimer_ = 0;
 		tutorialSpriteAlpha_ = 0;
@@ -84,7 +85,9 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 		//====================================================================================
 
 		if (keys[DIK_R]) {
-			Init(Scene::sceneNum_, map);
+			if (!cs.isEndChange_) {
+				Init(Scene::sceneNum_, map);
+			}
 		}
 
 		if (!isPause && !cs.isEndChange_ && !cs.isStartChange_) {
@@ -106,7 +109,7 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 				waitTimer_ = 0;
 			}
 
-			if (isBlockPushable_) {
+			if (isBlockPushable_ && isViewTelop_) {
 				tutorialSpriteAlpha_ += 4;
 
 				if (tutorialSpriteAlpha_ > 0x7f) {
@@ -122,56 +125,63 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 			/*------------------------------ブロックを動かすフラグを立てる-------------------------------*/
 			isBlockPushable_ = false;
 
+			if (!isViewTelop_) {
+				if (!keys[DIK_SPACE]) {
+					isViewTelop_ = true;
+				}
+			}
+
+			//動かせる状態かどうか取得-------------------------------------------------
+
+			if (centerAddress_.x - 1 >= 0) {
+				if (map.GetMapChip()[centerAddress_.y][centerAddress_.x - 1] > 0 &&
+					map.GetMapChip()[centerAddress_.y][centerAddress_.x - 1] <= 2) {
+					if (pos_.x - 2 <=
+						map.GetPos()[centerAddress_.y][centerAddress_.x - 1].x
+						+ (map.GetSize().x * 0.5f) + (size_.x * 0.5f)) {
+
+						isBlockPushable_ = true;
+					}
+				}
+			}
+
+			if (centerAddress_.x + 1 < map.GetMapChip()[0].size()) {
+				if (map.GetMapChip()[centerAddress_.y][centerAddress_.x + 1] > 0 &&
+					map.GetMapChip()[centerAddress_.y][centerAddress_.x + 1] <= 2) {
+					if (pos_.x + 2 >=
+						map.GetPos()[centerAddress_.y][centerAddress_.x + 1].x
+						- (map.GetSize().x * 0.5f) - (size_.x * 0.5f)) {
+
+						isBlockPushable_ = true;
+					}
+				}
+			}
+
+			if (centerAddress_.y - 1 >= 0) {
+				if (map.GetMapChip()[centerAddress_.y - 1][centerAddress_.x] > 0 &&
+					map.GetMapChip()[centerAddress_.y - 1][centerAddress_.x] <= 2) {
+					if (pos_.y - 2 <=
+						map.GetPos()[centerAddress_.y - 1][centerAddress_.x].y
+						+ (map.GetSize().y * 0.5f) + (size_.y * 0.5f)) {
+
+						isBlockPushable_ = true;
+					}
+				}
+			}
+
+			if (centerAddress_.y + 1 < map.GetMapChip().size()) {
+				if (map.GetMapChip()[centerAddress_.y + 1][centerAddress_.x] > 0 &&
+					map.GetMapChip()[centerAddress_.y + 1][centerAddress_.x] <= 2) {
+					if (pos_.y + 2 >=
+						map.GetPos()[centerAddress_.y + 1][centerAddress_.x].y
+						- (map.GetSize().y * 0.5f) - (size_.y * 0.5f)) {
+
+						isBlockPushable_ = true;
+					}
+				}
+			}
+
 			if (!isMoveBlock_) {
-
-				//動かせる状態かどうか取得-------------------------------------------------
-				if (centerAddress_.x - 1 >= 0) {
-					if (map.GetMapChip()[centerAddress_.y][centerAddress_.x - 1] > 0 &&
-						map.GetMapChip()[centerAddress_.y][centerAddress_.x - 1] <= 2) {
-						if (pos_.x - 2 <=
-							map.GetPos()[centerAddress_.y][centerAddress_.x - 1].x
-							+ (map.GetSize().x * 0.5f) + (size_.x * 0.5f)) {
-
-							isBlockPushable_ = true;
-						}
-					}
-				}
-
-				if (centerAddress_.x + 1 < map.GetMapChip()[0].size()) {
-					if (map.GetMapChip()[centerAddress_.y][centerAddress_.x + 1] > 0 &&
-						map.GetMapChip()[centerAddress_.y][centerAddress_.x + 1] <= 2) {
-						if (pos_.x + 2 >=
-							map.GetPos()[centerAddress_.y][centerAddress_.x + 1].x
-							- (map.GetSize().x * 0.5f) - (size_.x * 0.5f)) {
-
-							isBlockPushable_ = true;
-						}
-					}
-				}
-
-				if (centerAddress_.y - 1 >= 0) {
-					if (map.GetMapChip()[centerAddress_.y - 1][centerAddress_.x] > 0 &&
-						map.GetMapChip()[centerAddress_.y - 1][centerAddress_.x] <= 2) {
-						if (pos_.y - 2 <=
-							map.GetPos()[centerAddress_.y - 1][centerAddress_.x].y
-							+ (map.GetSize().y * 0.5f) + (size_.y * 0.5f)) {
-
-							isBlockPushable_ = true;
-						}
-					}
-				}
-
-				if (centerAddress_.y + 1 < map.GetMapChip().size()) {
-					if (map.GetMapChip()[centerAddress_.y + 1][centerAddress_.x] > 0 &&
-						map.GetMapChip()[centerAddress_.y + 1][centerAddress_.x] <= 2) {
-						if (pos_.y + 2 >=
-							map.GetPos()[centerAddress_.y + 1][centerAddress_.x].y
-							- (map.GetSize().y * 0.5f) - (size_.y * 0.5f)) {
-
-							isBlockPushable_ = true;
-						}
-					}
-				}
 
 				//------------------------------------------------------------------------------
 				for (int i = 0; i < 4; i++) {
@@ -800,6 +810,8 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 			/*------------------------------ブロックを動かす-------------------------------*/
 			if (isMoveBlock_) {
 
+				isViewTelop_ = false;
+
 				if (moveDirection_ != Top) {
 					Global::isMoveShadow_ = true;
 				}
@@ -1123,7 +1135,7 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 
 
 //====================================================描画=============================================================
-void Player::Draw(const Resources& rs) {
+void Player::Draw(const char* keys,const Resources& rs) {
 
 	//シーンに応じて処理を分ける
 	switch (Scene::sceneNum_) {
@@ -1154,7 +1166,36 @@ void Player::Draw(const Resources& rs) {
 			0xff0000ff
 		);*/
 		rs.whiteGH_;
-		DrawCat(pos_, size_.x * 1.4f, size_.y * 1.4f, 0xddddddff);
+		if ((keys[DIK_SPACE] && isBlockPushable_)or isMoveBlock_) {
+
+			DrawCat(pos_, size_.x * 1.2f, size_.y * 1.2f, 0xdfdfdfff);
+
+		} else if (!keys[DIK_LEFT] && !keys[DIK_RIGHT] && !keys[DIK_UP] && !keys[DIK_DOWN]) {
+			//停止しているとき-------------------------------------
+
+			DrawCat(
+				{
+					pos_.x,
+					(pos_.y + 4.0f) - fabsf(4.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI)))
+				},
+				(size_.x + 8.0f) - fabsf(8.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI))),
+				(size_.y - 4.0f) + fabsf(4.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI))),
+				0xdfdfdfff
+			);
+
+		}else {//左右移動しているとき-------------------------------------
+
+			DrawCat(
+				{
+					pos_.x,
+					(pos_.y + 8.0f) - fabsf(8.0f * cosf((float(Global::timeCount_) / 24.0f) * float(M_PI)))
+				},
+				size_.x - fabsf(4.0f * cosf((float(Global::timeCount_) / 24.0f) * float(M_PI))),
+				(size_.y - 8.0f) + fabsf(8.0f * cosf((float(Global::timeCount_) / 24.0f) * float(M_PI))),
+				0xdfdfdfff
+			);
+
+		}
 
 		//ブロックを押す操作説明
 		for (int i = 0; i < 4; i++) {

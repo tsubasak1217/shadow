@@ -136,7 +136,7 @@ void StageClear::Draw(Resources rs) {
 		Novice::DrawBox(int(Global::windowSize_.x / 2 - 250), int(Global::windowSize_.y / 2 - 50 - 250), 500, 500, 0.0f, windowColor_, kFillModeSolid);
 		Novice::DrawBox(int(Global::windowSize_.x / 2 - 200), int(Global::windowSize_.y / 2 - 50 - 200), 400, 400, 0.0f, skyColor_, kFillModeSolid);
 		//Novice::DrawSprite(int(Global::windowSize_.x / 2 - 200), int(Global::windowSize_.y / 2 - 50 - 200), rs.WindowGH_, 2, 2, 0, 0xFFFFFFFF);
-		
+
 
 		/*左のドア*/
 		Novice::DrawQuad(
@@ -184,7 +184,7 @@ void StageClear::Draw(Resources rs) {
 		for (int i = starGet_; i < 3; i++) {
 			My::DrawStarWire(starPos_[i], starSize_, 0.0f, 0x444444FF);
 		}
-		
+
 
 		if (starGet_ >= 2) {
 			Novice::DrawLine(int(starPos_[0].x), int(starPos_[0].y), int(starPos_[1].x), int(starPos_[1].y), starColor_);
@@ -205,7 +205,15 @@ void StageClear::Draw(Resources rs) {
 
 
 		/*猫*/
-		DrawCat(CatCPos_, CatSize_.x, CatSize_.y, 0x000000FF);
+		DrawCat(
+			{
+			CatCPos_.x,
+			(CatCPos_.y + 4.0f) - fabsf(4.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI)))
+			},
+			(CatSize_.x + 4.0f) - fabsf(4.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI))),
+			(CatSize_.y - 4.0f) + fabsf(4.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI))),
+			0x000000FF
+		);
 
 		/*押してくださいの文字*/
 		Novice::DrawSprite(int(PressKeyFontCPos_.x - PressKeyFontSize_.x / 2), int(PressKeyFontCPos_.y - PressKeyFontSize_.y / 2), rs.pressSpaceFontGH_, 0.5f, 0.5f, 0.0f, FColor_);
@@ -251,8 +259,7 @@ void StageClear::Debug(char* keys, char* preKeys) {
 			}
 		}
 
-		switch (debugNum)
-		{
+		switch (debugNum) {
 		case 0:
 			/*
 			if (keys[DIK_W]) {
@@ -331,7 +338,7 @@ void StageClear::Debug(char* keys, char* preKeys) {
 #pragma endregion
 #endif // _DEBUG
 		break;
-	}
+}
 
 }
 

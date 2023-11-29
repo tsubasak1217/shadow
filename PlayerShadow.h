@@ -5,7 +5,6 @@ class PlayerShadow {
 
 	Vec2 pos_;
 	Vec2 prePos_;
-	Vec2 prePosCopy_;
 	Vec2 size_;
 	Vec2 direction_;
 	Vec2 velocity_;
@@ -41,24 +40,23 @@ class PlayerShadow {
 
 	bool isHitMapChip_;
 	bool isHitRect_;
-	bool isInsideLightLT_;
-	bool isInsideLightRT_;
-	bool isInsideLightLB_;
-	bool isInsideLightRB_;
-	bool preIsInsideLightLB_;
-	bool preIsInsideLightRB_;
-	bool preIsInsideLightLT_;
-	bool preIsInsideLightRT_;
 
 	//動いていない時間を計る変数
 	int waitTimer_;
 
 	//クリア
+	std::vector<Vec2>starFollowPos_;
+	std::vector<Vec2>preStarFollowPos_;
+	std::vector<float>starTheta_;
+
 	int starGetCount_;
+	int jumpTimer_;
+	int itemGetSEHandle_;
 
 	int itemGetSEHandle_;
 	int killedSEHandle_;
 	int pushSEHandle_;
+	int goalTutorialAlpha_;
 
 public:
 
@@ -68,7 +66,6 @@ public:
 			shadow.firstPlayerPos_.y + screen.GetScreenLeftTop().y,
 		};
 		prePos_ = pos_;
-		prePosCopy_ = prePos_;
 
 		size_ = { 32.0f,32.0f };
 		direction_ = { 0.0f,0.0f };
@@ -103,28 +100,29 @@ public:
 		boadingVecRatio_ = 0.0f;
 		preBoadingVecRatio_ = boadingVecRatio_;
 
-		isInsideLightLB_ = false;
-		isInsideLightRB_ = false;
-		isInsideLightLT_ = false;
-		isInsideLightRT_ = false;
-		preIsInsideLightLB_ = false;
-		preIsInsideLightRB_ = false;
-		preIsInsideLightLT_ = false;
-		preIsInsideLightRT_ = false;
-
 		waitTimer_ = 0;
+		jumpTimer_ = 0;
 
 		starGetCount_ = 0;
+		starFollowPos_.clear();
+		preStarFollowPos_.clear();
+		starTheta_.clear();
 		itemGetSEHandle_=-1;
+
+		goalTutorialAlpha_ = 0;
 		killedSEHandle_=-1;
 		pushSEHandle_=-1;
 	}
 
 	void Init(int sceneNum, Screen screen, Shadow shadow);
+	void InitStar();
 
 	void Update(char* keys, char* Prekeys, const Resources& rs, ChangeScene& cs, Screen& screen, Shadow& shadow, Player& player, Map& map, Light& light, bool isPause);
 
-	void Draw(const Resources& rs, Screen screen);
+	void Draw(const char* keys, const Resources& rs, Screen screen);
+	void DrawResetAction(const Resources& rs, int timeCount, int kActionTime);
+
+	void PlayerShadowManager(const Resources& rs, PlayerShadow playerShadow);
 
 	//アクセッサ
 	Vec2 GetPos() { return pos_; }

@@ -37,7 +37,15 @@ void Pause::Draw(Resources rs) {
 			}
 
 
-			DrawCat(catPos_, catSize_.x, catSize_.y, 0xFFFFFFFF);
+			DrawCat(
+				{
+					catPos_.x,
+					(catPos_.y + 8.0f) - fabsf(8.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI)))
+				},
+				(catSize_.x + 12.0f) - fabsf(12.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI))),
+				(catSize_.y - 8.0f) + fabsf(8.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI))),
+				0xffffffff
+			);
 
 			Novice::DrawLine(int(lineStart_.x), int(lineStart_.y), int(lineEnd_.x), int(lineEnd_.y), elseColor_);
 		}

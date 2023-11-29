@@ -205,7 +205,9 @@ void Shadow::Update(char* keys, const ChangeScene& cs, const Resources& rs, cons
 
 		//Rで初期化
 		if (keys[DIK_R]) {
-			Init(rs, screen, Scene::sceneNum_);
+			if (!cs.isEndChange_) {
+				Init(rs, screen, Scene::sceneNum_);
+			}
 		}
 
 

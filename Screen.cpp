@@ -108,7 +108,9 @@ void Screen::Update(char* keys, const ChangeScene& cs, Map map, Light light) {
 
 		//Rで初期化
 		if (keys[DIK_R]) {
-			Init(Scene::sceneNum_, map, light);
+			if (!cs.isEndChange_) {
+				Init(Scene::sceneNum_, map, light);
+			}
 		}
 
 		preBoxPos_ = boxPos_;

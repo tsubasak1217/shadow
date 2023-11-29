@@ -26,6 +26,7 @@ class Player {
 	bool isSwitchPushable_;
 	//ブロックを押せるかどうか
 	bool isBlockPushable_;
+	bool isViewTelop_;
 	//当たった回数
 	bool isHitMapChip_;
 
@@ -74,6 +75,7 @@ public:
 
 		isSwitchPushable_ = true;
 		isBlockPushable_ = false;
+		isViewTelop_ = false;
 		waitTimer_ = 0;
 		tutorialSpriteAlpha_ = 0;
 		killSwitch_ = false;
@@ -85,7 +87,7 @@ public:
 
 	void Update(char* keys, const ChangeScene& cs, Map& map,bool isPause,const Resources& rs);
 
-	void Draw(const Resources& rs);
+	void Draw(const char* keys, const Resources& rs);
 
 	//アクセッサ
 	Vec2 GetPos() { return pos_; }

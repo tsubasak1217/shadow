@@ -21,7 +21,7 @@ public:
 
 	int tutorial_[2] = {
 		Novice::LoadTexture("./Resources/images/tutorial1.png"),
-		Novice::LoadTexture("./Resources/images/block_high.png"),//
+		Novice::LoadTexture("./Resources/images/tutorial2.png"),//
 	};
 
 	int textureGH_[2] = {
