@@ -15,6 +15,7 @@ class Player {
 	//ブロックの移動中かどうか
 	bool isMoveBlock_;
 	bool isStopMove_;
+	int moveStopTime_;
 	float blockMoveT_;
 	int moveTime_;
 	int moveDirection_;
@@ -64,6 +65,7 @@ public:
 
 		isMoveBlock_ = false;
 		isStopMove_ = false;
+		moveStopTime_ = 32;
 		blockMoveT_ = 0.0f;
 		moveTime_ = 32;
 		moveDirection_ = 0;
@@ -95,5 +97,6 @@ public:
 	Vec2 GetPos() { return pos_; }
 	void SetSwitchPushable(bool flag) { isSwitchPushable_ = flag; }
 	bool GetIsSwapped() { return isSwappped_; }
+	bool GetIsMoveBlock() { return isMoveBlock_; }
 };
 

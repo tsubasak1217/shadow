@@ -74,6 +74,12 @@ public:
 	//自機が死亡する
 	int playerKilledSE_ = Novice::LoadAudio("./Resources/sounds/SE/playerKilledSE.mp3");
 
+	//自機が死亡する
+	int playerRespawnSE_ = Novice::LoadAudio("./Resources/sounds/SE/playerRespawnSE.mp3");
+
+	//ブロックが動かせない音
+	int moveFailSE_ = Novice::LoadAudio("./Resources/sounds/SE/moveFail.mp3");
+
 	Resources();
 	~Resources();
 

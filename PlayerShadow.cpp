@@ -1,6 +1,8 @@
 ﻿#include "PlayerShadow.h"
+#include "Particle.h"
+#include "Shadow.h"
 
-void PlayerShadow::Init(int sceneNum, Screen screen, Shadow shadow) {
+void PlayerShadow::Init(int sceneNum, Screen screen, Shadow shadow,const char* keys) {
 
 	switch (sceneNum) {
 		//====================================================================================
@@ -64,6 +66,10 @@ void PlayerShadow::Init(int sceneNum, Screen screen, Shadow shadow) {
 		waitTimer_ = 0;
 		goalTutorialAlpha_ = 0;
 
+		if (keys[DIK_R]) {
+			starGetCount_ = 0;
+		}
+
 		break;
 
 	case CLEAR:
@@ -81,11 +87,12 @@ void PlayerShadow::InitStar() {
 	starTheta_.clear();
 }
 
-void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, ChangeScene& cs, Screen& screen, Shadow& shadow, Player& player, Map& map, Light& light, bool isPause) {
+void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, ChangeScene& cs, Screen& screen,
+	Shadow& shadow, Player& player, Map& map, Light& light, bool isPause) {
 
 	//シーン遷移の始まった瞬間にシーンに合わせて初期化
 	if (cs.isStartChange_ && cs.preIsEndChange_) {
-		Init(Scene::sceneNum_, screen, shadow);
+		Init(Scene::sceneNum_, screen, shadow,keys);
 		InitStar();
 		prePos_ = pos_;
 	}
@@ -106,7 +113,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 		//Rで初期化
 		if (keys[DIK_R]) {
 			if (!cs.isEndChange_) {
-				Init(Scene::sceneNum_, screen, shadow);
+				Init(Scene::sceneNum_, screen, shadow,keys);
 				InitStar();
 			}
 		}
@@ -129,7 +136,11 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 			if (!isAlive_) {
 				respawnTimeCount_--;
 
-				if (respawnTimeCount_ < 80) {
+				if (respawnTimeCount_ == 135) {
+					//復活音
+					Novice::PlayAudio(rs.playerRespawnSE_, 0, 0.12f);
+				
+				}else if (respawnTimeCount_ < 80) {
 
 					if (respawnTimeCount_ == 79) {
 						map.Init(rs, Scene::sceneNum_);
@@ -141,7 +152,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 					isBackToRespawnPos_ = true;
 
 					if (respawnTimeCount_ <= 0) {
-						Init(Scene::sceneNum_, screen, shadow);
+						Init(Scene::sceneNum_, screen, shadow,keys);
 
 						for (int i = 0; i < starFollowPos_.size(); i++) {
 
@@ -546,8 +557,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 							)) {
 
 								isAlive_ = false;
-								//効果音
-								killedSEHandle_ = Novice::PlayAudio(rs.playerKilledSE_, 0, 0.5f);
+
 							}
 						}
 					}
@@ -687,7 +697,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 							loopCount = 0;
 							isHitRect_ = false;
 
-								isAlive_ = false;
+							isAlive_ = false;
 							break;
 						}
 
@@ -712,14 +722,14 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 				if (ColisionBox_Ball(shadow.GetGoalLT(), shadow.GetGoalRT(), shadow.GetGoalLB(), shadow.GetGoalRB(), pos_, (size_.x / 10)) &&
 					int(dropSpeed_) < 1) {
 
-					goalTutorialAlpha_+= 0x04;
+					goalTutorialAlpha_ += 0x04;
 
 					if (keys[DIK_RETURN] && !Prekeys[DIK_RETURN]) {
 						cs.isEndChange_ = true;
 						pushSEHandle_ = Novice::PlayAudio(rs.selectPushSE_, 0, 0.5f);
 					}
 				} else {
-					goalTutorialAlpha_-= 0x04;
+					goalTutorialAlpha_ -= 0x04;
 				}
 
 				if (goalTutorialAlpha_ > 0xff) {
@@ -770,7 +780,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 	}
 }
 
-void PlayerShadow::Draw(const char* keys, const Resources& rs, Screen screen) {
+void PlayerShadow::Draw(const char* keys, const Resources& rs, Screen screen,const Shadow& shadow) {
 
 	//シーンに応じて処理を分ける
 	switch (Scene::sceneNum_) {
@@ -788,7 +798,19 @@ void PlayerShadow::Draw(const char* keys, const Resources& rs, Screen screen) {
 
 		if (isAlive_) {
 
+			//追尾する星
+			for (int i = 0; i < starFollowPos_.size(); i++) {
+				//星アイテム
+				My::DrawStar(
+					starFollowPos_[i],
+					(size_.x * 0.6f) / (1.0f + (CheckLength(starFollowPos_[i], pos_)* 0.01f * 2.0f)),
+					{ cosf((starTheta_[i] / 120.0f) * float(M_PI)),1.0f },
+					(starTheta_[i] / 120.0f) * float(M_PI),
+					0x3f3f3fff
+				);
+			}
 
+			//プレイヤー
 			if (!isJump_) {
 
 				if (!keys[DIK_A] && !keys[DIK_D]) {
@@ -802,7 +824,7 @@ void PlayerShadow::Draw(const char* keys, const Resources& rs, Screen screen) {
 						},
 						(size_.x + 8.0f) - fabsf(8.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI))),
 						(size_.y - 4.0f) + fabsf(4.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI))),
-						0x222222ff
+						0x555555ff
 					);
 
 					for (int i = 1; i < 5; i++) {
@@ -812,8 +834,8 @@ void PlayerShadow::Draw(const char* keys, const Resources& rs, Screen screen) {
 							(pos_.y + 4.0f) - fabsf(4.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI)))
 							},
 							(size_.x + 8.0f) - fabsf(8.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI))) + i * 0.6f,
-							(size_.y -4.0f) + fabsf(4.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI))) + i * 0.6f,
-							0x3f3f3f55);
+							(size_.y - 4.0f) + fabsf(4.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI))) + i * 0.6f,
+							0x55555555);
 					}
 				} else {//左右移動しているとき-------------------------------------
 
@@ -824,7 +846,7 @@ void PlayerShadow::Draw(const char* keys, const Resources& rs, Screen screen) {
 						},
 						size_.x - fabsf(4.0f * cosf((float(Global::timeCount_) / 24.0f) * float(M_PI))),
 						(size_.y - 8.0f) + fabsf(8.0f * cosf((float(Global::timeCount_) / 24.0f) * float(M_PI))),
-						0x222222ff
+						0x555555ff
 					);
 
 					for (int i = 1; i < 5; i++) {
@@ -833,41 +855,30 @@ void PlayerShadow::Draw(const char* keys, const Resources& rs, Screen screen) {
 								pos_.x,
 								(pos_.y + 8.0f) - fabsf(8.0f * cosf((float(Global::timeCount_) / 24.0f) * float(M_PI)))
 							},
-							size_.x  - fabsf(4.0f * cosf((float(Global::timeCount_) / 24.0f) * float(M_PI))) + i * 0.6f,
+							size_.x - fabsf(4.0f * cosf((float(Global::timeCount_) / 24.0f) * float(M_PI))) + i * 0.6f,
 							(size_.y - 8.0f) + fabsf(8.0f * cosf((float(Global::timeCount_) / 24.0f) * float(M_PI))) + i * 0.6f,
-							0x3f3f3f55
+							0x55555555
 						);
 					}
 				}
 			} else {//ジャンプ
 				DrawCat(
 					{ pos_.x,pos_.y + size_.y * 0.2f },
-					(size_.x * 0.5f) +((size_.x * 0.7f) * (float(jumpTimer_)/46.0f)),
+					(size_.x * 0.5f) + ((size_.x * 0.7f) * (float(jumpTimer_) / 46.0f)),
 					size_.y * 1.2f - ((size_.y) * (float(jumpTimer_) / 42.0f)),
-					0x222222ff
+					0x555555ff
 				);
 
 				for (int i = 1; i < 5; i++) {
 					DrawCat(
 						{ pos_.x,pos_.y + size_.y * 0.2f },
-						(size_.x * 0.5f) + ((size_.x) * (float(jumpTimer_) / 46.0f)) + i * 0.6f,
+						(size_.x * 0.5f) + ((size_.x * 0.7f) * (float(jumpTimer_) / 46.0f)) + i * 0.6f,
 						size_.y * 1.2f - ((size_.y) * (float(jumpTimer_) / 42.0f)) + i * 0.6f,
-						0x3f3f3fff
+						0x55555555
 					);
 				}
 			}
 
-			//追尾する星
-			for (int i = 0; i < starFollowPos_.size(); i++) {
-				//星アイテム
-				My::DrawStar(
-					starFollowPos_[i],
-					size_.x * 0.5f + (4.0f * cosf((float(Global::timeCount_) / 64.0f) * float(M_PI))),
-					{ cosf((starTheta_[i] / 120.0f) * float(M_PI)),1.0f },
-					(starTheta_[i] / 120.0f) * float(M_PI),
-					0x3f3f3fff
-				);
-			}
 
 			if (waitTimer_ > 240) {
 
@@ -908,6 +919,52 @@ void PlayerShadow::Draw(const char* keys, const Resources& rs, Screen screen) {
 					0xffffff3f + int(float(0x2f) * cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))
 				);
 			}
+		} else {
+
+			if (respawnTimeCount_ < 45) {
+
+				if (respawnTimeCount_ < 24) {
+					DrawCat(
+						{
+							shadow.firstPlayerPos_.x + screen.GetScreenLeftTop().x,
+							((shadow.firstPlayerPos_.y + screen.GetScreenLeftTop().y + 12) + 4.0f)
+							- fabsf(4.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI)))
+						},
+						(size_.x + 8.0f) - fabsf(8.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI))),
+						(size_.y - 4.0f) + fabsf(4.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI))),
+						0x555555ff
+					);
+
+					for (int i = 1; i < 5; i++) {
+						DrawCat(
+							{
+							shadow.firstPlayerPos_.x + screen.GetScreenLeftTop().x,
+							((shadow.firstPlayerPos_.y + screen.GetScreenLeftTop().y + 12) + 4.0f) 
+							- fabsf(4.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI)))
+							},
+							(size_.x + 8.0f) - fabsf(8.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI))) + i * 0.6f,
+							(size_.y - 4.0f) + fabsf(4.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI))) + i * 0.6f,
+							0x55555555);
+					}
+				}
+
+				for (int i = 0; i < 4; i++) {
+					Novice::DrawEllipse(
+						int(shadow.firstPlayerPos_.x + screen.GetScreenLeftTop().x),
+						int(shadow.firstPlayerPos_.y + screen.GetScreenLeftTop().y + 10),
+						int((size_.x - 4) * sinf(((45.0f - float(respawnTimeCount_)) / 45.0f) * float(M_PI)) + i * 2),
+						int((size_.y - 4) * sinf(((45.0f - float(respawnTimeCount_)) / 45.0f) * float(M_PI)) + i * 2),
+						0.0f,
+						0x3f3f3f7f,
+						kFillModeSolid
+					);
+				}
+			}
+
+			if (preIsAlive_) {
+				//死亡効果音
+				killedSEHandle_ = Novice::PlayAudio(rs.playerKilledSE_, 0, 0.5f);
+			}
 		}
 
 		break;
@@ -945,7 +1002,7 @@ void PlayerShadow::DrawResetAction(const Resources& rs, int timeCount, int kActi
 				84 + i * 4,
 				42 + i * 4,
 				0.0f,
-				0x00000000 + int(float(0x1f) * (float(goalTutorialAlpha_)/float(0xff))),
+				0x00000000 + int(float(0x26) * (float(goalTutorialAlpha_) / float(0xff))),
 				kFillModeSolid
 			);
 		}
@@ -1035,7 +1092,7 @@ void PlayerShadow::DrawResetAction(const Resources& rs, int timeCount, int kActi
 						0, 0,
 						1, 1,
 						rs.whiteGH_,
-						0x3f3f3fff + ((color * (j%2)) << 8) + ((color * (j%2)) << 16) + ((color * (j%2)) << 24)
+						0x3f3f3fff + ((color * (j % 2)) << 8) + ((color * (j % 2)) << 16) + ((color * (j % 2)) << 24)
 					);
 				}
 			}

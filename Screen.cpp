@@ -114,7 +114,7 @@ void Screen::Update(char* keys, const ChangeScene& cs, Map map, Light light) {
 		}
 
 		preBoxPos_ = boxPos_;
-
+		
 		boxPos_.clear();
 
 		//描画する座標決定

@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "Shadow.h"
 
+class Shadow;
+
 class PlayerShadow {
 
 	Vec2 pos_;
@@ -113,12 +115,12 @@ public:
 		pushSEHandle_=-1;
 	}
 
-	void Init(int sceneNum, Screen screen, Shadow shadow);
+	void Init(int sceneNum, Screen screen, Shadow shadow,const char* keys);
 	void InitStar();
 
 	void Update(char* keys, char* Prekeys, const Resources& rs, ChangeScene& cs, Screen& screen, Shadow& shadow, Player& player, Map& map, Light& light, bool isPause);
 
-	void Draw(const char* keys, const Resources& rs, Screen screen);
+	void Draw(const char* keys, const Resources& rs, Screen screen,const Shadow& shadow);
 	void DrawResetAction(const Resources& rs, int timeCount, int kActionTime);
 
 	void PlayerShadowManager(const Resources& rs, PlayerShadow playerShadow);

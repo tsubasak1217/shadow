@@ -92,7 +92,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		SCE.Update(stageClear, playerShadow.GetstarCount());
 		playerShadow.Update(keys, preKeys, rs, cs, screen, shadow, player, map, light, pause.isPause_);
 		for (int i = 0; i < 120; i++) {
-			particle[i].Update(emitter, playerShadow, shadow, screen);
+			particle[i].Update(emitter, playerShadow, shadow, screen,keys);
 		}
 
 		title.Update(keys, preKeys, rs);
@@ -135,8 +135,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		map.DrawSwitch(rs);
 		screen.DrawBG(rs);
 
-		playerShadow.Draw(keys, rs, screen);
 		shadow.Draw(rs);
+		playerShadow.Draw(keys, rs, screen,shadow);
 		screen.Draw(map, rs, light);
 
 		for (int i = 0; i < 120; i++) {
@@ -200,7 +200,7 @@ void DrawTutorial(const Resources& rs) {
 	for (int i = 0; i < 5; i++) {//下地
 
 		Novice::DrawBox(
-			-67 - i * 2,-10 - i * 2,
+			-67 - i * 2,-5 - i * 2,
 			128 + i * 4,
 			64 + i * 4,
 			0.0f,
@@ -221,7 +221,7 @@ void DrawTutorial(const Resources& rs) {
 
 		//esc
 		Novice::DrawSpriteRect(
-			-18, -5,
+			-18, 0,
 			128, 0,
 			128, 64,
 			rs.tutorial_[1],

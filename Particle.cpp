@@ -1,5 +1,19 @@
 ﻿#include "Particle.h"
 
+void Particle::Init() {
+	lifeTime_ = kLifeTime_;
+	isAlive_ = false;
+	particleMax_ = 120;
+
+	pos_ = { -100.0f,-100.0f };
+	size_ = { 8.0f,8.0f };
+	alpha_ = 0xff;
+	theta_ = 0.0f;
+	speed_ = float(rand() % 30) / 10.0f;
+	startPos_ = { -100.0f,-100.0f };
+	moveVec_ = { 0.0f,0.0f };
+}
+
 void Particle::Init(float theta, Vec2 pos, Vec2 size, float speed) {
 	theta_ = theta;
 	pos_ = pos;
@@ -7,7 +21,7 @@ void Particle::Init(float theta, Vec2 pos, Vec2 size, float speed) {
 	speed_ = speed;
 }
 
-void Particle::Update(Emitter emitter, PlayerShadow pShadow,const Shadow& shadow,Screen screen) {
+void Particle::Update(Emitter emitter, PlayerShadow pShadow,const Shadow& shadow,Screen screen,const char* keys) {
 
 	switch (Scene::sceneNum_) {
 		//====================================================================================
@@ -21,6 +35,10 @@ void Particle::Update(Emitter emitter, PlayerShadow pShadow,const Shadow& shadow
 		//====================================================================================
 	case GAME://								ゲーム本編
 		//====================================================================================
+
+		if (keys[DIK_R]) {
+			Init();
+		}
 
 		//プレイヤーが死んだときのエフェクト
 		if (!pShadow.GetIsAlive()) {
