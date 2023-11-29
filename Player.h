@@ -14,6 +14,7 @@ class Player {
 
 	//ブロックの移動中かどうか
 	bool isMoveBlock_;
+	bool isStopMove_;
 	float blockMoveT_;
 	int moveTime_;
 	int moveDirection_;
@@ -62,6 +63,7 @@ public:
 		centerAddress_.y = int((pos_.y - map.GetPuzzleLeftTop().y) / map.GetSize().y);
 
 		isMoveBlock_ = false;
+		isStopMove_ = false;
 		blockMoveT_ = 0.0f;
 		moveTime_ = 32;
 		moveDirection_ = 0;

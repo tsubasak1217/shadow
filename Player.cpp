@@ -33,6 +33,7 @@ void Player::Init(int sceneNum, Map map) {
 		centerAddress_.x = int((pos_.x - map.GetPuzzleLeftTop().x) / map.GetSize().x);
 		centerAddress_.y = int((pos_.y - map.GetPuzzleLeftTop().y) / map.GetSize().y);
 
+		isStopMove_ = false;
 		isMoveBlock_ = false;
 		blockMoveT_ = 0.0f;
 		moveTime_ = 32;
