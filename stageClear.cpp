@@ -136,7 +136,7 @@ void StageClear::Draw(Resources rs) {
 		Novice::DrawBox(int(Global::windowSize_.x / 2 - 250), int(Global::windowSize_.y / 2 - 50 - 250), 500, 500, 0.0f, windowColor_, kFillModeSolid);
 		Novice::DrawBox(int(Global::windowSize_.x / 2 - 200), int(Global::windowSize_.y / 2 - 50 - 200), 400, 400, 0.0f, skyColor_, kFillModeSolid);
 		//Novice::DrawSprite(int(Global::windowSize_.x / 2 - 200), int(Global::windowSize_.y / 2 - 50 - 200), rs.WindowGH_, 2, 2, 0, 0xFFFFFFFF);
-		
+
 
 		/*左のドア*/
 		Novice::DrawQuad(
@@ -184,7 +184,7 @@ void StageClear::Draw(Resources rs) {
 		for (int i = starGet_; i < 3; i++) {
 			My::DrawStarWire(starPos_[i], starSize_, 0.0f, 0x444444FF);
 		}
-		
+
 
 		if (starGet_ >= 2) {
 			Novice::DrawLine(int(starPos_[0].x), int(starPos_[0].y), int(starPos_[1].x), int(starPos_[1].y), starColor_);
@@ -195,13 +195,9 @@ void StageClear::Draw(Resources rs) {
 		}
 
 
-		if (debugNum % 2 == 0) {
-			/*ステージクリアの文字*/
-			Novice::DrawSprite(int(StageClearFontCPos_.x - StageClearFontSize_.x / 2), int(StageClearFontCPos_.y - StageClearFontSize_.y / 2), rs.stageClearFontGH_, 1, 1, 0.0f, FColor_);
-		} else {
-			Novice::DrawSprite(int(StageClearFontCPos_.x - 220 / 2),
-				int(StageClearFontCPos_.y + 150 - 220 / 2), rs.stageClearFont2GH_, 1, 1, 0.0f, FColor_);
-		}
+
+		/*ステージクリアの文字*/
+		Novice::DrawSprite(int(StageClearFontCPos_.x - StageClearFontSize_.x / 2), int(StageClearFontCPos_.y - StageClearFontSize_.y / 2), rs.stageClearFontGH_, 1, 1, 0.0f, FColor_);
 
 
 		/*猫*/

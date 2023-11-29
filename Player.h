@@ -83,7 +83,7 @@ public:
 
 	void Init(int sceneNum, Map map);
 
-	void Update(char* keys, const ChangeScene& cs, Map& map,bool isPause,const Resources& rs);
+	void Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, const Resources& rs);
 
 	void Draw(const Resources& rs);
 

@@ -37,7 +37,6 @@ public:
 	int pauseMenuGH_;
 	int pauseGH_;
 	int stageClearFontGH_;
-	int stageClearFont2GH_;
 	int selectFontGH_;
 	int creditFontGH_;
 

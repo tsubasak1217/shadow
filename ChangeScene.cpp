@@ -19,12 +19,12 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 			BCT_ += (1.0f / BCEaseTimer_) * BCEaseDir_;
 			BCAddT_ = EaseInOutBounce(BCT_);
 			addBCColor_ = (1 - BCAddT_) * minBCColor_ + BCAddT_ * maxBCColor_;
-			soundVolume_[2]= (1 - BCAddT_) * 0.12f + BCAddT_ * 0;
+			soundVolume_[2]= (1 - BCAddT_) * 0.06f + BCAddT_ * 0;
 			Novice::SetAudioVolume(BGMHandle_[2], soundVolume_[2]);
 
 			if (BCT_ <= 0.0f) {
 				BCT_ = 0.0f;
-				soundVolume_[2]=0.12f;
+				soundVolume_[2]=0.06f;
 				isStartChange_ = false;//暗幕の透明度を変化させるフラグを下す
 				isChangeScene = false;
 			}
@@ -53,7 +53,7 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 			BCT_ += (1.0f / (BCEaseTimer_ / 1.0f)) * BCEaseDir_;
 			BCAddT_ = EaseInCubic(BCT_);
 			addBCColor_ = (1 - BCAddT_) * minBCColor_ + BCAddT_ * maxBCColor_;
-			soundVolume_[2] = (1 - BCAddT_) * 0.12f + BCAddT_ * 0;
+			soundVolume_[2] = (1 - BCAddT_) * 0.06f + BCAddT_ * 0;
 			Novice::SetAudioVolume(BGMHandle_[2], soundVolume_[2]);
 			if (BCT_ >= 1.0f) {
 				BCT_ = 1.0f;

@@ -96,7 +96,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 
 		title.Update(keys, preKeys,rs);
-		door.Update(keys, preKeys,rs);
+		door.Update(keys, preKeys,rs ,playerShadow.GetstarCount());
 		stageClear.Update(cs.isStartChange_, playerShadow.GetstarCount());
 
 		pause.Update(cs, keys, preKeys,rs,audio.BGMHandle_[0],audio.soundVolume_[0]);
@@ -106,7 +106,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			SLParticle[i].Update(door,light);
 		}
 
-		//stageClear.Debug(keys, preKeys);
+
 
 		//デバックでのみ操作可能
 #if _DEBUG
@@ -177,7 +177,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				cs.isEndChange_ = true;
 			}
 		}
-
+		//stageClear.Debug(keys, preKeys);
 		///
 		/// ↑描画処理ここまで
 		///

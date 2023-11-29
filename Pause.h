@@ -68,6 +68,9 @@ class Pause {
 	int PushSEHandle_;
 	float maxVolume_;
 
+
+
+
 public:
 
 	bool isPause_;//PAUSE画面か否か
@@ -142,6 +145,7 @@ public:
 		isStageReset_ = false;
 
 
+		
 		SelectSEHandle_ = -1;
 		PushSEHandle_ = -1;
 		maxVolume_ = 0.12f;;

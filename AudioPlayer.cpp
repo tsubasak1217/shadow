@@ -57,7 +57,7 @@ AudioPlayer::AudioPlayer() {
 		soundVolume_[i] = 0;
 	}
 	//タイトルなので最初から音が出るようにする
-	soundVolume_[2] = 0.12f;
+	soundVolume_[2] = 0.06f;
 	
 		for (int i = 0; i < kSEHandleMax_; i++) {
 		SEHandle_[i] = -1;

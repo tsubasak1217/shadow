@@ -17,6 +17,8 @@ void Pause::Draw(Resources rs) {
 	case GAME://								ゲーム本編
 		//====================================================================================
 
+
+
 		if (isPause_ || isStartPause_ || isEndPause_) {
 			Novice::DrawBox(0, 0, int(Global::windowSize_.x), int(Global::windowSize_.y), 0.0f, BCColor_, kFillModeSolid);
 
@@ -51,6 +53,9 @@ void Pause::Draw(Resources rs) {
 		break;
 	}
 }
+
+
+
 void Pause::Update(ChangeScene& cs, char* keys, char* preKeys, const Resources& rs, int& BGMHandle, float& soundVolume) {
 
 
@@ -104,8 +109,8 @@ void Pause::Update(ChangeScene& cs, char* keys, char* preKeys, const Resources& 
 
 			addBCColor_ = (1 - BCAddT_) * minColor_ + BCAddT_ * maxBCColor_;
 			addElseColor_ = (1 - BCAddT_) * minColor_ + BCAddT_ * maxElseColor_;
-			soundVolume= (1 - BCAddT_) * maxVolume_ + BCAddT_ * 0;
-			Novice::SetAudioVolume(BGMHandle,soundVolume);
+			soundVolume = (1 - BCAddT_) * maxVolume_ + BCAddT_ * 0;
+			Novice::SetAudioVolume(BGMHandle, soundVolume);
 
 			//イージング
 			theta_ = (1 - BCAddT_) * minTheta_ + BCAddT_ * maxTheta_;
@@ -194,7 +199,7 @@ void Pause::Update(ChangeScene& cs, char* keys, char* preKeys, const Resources& 
 					selectNum_ = 2;
 				}
 				//SPACEキーで選択できる
-				if (keys[DIK_SPACE] && !preKeys[DIK_SPACE]||
+				if (keys[DIK_SPACE] && !preKeys[DIK_SPACE] ||
 					keys[DIK_RETURN] && !preKeys[DIK_RETURN]) {
 					isSelect_ = true;
 					PushSEHandle_ = Novice::PlayAudio(rs.pausePushSE_, 0, 0.4f);

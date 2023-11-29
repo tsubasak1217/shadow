@@ -44,7 +44,7 @@ void SelectDoor::Draw(Resources rs) {
 			if (isDraw_[i]) {
 				//扉の欄間から見える光
 				Novice::DrawBox(static_cast<int>(CPos_[i].x - size_.x / 2), static_cast<int>(CPos_[i].y - size_.y / 2),
-					static_cast<int>(size_.x), static_cast<int>(size_.y), 0.0f, lightColor_, kFillModeSolid);
+					static_cast<int>(size_.x), static_cast<int>(size_.y), 0.0f, lightColor_[i], kFillModeSolid);
 				//扉の外枠
 				Novice::DrawBox(static_cast<int>(CPos_[i].x - size_.x / 2), static_cast<int>(CPos_[i].y - size_.y / 2),
 					static_cast<int>(size_.x), static_cast<int>(size_.y), 0.0f, 0x000000FF, kFillModeWireFrame);
@@ -116,7 +116,7 @@ void SelectDoor::Draw(Resources rs) {
 
 
 
-void SelectDoor::Update(char* keys, char* preKeys, const Resources& rs) {
+void SelectDoor::Update(char* keys, char* preKeys, const Resources& rs, int starGetCount) {
 
 	switch (Scene::sceneNum_) {
 		//====================================================================================
@@ -249,6 +249,13 @@ void SelectDoor::Update(char* keys, char* preKeys, const Resources& rs) {
 		//====================================================================================
 	case CLEAR://								クリア画面
 		//====================================================================================
+
+		if (starGetCount == 3) {
+			lightColor_[selectNum_] = 0xE7E15AFF;
+				// 0xD4CD52FF;
+				//0xA29B0DFF;
+		}
+
 		break;
 
 	default:
@@ -490,9 +497,13 @@ void SelectDoor::Reset() {
 		for (int j = 0; j < 4; j++) {
 			vertex_[i][j] = { 0 };
 		}
+
 	}
 	color_ = 0x000000FF;
-	lightColor_ = 0xFFFFFFFF;
+
+	//lightColor_ = 0xFFFFFFFF;
+
+
 	//GH_ = Novice::LoadTexture("./images/Door.png");
 	//円周上に並んでいるドアの原点
 	originPos_ = { 240,512 };

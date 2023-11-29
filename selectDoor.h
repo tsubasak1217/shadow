@@ -16,7 +16,9 @@ public:
 
 
 	unsigned int color_;	//ドア本体の色
-	unsigned int lightColor_;	//欄間から見える光の色
+	unsigned int lightColor_[DOOR_MAX];	//欄間から見える光の色
+	bool isStageClear_[DOOR_MAX];//クリアしているか否か
+
 	int GH_;//ドアの画像
 
 
@@ -95,13 +97,18 @@ public:
 			Drawsize_ = { 0 };
 			theta_[i] = { 0 };
 			isDraw_[i] = true;
+			
+			lightColor_[i] =0xFFFFFFFF;
+			isStageClear_[i] = false;
+
 			rotateLength_[i] = { 0 };
 			for (int j = 0; j < 4; j++) {
 				vertex_[i][j] = { 0 };
 			}
 		}
 		color_ = 0x000000FF;
-		lightColor_ = 0xFFFFFFFF;
+		//0xFFFFFFFF
+
 		GH_ = Novice::LoadTexture("./Resources/images/Door.png");
 		//円周上に並んでいるドアの原点
 		originPos_ = { 240,512 };
@@ -161,7 +168,7 @@ public:
 
 	void Draw(Resources rs);
 
-	void Update(char* keys, char* preKeys, const Resources& rs);
+	void Update(char* keys, char* preKeys, const Resources& rs,int starGetCount);
 	void Debug(char* keys, char* preKeys);
 	void Reset();
 };
