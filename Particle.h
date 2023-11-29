@@ -35,8 +35,9 @@ public:
 
 	}
 
+	void Init();
 	void Init(float theta, Vec2 pos, Vec2 size, float speed);
-	void Update(Emitter emitter,PlayerShadow pShadow,const Shadow& shadow, Screen screen);
+	void Update(Emitter emitter,PlayerShadow pShadow,const Shadow& shadow, Screen screen, const char* keys);
 	void Draw();
 };
 

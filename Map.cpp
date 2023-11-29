@@ -174,7 +174,7 @@ Map::Map(const Resources& rs) {
 
 	//スイッチが押されたかのフラグ
 	isPressSwitch_ = false;
-
+	preIsPressSwitch_ = isPressSwitch_;
 
 	mapChipCopy_ = mapChip_;
 	posCopy_ = pos_;
@@ -364,7 +364,7 @@ void Map::Init(const Resources& rs, int sceneNum) {
 
 		//スイッチが押されたかのフラグ
 		isPressSwitch_ = false;
-
+		preIsPressSwitch_ = isPressSwitch_;
 		mapChipCopy_ = mapChip_;
 		posCopy_ = pos_;
 
@@ -404,16 +404,22 @@ void Map::Update(char* keys, const Resources& rs, const ChangeScene cs) {
 
 		//Rで初期化
 		if (keys[DIK_R]) {
-			Init(rs, Scene::sceneNum_);
+			if (!cs.isEndChange_) {
+				Init(rs, Scene::sceneNum_);
+			}
 		}
 
-		//falseで初期化
-		isPressSwitch_ = false;
 
 		//要素を消去	
 		touchable_.clear();
 		vertex_.clear();
 
+		//前フレームの情報保存
+		preIsPressSwitch_ = isPressSwitch_;
+
+		//falseで初期化
+		isPressSwitch_ = false;
+		
 		//マップチップの情報更新
 		for (int i = 0; i < mapChip_.size(); i++) {
 

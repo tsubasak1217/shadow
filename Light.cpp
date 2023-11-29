@@ -1,4 +1,5 @@
 ﻿#include "Light.h"
+#include "PlayerShadow.h"
 
 //=========================================================初期化関数==============================================================
 void Light::Init(int sceneNum, Map map) {
@@ -48,7 +49,7 @@ void Light::Init(int sceneNum, Map map) {
 }
 
 //====================================================アップデート=============================================================
-void Light::Update(char* keys, const ChangeScene& cs, Map map, float rangeTheta,bool isPause) {
+void Light::Update(char* keys, const ChangeScene& cs, Map map, float rangeTheta,bool isPause,PlayerShadow ps) {
 
 	//シーン遷移の始まった瞬間にシーンに合わせて初期化
 	if (cs.isStartChange_ && cs.preIsEndChange_) {
@@ -92,17 +93,19 @@ void Light::Update(char* keys, const ChangeScene& cs, Map map, float rangeTheta,
 			rightVec_ = CrossPos(emitPos_, rightVec_, { 0,0 }, { float(Global::windowSize_.x),0 });
 
 
+			if (!cs.isStartChange_) {
+				if (ps.GetIsAlive()) {
+					if (keys[DIK_Q]) {
+						Global::isMoveShadow_ = true;
+						emitPos_.x -= 2.0f;
+					}
 
-			if (keys[DIK_Q]) {
-				Global::isMoveShadow_ = true;
-				emitPos_.x -= 2.0f;
+					if (keys[DIK_E]) {
+						Global::isMoveShadow_ = true;
+						emitPos_.x += 2.0f;
+					}
+				}
 			}
-
-			if (keys[DIK_E]) {
-				Global::isMoveShadow_ = true;
-				emitPos_.x += 2.0f;
-			}
-
 
 			//左右の壁
 			if (emitPos_.x > Global::windowSize_.x - 32.0f) {

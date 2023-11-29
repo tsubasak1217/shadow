@@ -14,6 +14,8 @@ class Player {
 
 	//ブロックの移動中かどうか
 	bool isMoveBlock_;
+	bool isStopMove_;
+	int moveStopTime_;
 	float blockMoveT_;
 	int moveTime_;
 	int moveDirection_;
@@ -26,6 +28,7 @@ class Player {
 	bool isSwitchPushable_;
 	//ブロックを押せるかどうか
 	bool isBlockPushable_;
+	bool isViewTelop_;
 	//当たった回数
 	bool isHitMapChip_;
 
@@ -61,6 +64,8 @@ public:
 		centerAddress_.y = int((pos_.y - map.GetPuzzleLeftTop().y) / map.GetSize().y);
 
 		isMoveBlock_ = false;
+		isStopMove_ = false;
+		moveStopTime_ = 32;
 		blockMoveT_ = 0.0f;
 		moveTime_ = 32;
 		moveDirection_ = 0;
@@ -74,6 +79,7 @@ public:
 
 		isSwitchPushable_ = true;
 		isBlockPushable_ = false;
+		isViewTelop_ = false;
 		waitTimer_ = 0;
 		tutorialSpriteAlpha_ = 0;
 		killSwitch_ = false;
@@ -85,11 +91,12 @@ public:
 
 	void Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, const Resources& rs);
 
-	void Draw(const Resources& rs);
+	void Draw(const char* keys, const Resources& rs);
 
 	//アクセッサ
 	Vec2 GetPos() { return pos_; }
 	void SetSwitchPushable(bool flag) { isSwitchPushable_ = flag; }
 	bool GetIsSwapped() { return isSwappped_; }
+	bool GetIsMoveBlock() { return isMoveBlock_; }
 };
 

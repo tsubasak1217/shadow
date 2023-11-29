@@ -19,7 +19,7 @@ const char kWindowTitle[] = "1207_迷暗";
 //					  構造体など
 //======================================================
 
-
+void DrawTutorial(const Resources& rs);
 
 //======================================================
 //					  main関数
@@ -78,13 +78,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓更新処理ここから
 		///
 		global.Update();
-		
+
 		cs.UpDate(keys, preKeys, door.isChangeScene_, door.CPos_, door.selectNum_, stageClear.canSceneChange,
 			shadow.GetGoalPos(), shadow.GetGoalSize(), pause.isSelect_, title.isPush_,pause.isStageReset_,rs,door.lightSEHandle_,audio.BGMHandle_, audio.soundVolume_);
 
 		map.Update(keys, rs, cs);
 		player.Update(keys, cs, map, pause.isPause_,rs);
-		light.Update(keys, cs, map, ((3.0f / 4.0f) * float(M_PI)), pause.isPause_);
+		light.Update(keys, cs, map, ((3.0f / 4.0f) * float(M_PI)), pause.isPause_,playerShadow);
 
 		screen.Update(keys, cs, map, light);
 		shadow.Update(keys, cs, rs, screen, map);
@@ -92,18 +92,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		SCE.Update(stageClear, playerShadow.GetstarCount());
 		playerShadow.Update(keys, preKeys, rs, cs, screen, shadow, player, map, light, pause.isPause_);
 		for (int i = 0; i < 120; i++) {
-			particle[i].Update(emitter, playerShadow, shadow, screen);
+			particle[i].Update(emitter, playerShadow, shadow, screen,keys);
 		}
 
 		title.Update(keys, preKeys,rs);
-		door.Update(keys, preKeys,rs ,playerShadow.GetstarCount());
+		door.Update(keys, preKeys, rs, playerShadow.GetstarCount());
 		stageClear.Update(cs.isStartChange_, playerShadow.GetstarCount());
 
 		pause.Update(cs, keys, preKeys,rs,audio.BGMHandle_[0],audio.soundVolume_[0]);
 
-		for (int i = 0; i < 120; i++)
-		{
-			SLParticle[i].Update(door,light);
+		for (int i = 0; i < 120; i++) {
+			SLParticle[i].Update(door, light);
 		}
 
 
@@ -137,17 +136,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		screen.DrawBG(rs);
 
 		shadow.Draw(rs);
+		playerShadow.Draw(keys, rs, screen,shadow);
 		screen.Draw(map, rs, light);
-		playerShadow.Draw(rs,screen);
 
 		for (int i = 0; i < 120; i++) {
 			particle[i].Draw();
 
 		}
 
-		light.Draw(rs,map,cs);
+		light.Draw(rs, map, cs);
 		map.Draw(rs);
-		player.Draw(rs);
+		player.Draw(keys, rs);
 
 
 		title.Draw(rs);
@@ -155,10 +154,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		stageClear.Draw(rs);
 
 
-		for (int i = 0; i < 120; i++)
-		{
+		for (int i = 0; i < 120; i++) {
 			SLParticle[i].Draw(keys);
 		}
+
+		DrawTutorial(rs);
+
+		playerShadow.PlayerShadowManager(rs, playerShadow);
 
 		SCE.Draw(playerShadow.GetstarCount());
 
@@ -189,4 +191,59 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// ライブラリの終了
 	Novice::Finalize();
 	return 0;
+}
+
+void DrawTutorial(const Resources& rs) {
+
+	if (Scene::sceneNum_ == GAME) {
+
+	for (int i = 0; i < 5; i++) {//下地
+
+		Novice::DrawBox(
+			-67 - i * 2,-5 - i * 2,
+			128 + i * 4,
+			64 + i * 4,
+			0.0f,
+			0x00000015,
+			kFillModeSolid
+		);
+
+		Novice::DrawBox(
+			int(Global::windowSize_.x - 90 - i * 2),
+			int(-10 - i * 2),
+			128 + i * 4,
+			64 + i * 4,
+			0.0f,
+			0x00000015,
+			kFillModeSolid
+		);
+	}
+
+		//esc
+		Novice::DrawSpriteRect(
+			-18, 0,
+			128, 0,
+			128, 64,
+			rs.tutorial_[1],
+			(128.0f / 256.0f) / 1.2f,
+			(64.0f / 128.0f) / 1.2f,
+			0.0f,
+			0xffffffff
+		);
+
+
+		//reset
+		Novice::DrawSpriteRect(
+			Global::windowSize_.x - 110, 0,
+			0, 64,
+			128, 64,
+			rs.tutorial_[1],
+			(128.0f / 256.0f),
+			(64.0f / 128.0f),
+			0.0f,
+			0xffffffff
+		);
+
+
+	}
 }

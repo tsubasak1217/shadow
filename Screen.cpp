@@ -108,11 +108,13 @@ void Screen::Update(char* keys, const ChangeScene& cs, Map map, Light light) {
 
 		//Rで初期化
 		if (keys[DIK_R]) {
-			Init(Scene::sceneNum_, map, light);
+			if (!cs.isEndChange_) {
+				Init(Scene::sceneNum_, map, light);
+			}
 		}
 
 		preBoxPos_ = boxPos_;
-
+		
 		boxPos_.clear();
 
 		//描画する座標決定

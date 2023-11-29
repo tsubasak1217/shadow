@@ -21,7 +21,7 @@ public:
 
 	int tutorial_[2] = {
 		Novice::LoadTexture("./Resources/images/tutorial1.png"),
-		Novice::LoadTexture("./Resources/images/block_high.png"),//
+		Novice::LoadTexture("./Resources/images/tutorial2.png"),//
 	};
 
 	int textureGH_[2] = {
@@ -72,6 +72,12 @@ public:
 
 	//自機が死亡する
 	int playerKilledSE_ = Novice::LoadAudio("./Resources/sounds/SE/playerKilledSE.mp3");
+
+	//自機が死亡する
+	int playerRespawnSE_ = Novice::LoadAudio("./Resources/sounds/SE/playerRespawnSE.mp3");
+
+	//ブロックが動かせない音
+	int moveFailSE_ = Novice::LoadAudio("./Resources/sounds/SE/moveFail.mp3");
 
 	Resources();
 	~Resources();

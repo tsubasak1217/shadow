@@ -16,9 +16,11 @@ class Map
 	Vec2 puzzleLeftTop_;//パズル(画面下半分ののマップチップ)の左上座標
 	Vec2 puzzleMapSize_;//パズル画面の縦横幅
 
-	bool isPressSwitch_;//スイッチが押されたかのフラグ
+
 public:
 
+	bool isPressSwitch_;//スイッチが押されたかのフラグ
+	bool preIsPressSwitch_;//前フレームスイッチが押されたかのフラグ
 	static int stageNum_;
 
 	//マップチップから取得したプレイヤーの初期座標を格納する変数		
