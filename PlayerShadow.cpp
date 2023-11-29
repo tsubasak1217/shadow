@@ -10,6 +10,7 @@ void PlayerShadow::Init(int sceneNum, Screen screen, Shadow shadow) {
 		//====================================================================================
 	case SELECT://							   ステージ選択
 		//====================================================================================
+		starGetCount_ = 0;
 		break;
 		//====================================================================================
 	case GAME://								ゲーム本編
@@ -59,8 +60,9 @@ void PlayerShadow::Init(int sceneNum, Screen screen, Shadow shadow) {
 		preHitSurface_.clear();
 		preHitSurface2_.clear();
 
+		jumpTimer_ = 0;
 		waitTimer_ = 0;
-		starGetCount_ = 0;
+		goalTutorialAlpha_ = 0;
 
 		break;
 
@@ -103,8 +105,10 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 
 		//Rで初期化
 		if (keys[DIK_R]) {
-			Init(Scene::sceneNum_, screen, shadow);
-			InitStar();
+			if (!cs.isEndChange_) {
+				Init(Scene::sceneNum_, screen, shadow);
+				InitStar();
+			}
 		}
 		if (!isPause && !cs.isEndChange_ && !cs.isStartChange_) {
 			//前のフレームの情報保存に関するもの
@@ -182,8 +186,15 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 				//ジャンプ
 				if (isJump_) {
 					jumpSpeed_ = jumpVelocity_;
+					jumpTimer_++;
+
+					if (jumpTimer_ > 32) {
+						jumpTimer_ = 32;
+					}
 
 				} else {
+
+					jumpTimer_ = 0;
 
 					if (!isDrop_) {
 						if (keys[DIK_W]) {
@@ -540,8 +551,6 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 					}
 				}
 
-				Novice::ScreenPrintf(0, 40, "%d", isDrop_);
-
 				blockCount = 0;
 
 				//一回以上当たっていた時、当たらなくなるまで再計算
@@ -699,10 +708,21 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 
 				//ゴールと当たったらクリアに移動
 				if (ColisionBox_Ball(shadow.GetGoalLT(), shadow.GetGoalRT(), shadow.GetGoalLB(), shadow.GetGoalRB(), pos_, (size_.x / 10)) &&
-					!isDrop_) {
+					int(dropSpeed_) < 1) {
+
+					goalTutorialAlpha_+= 0x04;
+
 					if (keys[DIK_RETURN] && !Prekeys[DIK_RETURN]) {
 						cs.isEndChange_ = true;
 					}
+				} else {
+					goalTutorialAlpha_-= 0x04;
+				}
+
+				if (goalTutorialAlpha_ > 0xff) {
+					goalTutorialAlpha_ = 0xff;
+				} else if (goalTutorialAlpha_ < 0) {
+					goalTutorialAlpha_ = 0;
 				}
 
 				//プレイヤーの番地を再計算
@@ -765,6 +785,7 @@ void PlayerShadow::Draw(const char* keys, const Resources& rs, Screen screen) {
 
 		if (isAlive_) {
 
+
 			if (!isJump_) {
 
 				if (!keys[DIK_A] && !keys[DIK_D]) {
@@ -774,10 +795,10 @@ void PlayerShadow::Draw(const char* keys, const Resources& rs, Screen screen) {
 					DrawCat(
 						{
 							pos_.x,
-							(pos_.y + 8.0f) - fabsf(8.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI)))
+							(pos_.y + 4.0f) - fabsf(4.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI)))
 						},
 						(size_.x + 8.0f) - fabsf(8.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI))),
-						(size_.y - 8.0f) + fabsf(8.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI))),
+						(size_.y - 4.0f) + fabsf(4.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI))),
 						0x222222ff
 					);
 
@@ -785,10 +806,10 @@ void PlayerShadow::Draw(const char* keys, const Resources& rs, Screen screen) {
 						DrawCat(
 							{
 							pos_.x,
-							(pos_.y + 8.0f) - fabsf(8.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI)))
+							(pos_.y + 4.0f) - fabsf(4.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI)))
 							},
 							(size_.x + 8.0f) - fabsf(8.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI))) + i * 0.6f,
-							(size_.y + -8.0f) + fabsf(8.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI))) + i * 0.6f,
+							(size_.y -4.0f) + fabsf(4.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI))) + i * 0.6f,
 							0x3f3f3f55);
 					}
 				} else {//左右移動しているとき-------------------------------------
@@ -815,14 +836,22 @@ void PlayerShadow::Draw(const char* keys, const Resources& rs, Screen screen) {
 						);
 					}
 				}
-			} else {
+			} else {//ジャンプ
 				DrawCat(
 					{ pos_.x,pos_.y + size_.y * 0.2f },
-					size_.x * 0.8f,
-					size_.y * 1.2f,
+					(size_.x * 0.5f) +((size_.x * 0.7f) * (float(jumpTimer_)/46.0f)),
+					size_.y * 1.2f - ((size_.y) * (float(jumpTimer_) / 42.0f)),
 					0x222222ff
 				);
 
+				for (int i = 1; i < 5; i++) {
+					DrawCat(
+						{ pos_.x,pos_.y + size_.y * 0.2f },
+						(size_.x * 0.5f) + ((size_.x) * (float(jumpTimer_) / 46.0f)) + i * 0.6f,
+						size_.y * 1.2f - ((size_.y) * (float(jumpTimer_) / 42.0f)) + i * 0.6f,
+						0x3f3f3fff
+					);
+				}
 			}
 
 			//追尾する星
@@ -906,6 +935,32 @@ void PlayerShadow::DrawResetAction(const Resources& rs, int timeCount, int kActi
 
 	case GAME:
 
+		for (int i = 0; i < 5; i++) {
+			Novice::DrawBox(
+				int(pos_.x - 40 - i * 2),
+				int(pos_.y - 80 - i * 2),
+				84 + i * 4,
+				42 + i * 4,
+				0.0f,
+				0x00000000 + int(float(0x1f) * (float(goalTutorialAlpha_)/float(0xff))),
+				kFillModeSolid
+			);
+		}
+
+		//ゴール
+		Novice::DrawSpriteRect(
+			int(pos_.x - 42),
+			int(pos_.y - 80),
+			0, 0,
+			128,
+			64,
+			rs.tutorial_[1],
+			(128.0f / 256.0f) * 0.7f,
+			(64.0f / 128.0f) * 0.7f,
+			0.0f,
+			0xffffff00 + goalTutorialAlpha_
+		);
+
 		if (!isAlive_) {
 
 			const int kRowMax = 2;
@@ -959,7 +1014,7 @@ void PlayerShadow::DrawResetAction(const Resources& rs, int timeCount, int kActi
 				}
 			}
 
-			int color = int(float(0x1f) / float(kRowMax));
+			int color = 0x7f;
 
 			//描画
 			for (int i = kRowMax - 1; i >= 0; i--) {
@@ -977,7 +1032,7 @@ void PlayerShadow::DrawResetAction(const Resources& rs, int timeCount, int kActi
 						0, 0,
 						1, 1,
 						rs.whiteGH_,
-						0xFFFFFFff - ((color * j) << 8) - ((color * j) << 16) - ((color * j) << 24)
+						0x3f3f3fff + ((color * (j%2)) << 8) + ((color * (j%2)) << 16) + ((color * (j%2)) << 24)
 					);
 				}
 			}
@@ -990,7 +1045,7 @@ void PlayerShadow::DrawResetAction(const Resources& rs, int timeCount, int kActi
 					},
 					size[0][j].x,
 					(float(Global::timeCount_) / 64.0f) * float(M_PI),
-					0xFFFFFFff - ((color * j) << 8) - ((color * j) << 16) - ((color * j) << 24)
+					0x3f3f3fff + ((color * (j % 2)) << 8) + ((color * (j % 2)) << 16) + ((color * (j % 2)) << 24)
 				);
 
 
@@ -1001,7 +1056,7 @@ void PlayerShadow::DrawResetAction(const Resources& rs, int timeCount, int kActi
 					},
 					size[0][j].x,
 					(float(Global::timeCount_) / 64.0f) * float(M_PI),
-					0xFFFFFFff - ((color * j) << 8) - ((color * j) << 16) - ((color * j) << 24)
+					0x3f3f3fff + ((color * (j % 2)) << 8) + ((color * (j % 2)) << 16) + ((color * (j % 2)) << 24)
 				);
 
 			}

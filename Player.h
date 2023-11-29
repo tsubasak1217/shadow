@@ -26,6 +26,7 @@ class Player {
 	bool isSwitchPushable_;
 	//ブロックを押せるかどうか
 	bool isBlockPushable_;
+	bool isViewTelop_;
 	//当たった回数
 	bool isHitMapChip_;
 
@@ -71,6 +72,7 @@ public:
 
 		isSwitchPushable_ = true;
 		isBlockPushable_ = false;
+		isViewTelop_ = false;
 		waitTimer_ = 0;
 		tutorialSpriteAlpha_ = 0;
 		killSwitch_ = false;

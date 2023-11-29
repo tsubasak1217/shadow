@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "Map.h"
 
+class PlayerShadow;
+
 class Light {
 
 	Vec2 emitPos_;
@@ -39,7 +41,7 @@ public:
 
 	void Init(int stageNum,Map map);
 
-	void Update(char* keys,const ChangeScene& cs,Map map, float rangeTheta,bool isPause);
+	void Update(char* keys,const ChangeScene& cs,Map map, float rangeTheta,bool isPause, PlayerShadow ps);
 
 	void Draw(const Resources& rs, Map map, ChangeScene CS);
 

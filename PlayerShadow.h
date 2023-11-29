@@ -50,8 +50,10 @@ class PlayerShadow {
 	std::vector<float>starTheta_;
 
 	int starGetCount_;
-
+	int jumpTimer_;
 	int itemGetSEHandle_;
+
+	int goalTutorialAlpha_;
 
 public:
 
@@ -96,13 +98,15 @@ public:
 		preBoadingVecRatio_ = boadingVecRatio_;
 
 		waitTimer_ = 0;
+		jumpTimer_ = 0;
 
 		starGetCount_ = 0;
 		starFollowPos_.clear();
 		preStarFollowPos_.clear();
 		starTheta_.clear();
-
 		itemGetSEHandle_=-1;
+
+		goalTutorialAlpha_ = 0;
 	}
 
 	void Init(int sceneNum, Screen screen, Shadow shadow);

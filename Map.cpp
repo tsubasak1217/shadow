@@ -403,7 +403,9 @@ void Map::Update(char* keys, const Resources& rs, const ChangeScene cs) {
 
 		//Rで初期化
 		if (keys[DIK_R]) {
-			Init(rs, Scene::sceneNum_);
+			if (!cs.isEndChange_) {
+				Init(rs, Scene::sceneNum_);
+			}
 		}
 
 		//falseで初期化
