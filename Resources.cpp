@@ -14,6 +14,7 @@ Resources::Resources() {
 	selectFontGH_ = Novice::LoadTexture("./Resources/images/stageSelect.png");
 	keysGH_ = Novice::LoadTexture("./Resources/images/keys1.png");
 	creditFontGH_ = Novice::LoadTexture("./Resources/images/credit.png");
+	slashGH_ = Novice::LoadTexture("./Resources/images/slash.png");
 
 	mapCsv_[0] = "./Resources/csv/stage1/mapChip.csv";
 	mapCsv_[1] = "./Resources/csv/stage2/mapChip.csv";

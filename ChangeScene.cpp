@@ -13,7 +13,6 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 		//====================================================================================
 		Reset();
 
-
 		//足す透明度をイージング
 		if (isStartChange_) {
 			BCT_ += (1.0f / BCEaseTimer_) * BCEaseDir_;
@@ -829,11 +828,7 @@ void ChangeScene::Reset() {
 
 
 		//EndScene以外の時
-		/*
-		for (int i = 0; i < 4; i++) {
-			GCVertex_[i] = { 0 };//状態遷移用の扉の４頂点
-		}
-		*/
+
 		GCT_ = 0;//SceneChangeのｔ
 		GCAddT_ = 0;//SceneChangeのaddT
 		GCColor_ = 0xFFFFFFFF;//欄間から見える光の色

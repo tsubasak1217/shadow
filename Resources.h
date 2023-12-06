@@ -39,6 +39,7 @@ public:
 	int stageClearFontGH_;
 	int selectFontGH_;
 	int creditFontGH_;
+	int slashGH_;
 
 	//sounds
 	int BGM[3] = {

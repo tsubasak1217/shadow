@@ -123,7 +123,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 
 
-		//door.Debug(keys, preKeys);
+//		door.Debug(keys, preKeys);
 
 #endif DEBUG
 
