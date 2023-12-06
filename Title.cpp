@@ -81,6 +81,26 @@ void Title::Update(char* keys, char* preKeys ,const Resources& rs) {
 				isTMove = true;//タイトルロゴを移動
 				isPush_ = true;//スペースキーの透明度低下
 				titlePushSEHandle_ = Novice::PlayAudio(rs.titlePushSE_, 0, 0.4f);
+
+				Global::controlMode_ = 0;
+			}
+		
+		} else if (
+			
+			Novice::IsPressButton(0,kPadButton6) or 
+			Novice::IsPressButton(0, kPadButton7) or
+			Novice::IsPressButton(0, kPadButton8) or
+			Novice::IsPressButton(0, kPadButton9) or
+			Novice::IsPressButton(0, kPadButton10) or
+			Novice::IsPressButton(0, kPadButton11) 
+			) {
+
+			if (!isTMove && !isPush_) {
+				isTMove = true;//タイトルロゴを移動
+				isPush_ = true;//スペースキーの透明度低下
+				titlePushSEHandle_ = Novice::PlayAudio(rs.titlePushSE_, 0, 0.4f);
+
+				Global::controlMode_ = 1;
 			}
 		}
 

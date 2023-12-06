@@ -77,7 +77,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		/// ↓更新処理ここから
 		///
-		global.Update();
+		global.Update(keys);
 
 		cs.UpDate(keys, preKeys, door.isChangeScene_, door.CPos_, door.selectNum_, stageClear.canSceneChange,
 			shadow.GetGoalPos(), shadow.GetGoalSize(), pause.isSelect_, title.isPush_,pause.isStageReset_,rs,door.lightSEHandle_,audio.BGMHandle_, audio.soundVolume_);
@@ -136,7 +136,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		screen.DrawBG(rs);
 
 		shadow.Draw(rs);
-		playerShadow.Draw(keys, rs, screen,shadow);
+		playerShadow.Draw(rs, screen,shadow);
 		screen.Draw(map, rs, light);
 
 		for (int i = 0; i < 120; i++) {

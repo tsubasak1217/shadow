@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Scene.h"
+#include "Global.h"
 #include "localFunc.h"
 
 //シーンを変える間にモーションを入れたりするためのクラス(シーン遷移)

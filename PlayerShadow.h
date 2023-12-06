@@ -120,7 +120,7 @@ public:
 
 	void Update(char* keys, char* Prekeys, const Resources& rs, ChangeScene& cs, Screen& screen, Shadow& shadow, Player& player, Map& map, Light& light, bool isPause);
 
-	void Draw(const char* keys, const Resources& rs, Screen screen,const Shadow& shadow);
+	void Draw(const Resources& rs, Screen screen,const Shadow& shadow);
 	void DrawResetAction(const Resources& rs, int timeCount, int kActionTime);
 
 	void PlayerShadowManager(const Resources& rs, PlayerShadow playerShadow);

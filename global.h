@@ -1,5 +1,5 @@
 #pragma once
-#include "Resources.h"
+#include "Scene.h"
 
 class Global{
 public:
@@ -7,9 +7,11 @@ public:
 	static bool isMoveShadow_;
 	static const int stageMAX = 8;
 	static int timeCount_;
+	static int controlMode_;
+	static int character_;
 
 	Global();
 	~Global();
 
-	void Update();
+	void Update(const char* keys);
 };

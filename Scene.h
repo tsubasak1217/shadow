@@ -1,5 +1,5 @@
 #pragma once
-#include "global.h"
+#include "Resources.h"
 enum SCENENAME {
 	TITLE,
 	SELECT,

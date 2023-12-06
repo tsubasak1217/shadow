@@ -2,7 +2,7 @@
 #include "Particle.h"
 #include "Shadow.h"
 
-void PlayerShadow::Init(int sceneNum, Screen screen, Shadow shadow,const char* keys) {
+void PlayerShadow::Init(int sceneNum, Screen screen, Shadow shadow, const char* keys) {
 
 	switch (sceneNum) {
 		//====================================================================================
@@ -92,7 +92,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 
 	//シーン遷移の始まった瞬間にシーンに合わせて初期化
 	if (cs.isStartChange_ && cs.preIsEndChange_) {
-		Init(Scene::sceneNum_, screen, shadow,keys);
+		Init(Scene::sceneNum_, screen, shadow, keys);
 		InitStar();
 		prePos_ = pos_;
 	}
@@ -113,7 +113,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 		//Rで初期化
 		if (keys[DIK_R]) {
 			if (!cs.isEndChange_) {
-				Init(Scene::sceneNum_, screen, shadow,keys);
+				Init(Scene::sceneNum_, screen, shadow, keys);
 				InitStar();
 			}
 		}
@@ -125,12 +125,19 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 
 			//動いてないとき、待機時間タイマーを加算
 			//動いていないとき、動いていない時間タイマーを加算
-			if (!keys[DIK_W] && !keys[DIK_A] && !keys[DIK_D]) {
-				waitTimer_++;
+			if (Global::controlMode_ == 0) {
+				if (!keys[DIK_W] && !keys[DIK_A] && !keys[DIK_D]) {
+					waitTimer_++;
+				} else {
+					waitTimer_ = 0;
+				}
 			} else {
-				waitTimer_ = 0;
+				if (velocity_.x == 0 && int(velocity_.y) == 0) {
+					waitTimer_++;
+				} else {
+					waitTimer_ = 0;
+				}
 			}
-
 
 			/*----------------------------死んだときの処理-----------------------------*/
 			if (!isAlive_) {
@@ -139,8 +146,8 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 				if (respawnTimeCount_ == 135) {
 					//復活音
 					Novice::PlayAudio(rs.playerRespawnSE_, 0, 0.12f);
-				
-				}else if (respawnTimeCount_ < 80) {
+
+				} else if (respawnTimeCount_ < 80) {
 
 					if (respawnTimeCount_ == 79) {
 						map.Init(rs, Scene::sceneNum_);
@@ -152,7 +159,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 					isBackToRespawnPos_ = true;
 
 					if (respawnTimeCount_ <= 0) {
-						Init(Scene::sceneNum_, screen, shadow,keys);
+						Init(Scene::sceneNum_, screen, shadow, keys);
 
 						for (int i = 0; i < starFollowPos_.size(); i++) {
 
@@ -208,14 +215,30 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 					jumpTimer_ = 0;
 
 					if (!isDrop_) {
-						if (keys[DIK_W]) {
 
-							isJump_ = true;
-							isDrop_ = true;
-							jumpSpeed_ = jumpVelocity_;
+						if (Global::character_ == 0) {
+							if (Global::controlMode_ == 0) {
+								if (keys[DIK_W]) {
 
-						} else {
-							jumpSpeed_ = 0.0f;
+									isJump_ = true;
+									isDrop_ = true;
+									jumpSpeed_ = jumpVelocity_;
+
+								} else {
+									jumpSpeed_ = 0.0f;
+								}
+							} else {
+
+								if (Novice::IsPressButton(0, kPadButton15)) {
+
+									isJump_ = true;
+									isDrop_ = true;
+									jumpSpeed_ = jumpVelocity_;
+
+								} else {
+									jumpSpeed_ = 0.0f;
+								}
+							}
 						}
 					}
 
@@ -284,18 +307,32 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 				//ジャンプ
 				if (!isJump_) {
 
-					if (!isDrop_) {
+
+					if (Global::controlMode_ == 0) {
 						if (keys[DIK_W]) {
 
-							isJump_ = true;
-							isDrop_ = true;
-							jumpSpeed_ = jumpVelocity_;
+							if (Global::character_ == 0) {
+								isJump_ = true;
+								isDrop_ = true;
+								jumpSpeed_ = jumpVelocity_;
+							}
 
 						} else {
 							jumpSpeed_ = 0.0f;
 						}
-					}
+					} else {
 
+						if (Novice::IsPressButton(0, kPadButton10)) {
+
+							if (Global::character_ == 0) {
+								isJump_ = true;
+								isDrop_ = true;
+								jumpSpeed_ = jumpVelocity_;
+							}
+						} else {
+							jumpSpeed_ = 0.0f;
+						}
+					}
 				}
 
 
@@ -313,7 +350,17 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 
 
 				//左右移動
-				direction_.x = float(keys[DIK_D] - keys[DIK_A]);
+				Vector2<int>padDirection;
+				Novice::GetAnalogInputLeft(0, &padDirection.x, &padDirection.y);
+				Novice::ScreenPrintf(0, 0, "%d", padDirection.x);
+
+				if (Global::character_ == 0) {
+					if (Global::controlMode_ == 0) {
+						direction_.x = float(keys[DIK_D] - keys[DIK_A]);
+					} else {
+						direction_.x = float(-padDirection.x);
+					}
+				}
 
 				velocity_.x = Normalize({ 0.0f,0.0f }, direction_).x;
 
@@ -724,10 +771,18 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 
 					goalTutorialAlpha_ += 0x04;
 
-					if (keys[DIK_RETURN] && !Prekeys[DIK_RETURN]) {
-						cs.isEndChange_ = true;
-						pushSEHandle_ = Novice::PlayAudio(rs.selectPushSE_, 0, 0.5f);
+					if (Global::controlMode_ == 0) {
+						if (keys[DIK_RETURN] && !Prekeys[DIK_RETURN]) {
+							cs.isEndChange_ = true;
+							pushSEHandle_ = Novice::PlayAudio(rs.selectPushSE_, 0, 0.5f);
+						}
+					} else {
+						if (Novice::IsTriggerButton(0, kPadButton11)) {
+							cs.isEndChange_ = true;
+							pushSEHandle_ = Novice::PlayAudio(rs.selectPushSE_, 0, 0.5f);
+						}
 					}
+
 				} else {
 					goalTutorialAlpha_ -= 0x04;
 				}
@@ -780,7 +835,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 	}
 }
 
-void PlayerShadow::Draw(const char* keys, const Resources& rs, Screen screen,const Shadow& shadow) {
+void PlayerShadow::Draw(const Resources& rs, Screen screen, const Shadow& shadow) {
 
 	//シーンに応じて処理を分ける
 	switch (Scene::sceneNum_) {
@@ -803,7 +858,7 @@ void PlayerShadow::Draw(const char* keys, const Resources& rs, Screen screen,con
 				//星アイテム
 				My::DrawStar(
 					starFollowPos_[i],
-					(size_.x * 0.6f) / (1.0f + (CheckLength(starFollowPos_[i], pos_)* 0.01f * 2.0f)),
+					(size_.x * 0.6f) / (1.0f + (CheckLength(starFollowPos_[i], pos_) * 0.01f * 2.0f)),
 					{ cosf((starTheta_[i] / 120.0f) * float(M_PI)),1.0f },
 					(starTheta_[i] / 120.0f) * float(M_PI),
 					0x3f3f3fff
@@ -813,7 +868,7 @@ void PlayerShadow::Draw(const char* keys, const Resources& rs, Screen screen,con
 			//プレイヤー
 			if (!isJump_) {
 
-				if (!keys[DIK_A] && !keys[DIK_D]) {
+				if (velocity_.x <= 2 && velocity_.y <= 2) {
 					//停止しているとき-------------------------------------
 
 
@@ -939,7 +994,7 @@ void PlayerShadow::Draw(const char* keys, const Resources& rs, Screen screen,con
 						DrawCat(
 							{
 							shadow.firstPlayerPos_.x + screen.GetScreenLeftTop().x,
-							((shadow.firstPlayerPos_.y + screen.GetScreenLeftTop().y + 12) + 4.0f) 
+							((shadow.firstPlayerPos_.y + screen.GetScreenLeftTop().y + 12) + 4.0f)
 							- fabsf(4.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI)))
 							},
 							(size_.x + 8.0f) - fabsf(8.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI))) + i * 0.6f,
