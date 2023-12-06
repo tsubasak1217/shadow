@@ -785,7 +785,7 @@ void ChangeScene::Reset() {
 		isPushEscape_ = false;
 		//状態遷移イージング用
 		SCCPos_ = { -200,-100 };
-		SCSize_ = { 50,100 };
+		SCSize_ = { 200,400 };
 		for (int i = 0; i < 4; i++) {
 			SCVertex_[i] = { 0 };
 		}

@@ -13,7 +13,7 @@ void SelectDoor::Draw(Resources rs) {
 		//====================================================================================
 #pragma region"描画"
 
-		Novice::DrawBox(0, 0, int(480), int(720), 0.0f, 0x444444FF, kFillModeSolid);
+		Novice::DrawBox(0, 0, Global::windowSize_.x, Global::windowSize_.y, 0.0f, 0x444444FF, kFillModeSolid);
 		//size_に応じてSpriteの表示サイズを変更
 		Drawsize_.x = size_.x / 100;
 		Drawsize_.y = size_.y / 200;
@@ -26,8 +26,9 @@ void SelectDoor::Draw(Resources rs) {
 		Novice::DrawSprite(int(selectFontCPos_.x - selectFontSize_.x / 2), int(selectFontCPos_.y - selectFontSize_.y / 2), rs.selectFontGH_, 0.5f, 0.5f, 0.0f, FColor_);
 
 
-		//床の円
-		Novice::DrawEllipse(static_cast<int>(EllPos_.x), static_cast<int>(EllPos_.y), static_cast<int>(EllSize_.x), static_cast<int>(EllSize_.y), 0.0f, 0x000000FF, kFillModeWireFrame);
+		//床の線
+		Novice::DrawLine(0, int(NumlightEllCPos_.y - NumlightEllSize_.y - 15),Global::windowSize_.x, int(NumlightEllCPos_.y - NumlightEllSize_.y - 15),0x000000FF);
+
 
 		for (int i = 0; i < 3; i++) {
 			Novice::DrawEllipse(static_cast<int>(NumlightEllCPos_.x), static_cast<int>(NumlightEllCPos_.y),
@@ -57,7 +58,7 @@ void SelectDoor::Draw(Resources rs) {
 		/*------------------------------選択範囲の描画------------------------------*/
 		//点滅させる
 		DrawTimer_ -= 1;
-		if (!isEaseS_) {
+		if (!isEaseM_) {
 			if (DrawTimer_ == 0) {
 				if (isSelectDraw_) {
 					isSelectDraw_ = false;
@@ -68,8 +69,8 @@ void SelectDoor::Draw(Resources rs) {
 				}
 			}
 		} else {
-			isSelectDraw_ = true;
-			DrawTimer_ = DrawTimerMax_;
+			isSelectDraw_ = false;
+			DrawTimer_ = DrawTimerMax_ + 5;
 		}
 
 		//選択範囲の描画
@@ -83,18 +84,6 @@ void SelectDoor::Draw(Resources rs) {
 
 
 
-	/*------------------------------状態遷移用の扉----------------------------------------*/
-	/*
-	//扉の欄間から見える光
-	Novice::DrawBox(static_cast<int>(SCCPos_.x - SCSize_.x / 2), static_cast<int>(SCCPos_.y - SCSize_.y / 2),
-		static_cast<int>(SCSize_.x), static_cast<int>(SCSize_.y), 0.0f, SCColor_, kFillModeSolid);
-	if (isAllDraw_) {
-		//ドア本体
-		Novice::DrawQuad(static_cast<int>(SCVertex_[0].x), static_cast<int>(SCVertex_[0].y), static_cast<int>(SCVertex_[1].x), static_cast<int>(SCVertex_[1].y),
-			static_cast<int>(SCVertex_[2].x), static_cast<int>(SCVertex_[2].y), static_cast<int>(SCVertex_[3].x), static_cast<int>(SCVertex_[3].y),
-			0, 0, 100, 200, GH_, color_);
-	}
-	*/
 #pragma endregion
 
 		break;
@@ -137,24 +126,36 @@ void SelectDoor::Update(char* keys, char* preKeys, const Resources& rs, int star
 
 	/*----------------------------選択範囲の移動--------------------------------------*/
 		if (!isChangeScene_ &&
-			!isEaseS_) {
+			!isEaseM_) {
 			//左方向に移動
-			if (keys[DIK_A] && !preKeys[DIK_A] ||
-				keys[DIK_LEFT] && !preKeys[DIK_LEFT]) {
-				selectNum_--;
-				selectT_ = 0.0f;
-				selectAddT_ = 0.0f;
-				selectCursorSEHandle_ = Novice::PlayAudio(rs.selectCursorSE_, 0, 0.12f);
-				isEaseS_ = true;//イージングで移動するフラグ(select)
-			}
-			//右方向に移動
-			if (keys[DIK_D] && !preKeys[DIK_D] ||
-				keys[DIK_RIGHT] && !preKeys[DIK_RIGHT]) {
-				selectNum_++;
-				selectT_ = 0.0f;
-				selectAddT_ = 0.0f;
-				selectCursorSEHandle_ = Novice::PlayAudio(rs.selectCursorSE_, 0, 0.12f);
-				isEaseS_ = true;//イージングで移動するフラグ(select)
+			if (keys[DIK_A] && preKeys[DIK_A] ||
+				keys[DIK_LEFT] && preKeys[DIK_LEFT]) {
+				if (selectNum_ > 0) {
+					selectNum_--;
+					moveT_ = 0.0f;
+					moveAddT_ = 0.0f;
+					selectCursorSEHandle_ = Novice::PlayAudio(rs.selectCursorSE_, 0, 0.12f);
+					moveMaxPos_.x = CPos_[0].x + float(Global::windowSize_.x * 0.65f);
+					moveMinPos_.x = CPos_[0].x;
+					//CPos_[0].x += float(Global::windowSize_.x / 2);
+
+					isEaseM_ = true;//イージングで移動するフラグ(select)
+				}
+
+			} else if (keys[DIK_D] && preKeys[DIK_D] ||
+				keys[DIK_RIGHT] && preKeys[DIK_RIGHT]) {
+				if (selectNum_ < DOOR_MAX-1) {
+					selectNum_++;
+					moveT_ = 0.0f;
+					moveAddT_ = 0.0f;
+					selectCursorSEHandle_ = Novice::PlayAudio(rs.selectCursorSE_, 0, 0.12f);
+					moveMaxPos_.x = CPos_[0].x - float(Global::windowSize_.x * 0.65f);
+					moveMinPos_.x = CPos_[0].x;
+					//CPos_[0].x -= float(Global::windowSize_.x / 2);
+					isEaseM_ = true;//イージングで移動するフラグ(select)
+				}
+
+
 			}
 		} else {
 			selectPos_ = CPos_[selectNum_];
@@ -162,31 +163,41 @@ void SelectDoor::Update(char* keys, char* preKeys, const Resources& rs, int star
 
 		//Numを範囲内に収める
 		//selectNumは扉の添え字用の変数なので、0～7の範囲内
+		/*
 		if (selectNum_ == 8) {
 			selectNum_ = 0;
 		}
 		if (selectNum_ == -1) {
 			selectNum_ = 7;
-		}
+		}*/
 
 		//現地点と指定されたドアの位置を保存
-		selectMinPos_ = selectPos_;
-		selectMaxPos_ = CPos_[selectNum_];
+
+		selectPos_ = CPos_[selectNum_];
 		Map::stageNum_ = selectNum_;
 
+
+
 		//選択範囲の移動
-		if (isEaseS_) {
+		if (isEaseM_) {
 			//座標をイージングで移動
-			selectT_ += (1 / easeTimerS_);
-			selectAddT_ = EaseInOutCubic(selectT_);
-			selectPos_.x = (1 - selectAddT_) * selectMinPos_.x + selectAddT_ * selectMaxPos_.x;
-			selectPos_.y = (1 - selectAddT_) * selectMinPos_.y + selectAddT_ * selectMaxPos_.y;
-			if (selectT_ >= 1) {
-				selectT_ = 0.0f;
-				selectAddT_ = 0.0f;
-				isEaseS_ = false;//フラグを下す
+			moveT_ += (1 / easeTimerM_);
+			moveAddT_ = EaseInOutCubic(moveT_);
+			CPos_[0].x = (1 - moveAddT_) * moveMinPos_.x + moveAddT_ * moveMaxPos_.x;
+			CPos_[0].y = (1 - moveAddT_) * moveMinPos_.y + moveAddT_ * moveMaxPos_.y;
+			if (moveT_ >= 1) {
+				moveT_ = 0.0f;
+				moveAddT_ = 0.0f;
+				CPos_[0].x = moveMaxPos_.x;
+				isEaseM_ = false;//フラグを下す
 			}
 		}
+		for (int i = 0; i < DOOR_MAX; i++) {
+			CPos_[i] = { CPos_[0].x + (float(Global::windowSize_.x * 0.65f) * i),float(Global::windowSize_.y / 2) };
+			//４頂点を求める
+			VectorVertexS(vertex_[i], CPos_[i], size_.x, size_.y);
+		}
+
 
 #pragma endregion
 
@@ -203,7 +214,7 @@ void SelectDoor::Update(char* keys, char* preKeys, const Resources& rs, int star
 #pragma region"ステージ番号表示用のライトの点滅イージング"
 		//足す透明度をイージング
 		if (!isChangeScene_ ||
-			!isEaseS_) {
+			!isEaseM_) {
 			DLT_ += (1.0f / DLEaseTimer_) * DLEaseDir_;
 			DLAddT_ = EaseInOutBounce(DLT_);
 			addDLColor_ = (1 - DLAddT_) * minDLColor_ + DLAddT_ * maxDLColor_;
@@ -252,8 +263,8 @@ void SelectDoor::Update(char* keys, char* preKeys, const Resources& rs, int star
 
 		if (starGetCount == 3) {
 			lightColor_[selectNum_] = 0xE7E15AFF;
-				// 0xD4CD52FF;
-				//0xA29B0DFF;
+			// 0xD4CD52FF;
+			//0xA29B0DFF;
 		}
 
 		break;
@@ -479,6 +490,9 @@ void DOOR::Debug(char* keys, char* preKeys) {
 #pragma endregion
 
 
+
+
+
 void SelectDoor::Reset() {
 
 #pragma region"リセット"
@@ -488,8 +502,8 @@ void SelectDoor::Reset() {
 
 	//ドア本体の変数
 	for (int i = 0; i < DOOR_MAX; i++) {
-		CPos_[i] = { 0 };
-		size_ = { 50,100 };
+		//CPos_[i] = { 0 };
+		size_ = { 200,400 };
 		Drawsize_ = { 0 };
 		theta_[i] = { 0 };
 		isDraw_[i] = true;
@@ -513,32 +527,35 @@ void SelectDoor::Reset() {
 	if (Scene::sceneNum_ == TITLE) {
 		selectNum_ = 0;
 		selectPos_ = { 0 };
-		selectMinPos_ = CPos_[0];
-		selectMaxPos_ = CPos_[0];
+		moveMinPos_ = CPos_[0];
+		moveMaxPos_ = CPos_[0];
 	}
 	selectColor_ = 0xFF0000FF;
 	isSelectDraw_ = false;
-	isEaseS_ = false;
+	isEaseM_ = false;
 	DrawTimerMax_ = 45;
 	DrawTimer_ = DrawTimerMax_;
-	easeTimerS_ = 2.0f;
-	selectT_ = 0.0f;
-	selectAddT_ = 0.0f;
+	easeTimerM_ = 20;//フレーム指定
+	moveT_ = 0.0f;
+	moveAddT_ = 0.0f;
 
 	//床の円
-	EllSize_ = { 260,276 };
-	EllPos_ = { 240,615 };
+	EllSize_ = { 185,85 };//{ 260,276 };
+	EllPos_ = { 240,640 }; //{ 240,615 };
 
 
 	//*-------------------------------各ドアの座標を求める----------------------------------*//
+
 	for (int i = 0; i < DOOR_MAX; i++) {
 		//角度を決める
-		theta_[i] = theta_[0] + (1.0f / 7.0f * float(M_PI)) * i;
-		theta_[0] = (float(M_PI));
+		//theta_[i] = theta_[0] + (1.0f / 7.0f * float(M_PI)) * i;
+		//theta_[0] = (float(M_PI));
 		//移動
-		rotateLength_[i] = rotateVect(length_, sinf(theta_[i]), cosf(theta_[i]));
+		//rotateLength_[i] = rotateVect(length_, sinf(theta_[i]), cosf(theta_[i]));
 		//円形に配置
-		CPos_[i] = getVectAdd(rotateLength_[i], originPos_);
+		if (Scene::sceneNum_ == TITLE) {
+			CPos_[i] = { float(Global::windowSize_.x / 2) + (float(Global::windowSize_.x / 2) * i),float(Global::windowSize_.y / 2) };
+		}
 		//４頂点を求める
 		VectorVertexS(vertex_[i], CPos_[i], size_.x, size_.y);
 	}
@@ -552,5 +569,88 @@ void SelectDoor::Reset() {
 
 #pragma endregion
 
+
+}
+void SelectDoor::Debug(char* keys, char* preKeys) {
+#pragma region"デバック用"
+#if _DEBUG
+	//操作したい番号選択
+	if (keys[DIK_SPACE] && !preKeys[DIK_SPACE]) {
+		debugNum += 1;
+		//[1]=originPos_
+		//[2]=size_
+		//[3]=length_
+		if (debugNum == 4) {
+			debugNum = 0;
+		}
+
+	}
+	switch (debugNum)
+	{
+	case 0:
+		if (keys[DIK_W]) {
+			NumVertex_[3].y -= 1;
+		}
+		if (keys[DIK_S]) {
+			NumVertex_[3].y += 1;
+		}
+		if (keys[DIK_A]) {
+			NumVertex_[3].x -= 1;
+		}
+		if (keys[DIK_D]) {
+			NumVertex_[3].x += 1;
+		}
+		break;
+	case 1:
+		if (keys[DIK_W]) {
+			NumlightEllCPos_.y -= 1;
+		}
+		if (keys[DIK_S]) {
+			NumlightEllCPos_.y += 1;
+		}
+		if (keys[DIK_A]) {
+			NumlightEllCPos_.x -= 1;
+		}
+		if (keys[DIK_D]) {
+			NumlightEllCPos_.x += 1;
+		}
+		break;
+	case 2:
+		if (keys[DIK_W]) {
+			NumlightEllSize_.y -= 1;
+		}
+		if (keys[DIK_S]) {
+			NumlightEllSize_.y += 1;
+		}
+		if (keys[DIK_A]) {
+			NumlightEllSize_.x -= 1;
+		}
+		if (keys[DIK_D]) {
+			NumlightEllSize_.x += 1;
+		}
+		break;
+	case 3:
+		if (keys[DIK_W]) {
+			NumVertex_[2].y -= 1;
+		}
+		if (keys[DIK_S]) {
+			NumVertex_[2].y += 1;
+		}
+		if (keys[DIK_A]) {
+			NumVertex_[2].x -= 1;
+		}
+		if (keys[DIK_D]) {
+			NumVertex_[2].x += 1;
+		}
+		break;
+	default:
+		break;
+	}
+	Novice::ScreenPrintf(0, 0, "debugNum=%d", debugNum);
+	Novice::ScreenPrintf(0, 20, "NumlightEllCPos_ x=%f,y=%f", NumlightEllCPos_.x, NumlightEllCPos_.y);
+	Novice::ScreenPrintf(0, 40, "NumlightEllSize_x = %f, y = %f", NumlightEllSize_.x, NumlightEllSize_.y);
+	Novice::ScreenPrintf(0, 60, "length_ x=%f,y=%f", length_.x, length_.y);
+#endif // _DEBUG
+#pragma endregion
 
 }

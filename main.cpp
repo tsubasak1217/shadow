@@ -121,6 +121,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				Scene::sceneNum_ = CLEAR;
 			}
 		}
+
+
+		//door.Debug(keys, preKeys);
+
 #endif DEBUG
 
 		///
