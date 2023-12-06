@@ -877,9 +877,11 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 				velocity_.x *= speed_;
 				velocity_.y *= speed_;
 
-				if (!isMoveBlock_) {
-					pos_.x += velocity_.x;
-					pos_.y += velocity_.y;
+				if (!isStopMove_) {
+					if (!isMoveBlock_) {
+						pos_.x += velocity_.x;
+						pos_.y += velocity_.y;
+					}
 				}
 
 
@@ -1003,6 +1005,11 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 							);
 							isSwappped_ = true;
 
+							//押してた場合少し戻す
+							if (centerAddress_.y == moveBlockAddress_.y) {
+								pos_.y++;
+							}
+
 							break;
 
 						case Right:
@@ -1023,6 +1030,11 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 								moveBlockAddress_.y, moveBlockAddress_.x,
 								0
 							);
+
+							//押してた場合少し戻す
+							if (centerAddress_.x == moveBlockAddress_.x) {
+								pos_.x--;
+							}
 
 							break;
 
@@ -1047,6 +1059,11 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 
 							isSwappped_ = true;
 
+							//押してた場合少し戻す
+							if (centerAddress_.y == moveBlockAddress_.y) {
+       								pos_.y--;
+							}
+
 							break;
 
 						case Left:
@@ -1067,6 +1084,11 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 								moveBlockAddress_.y, moveBlockAddress_.x,
 								0
 							);
+
+							//押してた場合少し戻す
+							if (centerAddress_.x == moveBlockAddress_.x) {
+								pos_.x++;
+							}
 
 							break;
 
@@ -1236,7 +1258,7 @@ void Player::Draw(const char* keys,const Resources& rs) {
 		rs.whiteGH_;
 
 		if (!isStopMove_) {
-			if ((keys[DIK_SPACE] && isBlockPushable_) or isMoveBlock_) {
+			if ((keys[DIK_SPACE] && isBlockPushable_) or isMoveBlock_ or swapTimeCount_ == 3) {
 
 				DrawCat(pos_, size_.x * 1.2f, size_.y * 1.2f, 0xdfdfdfff);
 
