@@ -160,6 +160,7 @@ void SelectDoor::Update(char* keys, char* preKeys, const Resources& rs, int star
 
 			if (keys[DIK_D] && preKeys[DIK_D] ||
 				keys[DIK_RIGHT] && preKeys[DIK_RIGHT]) {
+
 				if (selectNum_ < DOOR_MAX - 1) {//ステージの右端以外なら動く
 					//ステージ番号インクリメント
 					selectNum_++;
@@ -190,12 +191,9 @@ void SelectDoor::Update(char* keys, char* preKeys, const Resources& rs, int star
 					}
 
 				}
-		} else {
-			//選択の赤枠を移動する扉まで移動
-			selectPos_ = CPos_[selectNum_];
-		}
+		} 
 
-		//現地点と指定されたドアの位置を保存
+
 		selectPos_ = CPos_[selectNum_];
 		Map::stageNum_ = selectNum_;
 

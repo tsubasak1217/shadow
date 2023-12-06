@@ -2,7 +2,7 @@
 
 void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CPos[],
 	int selectNum, bool& CanCS, Vec2 goalPos, Vec2 goalSize, bool& isPauseSelect, bool& isTitlePush, bool& stageReset,const Resources &rs,int& selectLightSEHandle,
-	int BGMHandle_[3],float soundVolume_[3]) {
+	int BGMHandle_[3],float soundVolume_[3],bool &isEaseM) {
 	
 	preIsStartChange_ = isStartChange_;
 	preIsEndChange_ = isEndChange_;
@@ -12,6 +12,7 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 	case TITLE://							   タイトル画面
 		//====================================================================================
 		Reset();
+#pragma region"セレクトからタイトル（開始処理)"
 
 		//足す透明度をイージング
 		if (isStartChange_) {
@@ -37,7 +38,7 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 			BCColor_ = 0x00000000 + int(addBCColor_);//ここで透明度を足す
 		}
 
-
+#pragma endregion
 
 
 
@@ -119,12 +120,14 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 			keys[DIK_RETURN] && !preKeys[DIK_RETURN]) {
 			if (!isPushEscape_) {//ESCAPE押されていないとき
 				if (!isChangeScene && !isEndChange_ && !isStartChange_) {
-					isChangeScene = true;
-					isEndChange_ = true;
-					isSetSCPos_ = true;
-					isChangeColor_ = true;
-					pushSEHandle_ = Novice::PlayAudio(rs.selectPushSE_, 0, 0.5f);
-					Novice::StopAudio(selectLightSEHandle);
+					if (!isEaseM) {
+						isChangeScene = true;
+						isEndChange_ = true;
+						isSetSCPos_ = true;
+						isChangeColor_ = true;
+						pushSEHandle_ = Novice::PlayAudio(rs.selectPushSE_, 0, 0.5f);
+						Novice::StopAudio(selectLightSEHandle);
+					}
 				}
 			}
 		}

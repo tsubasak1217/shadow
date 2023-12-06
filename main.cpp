@@ -80,7 +80,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		global.Update();
 
 		cs.UpDate(keys, preKeys, door.isChangeScene_, door.CPos_, door.selectNum_, stageClear.canSceneChange,
-			shadow.GetGoalPos(), shadow.GetGoalSize(), pause.isSelect_, title.isPush_,pause.isStageReset_,rs,door.lightSEHandle_,audio.BGMHandle_, audio.soundVolume_);
+			shadow.GetGoalPos(), shadow.GetGoalSize(), pause.isSelect_, title.isPush_,pause.isStageReset_,rs,door.lightSEHandle_,audio.BGMHandle_, audio.soundVolume_,door.isEaseM_);
 
 		map.Update(keys, rs, cs);
 		player.Update(keys, cs, map, pause.isPause_,rs);
