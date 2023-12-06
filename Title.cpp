@@ -71,28 +71,23 @@ void Title::Draw(Resources rs) {
 }
 
 
-void Title::Update(char* keys, char* preKeys ,const Resources& rs) {
+void Title::Update(char* keys, char* preKeys, Resources& rs) {
 	switch (Scene::sceneNum_) {
 		//====================================================================================
 	case TITLE://							   タイトル画面
 		//====================================================================================
 		if (keys[DIK_SPACE] && !preKeys[DIK_SPACE]) {
-			if (!isTMove&&!isPush_) {
+			if (!isTMove && !isPush_) {
 				isTMove = true;//タイトルロゴを移動
 				isPush_ = true;//スペースキーの透明度低下
 				titlePushSEHandle_ = Novice::PlayAudio(rs.titlePushSE_, 0, 0.4f);
 
 				Global::controlMode_ = 0;
 			}
-		
+
 		} else if (
-			
-			Novice::IsPressButton(0,kPadButton6) or 
-			Novice::IsPressButton(0, kPadButton7) or
-			Novice::IsPressButton(0, kPadButton8) or
-			Novice::IsPressButton(0, kPadButton9) or
 			Novice::IsPressButton(0, kPadButton10) or
-			Novice::IsPressButton(0, kPadButton11) 
+			Novice::IsPressButton(0, kPadButton11)
 			) {
 
 			if (!isTMove && !isPush_) {
@@ -100,6 +95,9 @@ void Title::Update(char* keys, char* preKeys ,const Resources& rs) {
 				isPush_ = true;//スペースキーの透明度低下
 				titlePushSEHandle_ = Novice::PlayAudio(rs.titlePushSE_, 0, 0.4f);
 
+				rs.tutorial_[0] = Novice::LoadTexture("./Resources/images/tutorial2_1.png");
+				rs.tutorial_[1] = Novice::LoadTexture("./Resources/images/tutorial2_2.png");
+				rs.keysGH_ = Novice::LoadTexture("./Resources/images/keys2.png");
 				Global::controlMode_ = 1;
 			}
 		}
@@ -209,7 +207,7 @@ void Title::Update(char* keys, char* preKeys ,const Resources& rs) {
 				SFT_ += (1.0f / 24.0f);
 			} else {
 				SFT_ = 1.0f;
-		
+
 			}
 
 			opacity_ = (1 - SFT_) * startOpacity_ + SFT_ * endOpacity_;

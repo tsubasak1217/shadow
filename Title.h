@@ -152,6 +152,6 @@ public:
 	}
 
 	void Draw(Resources rs);
-	void Update(char* keys, char* preKeys, const Resources& rs);
+	void Update(char* keys, char* preKeys, Resources& rs);
 	void Reset();
 };

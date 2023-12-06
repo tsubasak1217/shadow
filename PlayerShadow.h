@@ -122,6 +122,7 @@ public:
 
 	void Draw(const Resources& rs, Screen screen,const Shadow& shadow);
 	void DrawResetAction(const Resources& rs, int timeCount, int kActionTime);
+	void DrawFrame(Map map,Screen screen);
 
 	void PlayerShadowManager(const Resources& rs, PlayerShadow playerShadow);
 

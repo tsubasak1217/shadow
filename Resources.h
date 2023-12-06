@@ -29,6 +29,11 @@ public:
 		Novice::LoadTexture("./Resources/images/texture_ground.png"),
 	};
 
+	int changeGH_[2] = {
+		Novice::LoadTexture("./Resources/images/change1.png"),
+		Novice::LoadTexture("./Resources/images/change2.png")
+	};
+
 	int keysGH_;
 	int titleFontGH_;
 	int pressSpaceFontGH_;

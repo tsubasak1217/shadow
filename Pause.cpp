@@ -93,16 +93,32 @@ void Pause::Update(ChangeScene& cs, char* keys, char* preKeys, const Resources& 
 #pragma region"ESCAPEキーでポーズ切り替え"
 
 		/*ESCAPEキーでPAUSEのONOFFを可能にする*/
-		if (!preKeys[DIK_ESCAPE] && keys[DIK_ESCAPE]) {
-			if (!cs.isStartChange_ && !cs.isEndChange_) {
+		if (Global::controlMode_ == 0) {
+			if (!preKeys[DIK_ESCAPE] && keys[DIK_ESCAPE]) {
+				if (!cs.isStartChange_ && !cs.isEndChange_) {
 
-				if (!isPause_) {
-					isStartPause_ = true;
-					selectNum_ = 0;
-				} else {
-					isEndPause_ = true;
+					if (!isPause_) {
+						isStartPause_ = true;
+						selectNum_ = 0;
+					} else {
+						isEndPause_ = true;
+					}
+
 				}
+			}
+		} else {
 
+			if (Novice::IsTriggerButton(0, kPadButton4) or Novice::IsTriggerButton(0, kPadButton5)) {
+				if (!cs.isStartChange_ && !cs.isEndChange_) {
+
+					if (!isPause_) {
+						isStartPause_ = true;
+						selectNum_ = 0;
+					} else {
+						isEndPause_ = true;
+					}
+
+				}
 			}
 		}
 #pragma endregion
@@ -184,33 +200,66 @@ void Pause::Update(ChangeScene& cs, char* keys, char* preKeys, const Resources& 
 		if (isPause_) {
 			if (!isSelect_) {//選択されていない時
 
-				//選択範囲の移動
-				if (!preKeys[DIK_W] && keys[DIK_W] ||
-					keys[DIK_UP] && !preKeys[DIK_UP]) {
-					selectNum_--;
+				if (Global::controlMode_ == 0) {
+					//選択範囲の移動
+					if (!preKeys[DIK_W] && keys[DIK_W] ||
+						keys[DIK_UP] && !preKeys[DIK_UP]) {
+						selectNum_--;
 
-					SelectSEHandle_ = Novice::PlayAudio(rs.pauseSelectSE_, 0, 0.12f);
-				}
+						SelectSEHandle_ = Novice::PlayAudio(rs.pauseSelectSE_, 0, 0.12f);
+					}
 
-				if (!preKeys[DIK_S] && keys[DIK_S] ||
-					keys[DIK_DOWN] && !preKeys[DIK_DOWN]) {
-					selectNum_++;
+					if (!preKeys[DIK_S] && keys[DIK_S] ||
+						keys[DIK_DOWN] && !preKeys[DIK_DOWN]) {
+						selectNum_++;
 
-					SelectSEHandle_ = Novice::PlayAudio(rs.pauseSelectSE_, 0, 0.12f);
-				}
+						SelectSEHandle_ = Novice::PlayAudio(rs.pauseSelectSE_, 0, 0.12f);
+					}
 
-				//clamp
-				if (selectNum_ == 3) {
-					selectNum_ = 0;
-				}
-				if (selectNum_ == -1) {
-					selectNum_ = 2;
-				}
-				//SPACEキーで選択できる
-				if (keys[DIK_SPACE] && !preKeys[DIK_SPACE] ||
-					keys[DIK_RETURN] && !preKeys[DIK_RETURN]) {
-					isSelect_ = true;
-					PushSEHandle_ = Novice::PlayAudio(rs.pausePushSE_, 0, 0.4f);
+					//clamp
+					if (selectNum_ == 3) {
+						selectNum_ = 0;
+					}
+					if (selectNum_ == -1) {
+						selectNum_ = 2;
+					}
+					//SPACEキーで選択できる
+					if (keys[DIK_SPACE] && !preKeys[DIK_SPACE] ||
+						keys[DIK_RETURN] && !preKeys[DIK_RETURN]) {
+						isSelect_ = true;
+						PushSEHandle_ = Novice::PlayAudio(rs.pausePushSE_, 0, 0.4f);
+					}
+
+				} else {
+
+					//選択範囲の移動
+					if (Global::isTriggerLeftStick_UP_ or
+						Novice::IsTriggerButton(0,kPadButton0)) {
+						selectNum_--;
+
+						SelectSEHandle_ = Novice::PlayAudio(rs.pauseSelectSE_, 0, 0.12f);
+					}
+
+					if (Global::isTriggerLeftStick_DOWN_ or
+						Novice::IsTriggerButton(0, kPadButton1)) {
+						selectNum_++;
+
+						SelectSEHandle_ = Novice::PlayAudio(rs.pauseSelectSE_, 0, 0.12f);
+					}
+
+					//clamp
+					if (selectNum_ == 3) {
+						selectNum_ = 0;
+					}
+					if (selectNum_ == -1) {
+						selectNum_ = 2;
+					}
+					//SPACEキーで選択できる
+					if (Novice::IsTriggerButton(0,kPadButton10) or
+						Novice::IsTriggerButton(0, kPadButton11)) {
+						isSelect_ = true;
+						PushSEHandle_ = Novice::PlayAudio(rs.pausePushSE_, 0, 0.4f);
+					}
 				}
 			}
 

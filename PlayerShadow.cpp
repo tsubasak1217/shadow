@@ -70,10 +70,12 @@ void PlayerShadow::Init(int sceneNum, Screen screen, Shadow shadow, const char* 
 			starGetCount_ = 0;
 		}
 
+
 		break;
 
 	case CLEAR:
 
+		Global::character_ = 0;
 		break;
 
 	default:
@@ -126,7 +128,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 			//動いてないとき、待機時間タイマーを加算
 			//動いていないとき、動いていない時間タイマーを加算
 			if (Global::controlMode_ == 0) {
-				if (!keys[DIK_W] && !keys[DIK_A] && !keys[DIK_D]) {
+				if (!keys[DIK_UP] && !keys[DIK_LEFT] && !keys[DIK_RIGHT]) {
 					waitTimer_++;
 				} else {
 					waitTimer_ = 0;
@@ -216,30 +218,33 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 
 					if (!isDrop_) {
 
-						if (Global::character_ == 0) {
-							if (Global::controlMode_ == 0) {
-								if (keys[DIK_W]) {
 
+						if (Global::controlMode_ == 0) {
+							if (keys[DIK_UP]) {
+
+								if (Global::character_ == 0) {
 									isJump_ = true;
 									isDrop_ = true;
 									jumpSpeed_ = jumpVelocity_;
+								}
 
-								} else {
-									jumpSpeed_ = 0.0f;
+							} else {
+								jumpSpeed_ = 0.0f;
+							}
+						} else {
+
+							if (Novice::IsPressButton(0, kPadButton11)) {
+
+								if (Global::character_ == 0) {
+									isJump_ = true;
+									isDrop_ = true;
+									jumpSpeed_ = jumpVelocity_;
 								}
 							} else {
-
-								if (Novice::IsPressButton(0, kPadButton15)) {
-
-									isJump_ = true;
-									isDrop_ = true;
-									jumpSpeed_ = jumpVelocity_;
-
-								} else {
-									jumpSpeed_ = 0.0f;
-								}
+								jumpSpeed_ = 0.0f;
 							}
 						}
+
 					}
 
 				}
@@ -309,7 +314,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 
 
 					if (Global::controlMode_ == 0) {
-						if (keys[DIK_W]) {
+						if (keys[DIK_UP]) {
 
 							if (Global::character_ == 0) {
 								isJump_ = true;
@@ -322,7 +327,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 						}
 					} else {
 
-						if (Novice::IsPressButton(0, kPadButton10)) {
+						if (Novice::IsPressButton(0, kPadButton11)) {
 
 							if (Global::character_ == 0) {
 								isJump_ = true;
@@ -352,11 +357,10 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 				//左右移動
 				Vector2<int>padDirection;
 				Novice::GetAnalogInputLeft(0, &padDirection.x, &padDirection.y);
-				Novice::ScreenPrintf(0, 0, "%d", padDirection.x);
 
 				if (Global::character_ == 0) {
 					if (Global::controlMode_ == 0) {
-						direction_.x = float(keys[DIK_D] - keys[DIK_A]);
+						direction_.x = float(keys[DIK_RIGHT] - keys[DIK_LEFT]);
 					} else {
 						direction_.x = float(-padDirection.x);
 					}
@@ -769,21 +773,29 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 				if (ColisionBox_Ball(shadow.GetGoalLT(), shadow.GetGoalRT(), shadow.GetGoalLB(), shadow.GetGoalRB(), pos_, (size_.x / 10)) &&
 					int(dropSpeed_) < 1) {
 
-					goalTutorialAlpha_ += 0x04;
+					if (Global::character_ == 0) {
 
-					if (Global::controlMode_ == 0) {
-						if (keys[DIK_RETURN] && !Prekeys[DIK_RETURN]) {
-							cs.isEndChange_ = true;
-							pushSEHandle_ = Novice::PlayAudio(rs.selectPushSE_, 0, 0.5f);
-						}
-					} else {
-						if (Novice::IsTriggerButton(0, kPadButton11)) {
-							cs.isEndChange_ = true;
-							pushSEHandle_ = Novice::PlayAudio(rs.selectPushSE_, 0, 0.5f);
+						goalTutorialAlpha_ += 0x04;
+
+						if (Global::controlMode_ == 0) {
+
+							if (keys[DIK_SPACE] && !Prekeys[DIK_SPACE]) {
+								cs.isEndChange_ = true;
+								pushSEHandle_ = Novice::PlayAudio(rs.selectPushSE_, 0, 0.5f);
+							}
+						} else {
+							if (Novice::IsTriggerButton(0, kPadButton10)) {
+								cs.isEndChange_ = true;
+								pushSEHandle_ = Novice::PlayAudio(rs.selectPushSE_, 0, 0.5f);
+							}
 						}
 					}
 
 				} else {
+					goalTutorialAlpha_ -= 0x04;
+				}
+
+				if (Global::character_ == 1) {
 					goalTutorialAlpha_ -= 0x04;
 				}
 
@@ -868,9 +880,8 @@ void PlayerShadow::Draw(const Resources& rs, Screen screen, const Shadow& shadow
 			//プレイヤー
 			if (!isJump_) {
 
-				if (velocity_.x <= 2 && velocity_.y <= 2) {
+				if (fabsf(velocity_.x) <= 2 && fabsf(velocity_.y) <= 2) {
 					//停止しているとき-------------------------------------
-
 
 					DrawCat(
 						{
@@ -935,45 +946,81 @@ void PlayerShadow::Draw(const Resources& rs, Screen screen, const Shadow& shadow
 			}
 
 
-			if (waitTimer_ > 240) {
-
-				//W
-				Novice::DrawSpriteRect(
-					int(pos_.x - size_.x * 0.5f),
-					int(pos_.y - size_.y * 0.5f - 32) - int(4.0f * fabsf(cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))),
-					0, 0,
-					32, 32,
-					rs.keysGH_,
-					32.0f / 128.0f, 32.0f / 94.0f,
-					0.0f,
-					0xffffff3f + int(float(0x2f) * cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))
-				);
-
-				//A
-				Novice::DrawSpriteRect(
-					int(pos_.x - size_.x * 0.5f - 32) - int(4.0f * fabsf(cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))),
-					int(pos_.y - size_.y * 0.5f),
-					32, 0,
-					32, 32,
-					rs.keysGH_,
-					32.0f / 128.0f, 32.0f / 94.0f,
-					0.0f,
-					0xffffff3f + int(float(0x2f) * cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))
-				);
 
 
-				//D
-				Novice::DrawSpriteRect(
-					int(pos_.x + size_.x * 0.5f) + int(4.0f * fabsf(cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))),
-					int(pos_.y - size_.y * 0.5f),
-					64, 0,
-					32, 32,
-					rs.keysGH_,
-					32.0f / 128.0f, 32.0f / 94.0f,
-					0.0f,
-					0xffffff3f + int(float(0x2f) * cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))
-				);
+			if (Global::character_ == 0) {
+
+				if (waitTimer_ > 240) {
+
+					//W
+					Novice::DrawSpriteRect(
+						int(pos_.x - size_.x * 0.5f),
+						int(pos_.y - size_.y * 0.5f - 32) - int(4.0f * fabsf(cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))),
+						0, 0,
+						32, 32,
+						rs.keysGH_,
+						32.0f / 128.0f, 32.0f / 94.0f,
+						0.0f,
+						0xffffff3f + int(float(0x2f) * cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))
+					);
+
+					//A
+					Novice::DrawSpriteRect(
+						int(pos_.x - size_.x * 0.5f - 32) - int(4.0f * fabsf(cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))),
+						int(pos_.y - size_.y * 0.5f),
+						32, 0,
+						32, 32,
+						rs.keysGH_,
+						32.0f / 128.0f, 32.0f / 94.0f,
+						0.0f,
+						0xffffff3f + int(float(0x2f) * cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))
+					);
+
+
+					//D
+					Novice::DrawSpriteRect(
+						int(pos_.x + size_.x * 0.5f) + int(4.0f * fabsf(cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))),
+						int(pos_.y - size_.y * 0.5f),
+						64, 0,
+						32, 32,
+						rs.keysGH_,
+						32.0f / 128.0f, 32.0f / 94.0f,
+						0.0f,
+						0xffffff3f + int(float(0x2f) * cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))
+					);
+
+				}
+			} else {
+
+				if (Global::controlMode_ == 0) {
+					//W
+					Novice::DrawSpriteRect(
+						int(pos_.x - size_.x * 1.5f),
+						int(pos_.y - size_.y * 0.5f - 32) - int(4.0f * fabsf(cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))),
+						0, 0,
+						96, 32,
+						rs.changeGH_[1],
+						1, 1,
+						0.0f,
+						0x5555553f + int(float(0x2f) * cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))
+					);
+
+				} else {
+
+					//W
+					Novice::DrawSpriteRect(
+						int(pos_.x - size_.x * 1.0f),
+						int(pos_.y - size_.y * 0.5f - 32) - int(4.0f * fabsf(cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))),
+						0, 0,
+						64, 32,
+						rs.changeGH_[0],
+						1, 1,
+						0.0f,
+						0x5555553f + int(float(0x2f) * cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))
+					);
+				}
 			}
+
 		} else {
 
 			if (respawnTimeCount_ < 45) {
@@ -1050,31 +1097,35 @@ void PlayerShadow::DrawResetAction(const Resources& rs, int timeCount, int kActi
 
 	case GAME:
 
-		for (int i = 0; i < 5; i++) {
-			Novice::DrawBox(
-				int(pos_.x - 40 - i * 2),
-				int(pos_.y - 80 - i * 2),
-				84 + i * 4,
-				42 + i * 4,
+		if (Global::character_ == 0) {
+			for (int i = 0; i < 5; i++) {
+				Novice::DrawBox(
+					int(pos_.x - 40 - i * 2),
+					int(pos_.y - 80 - i * 2),
+					84 + i * 4,
+					42 + i * 4,
+					0.0f,
+					0x00000000 + int(float(0x26) * (float(goalTutorialAlpha_) / float(0xff))),
+					kFillModeSolid
+				);
+			}
+
+
+			//ゴール
+			Novice::DrawSpriteRect(
+				int(pos_.x - 42),
+				int(pos_.y - 80),
+				0, 0,
+				128,
+				64,
+				rs.tutorial_[1],
+				(128.0f / 256.0f) * 0.7f,
+				(64.0f / 128.0f) * 0.7f,
 				0.0f,
-				0x00000000 + int(float(0x26) * (float(goalTutorialAlpha_) / float(0xff))),
-				kFillModeSolid
+				0xffffff00 + goalTutorialAlpha_
 			);
 		}
 
-		//ゴール
-		Novice::DrawSpriteRect(
-			int(pos_.x - 42),
-			int(pos_.y - 80),
-			0, 0,
-			128,
-			64,
-			rs.tutorial_[1],
-			(128.0f / 256.0f) * 0.7f,
-			(64.0f / 128.0f) * 0.7f,
-			0.0f,
-			0xffffff00 + goalTutorialAlpha_
-		);
 
 		if (!isAlive_) {
 
@@ -1183,6 +1234,73 @@ void PlayerShadow::DrawResetAction(const Resources& rs, int timeCount, int kActi
 
 	default:
 		break;
+
+	}
+}
+
+void PlayerShadow::DrawFrame(Map map, Screen screen) {
+
+	if (Scene::sceneNum_ == GAME) {
+
+		switch (Global::character_) {
+
+		case 0:
+
+			Novice::DrawBox(
+				int(screen.GetScreenLeftTop().x),
+				int(screen.GetScreenLeftTop().y),
+				int(screen.GetSize().x),
+				int(screen.GetSize().y),
+				0.0f,
+				0xffffffff,
+				kFillModeWireFrame
+			);
+
+			for (int i = 0; i < 12; i++) {
+
+				Novice::DrawBox(
+					int(screen.GetScreenLeftTop().x) - i,
+					int(screen.GetScreenLeftTop().y) - i,
+					int(screen.GetSize().x) + i * 2,
+					int(screen.GetSize().y) + i * 2,
+					0.0f,
+					0xffffa500 + int((float(0xff) * (1.0f / i)) * fabsf(cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))),
+					kFillModeWireFrame
+				);
+			}
+
+			break;
+
+		case 1:
+
+			Novice::DrawBox(
+				int(map.GetPuzzleLeftTop().x),
+				int(map.GetPuzzleLeftTop().y),
+				int(map.GetPuzzleMapSize().x),
+				int(map.GetPuzzleMapSize().y),
+				0.0f,
+				0xffffffff,
+				kFillModeWireFrame
+			);
+
+			for (int i = 0; i < 12; i++) {
+
+				Novice::DrawBox(
+					int(map.GetPuzzleLeftTop().x) - i,
+					int(map.GetPuzzleLeftTop().y) - i,
+					int(map.GetPuzzleMapSize().x) + i * 2,
+					int(map.GetPuzzleMapSize().y) + i * 2,
+					0.0f,
+					0xffffa500 + int((float(0xff) * (1.0f / i)) * fabsf(cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))),
+					kFillModeWireFrame
+				);
+			}
+
+			break;
+
+		default:
+			break;
+		}
 
 	}
 }

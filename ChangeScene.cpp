@@ -1,9 +1,9 @@
 ﻿#include "ChangeScene.h"
 
 void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CPos[],
-	int selectNum, bool& CanCS, Vec2 goalPos, Vec2 goalSize, bool& isPauseSelect, bool& isTitlePush, bool& stageReset,const Resources &rs,int& selectLightSEHandle,
-	int BGMHandle_[3],float soundVolume_[3]) {
-	
+	int selectNum, bool& CanCS, Vec2 goalPos, Vec2 goalSize, bool& isPauseSelect, bool& isTitlePush, bool& stageReset, const Resources& rs, int& selectLightSEHandle,
+	int BGMHandle_[3], float soundVolume_[3]) {
+
 	preIsStartChange_ = isStartChange_;
 	preIsEndChange_ = isEndChange_;
 
@@ -19,12 +19,12 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 			BCT_ += (1.0f / BCEaseTimer_) * BCEaseDir_;
 			BCAddT_ = EaseInOutBounce(BCT_);
 			addBCColor_ = (1 - BCAddT_) * minBCColor_ + BCAddT_ * maxBCColor_;
-			soundVolume_[2]= (1 - BCAddT_) * 0.06f + BCAddT_ * 0;
+			soundVolume_[2] = (1 - BCAddT_) * 0.06f + BCAddT_ * 0;
 			Novice::SetAudioVolume(BGMHandle_[2], soundVolume_[2]);
 
 			if (BCT_ <= 0.0f) {
 				BCT_ = 0.0f;
-				soundVolume_[2]=0.06f;
+				soundVolume_[2] = 0.06f;
 				isStartChange_ = false;//暗幕の透明度を変化させるフラグを下す
 				isChangeScene = false;
 			}
@@ -94,7 +94,7 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 
 			if (BCT_ <= 0.0f) {
 				BCT_ = 0.0f;
-				
+
 				isStartChange_ = false;//暗幕の透明度を変化させるフラグを下す
 			}
 
@@ -116,29 +116,60 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 
 #pragma region"シーンチェンジで開始"
 
-		if (keys[DIK_SPACE] && !preKeys[DIK_SPACE]||
-			keys[DIK_RETURN] && !preKeys[DIK_RETURN]) {
-			if (!isPushEscape_) {//ESCAPE押されていないとき
-				if (!isChangeScene && !isEndChange_ && !isStartChange_) {
-					isChangeScene = true;
-					isEndChange_ = true;
-					isSetSCPos_ = true;
-					isChangeColor_ = true;
-					pushSEHandle_ = Novice::PlayAudio(rs.selectPushSE_, 0, 0.5f);
-					Novice::StopAudio(selectLightSEHandle);
+		if (Global::controlMode_ == 0) {
+			if (keys[DIK_SPACE] && !preKeys[DIK_SPACE] ||
+				keys[DIK_RETURN] && !preKeys[DIK_RETURN]) {
+				if (!isPushEscape_) {//ESCAPE押されていないとき
+					if (!isChangeScene && !isEndChange_ && !isStartChange_) {
+						isChangeScene = true;
+						isEndChange_ = true;
+						isSetSCPos_ = true;
+						isChangeColor_ = true;
+						pushSEHandle_ = Novice::PlayAudio(rs.selectPushSE_, 0, 0.5f);
+						Novice::StopAudio(selectLightSEHandle);
+					}
 				}
 			}
+		} else {
+			if (Novice::IsTriggerButton(0, kPadButton10) or
+				Novice::IsTriggerButton(0, kPadButton11)) {
+				if (!isPushEscape_) {//ESCAPE押されていないとき
+					if (!isChangeScene && !isEndChange_ && !isStartChange_) {
+						isChangeScene = true;
+						isEndChange_ = true;
+						isSetSCPos_ = true;
+						isChangeColor_ = true;
+						pushSEHandle_ = Novice::PlayAudio(rs.selectPushSE_, 0, 0.5f);
+						Novice::StopAudio(selectLightSEHandle);
+					}
+				}
+			}
+
 		}
 
-		if (keys[DIK_ESCAPE] && !preKeys[DIK_ESCAPE]) {
-			if (!isPushEscape_) {//ESCAPE押されていないとき
-				if (!isChangeScene && !isEndChange_ && !isStartChange_) {
-					isChangeScene = true;
-					isEndChange_ = true;
-					isPushEscape_ = true;
-					Novice::StopAudio(selectLightSEHandle);
+		if (Global::controlMode_ == 0) {
+			if (keys[DIK_ESCAPE] && !preKeys[DIK_ESCAPE]) {
+				if (!isPushEscape_) {//ESCAPE押されていないとき
+					if (!isChangeScene && !isEndChange_ && !isStartChange_) {
+						isChangeScene = true;
+						isEndChange_ = true;
+						isPushEscape_ = true;
+						Novice::StopAudio(selectLightSEHandle);
+					}
 				}
 			}
+		} else {
+			if (Novice::IsTriggerButton(0,kPadButton4) or Novice::IsTriggerButton(0, kPadButton5)) {
+				if (!isPushEscape_) {//ESCAPE押されていないとき
+					if (!isChangeScene && !isEndChange_ && !isStartChange_) {
+						isChangeScene = true;
+						isEndChange_ = true;
+						isPushEscape_ = true;
+						Novice::StopAudio(selectLightSEHandle);
+					}
+				}
+			}
+
 		}
 
 
@@ -256,14 +287,14 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 
 					if (SCT_ >= 0.3f) {
 						isSetVertexO_ = true;//扉を開けるイージングで使う変数の値を入れる
-						
-						if (!Novice::IsPlayingAudio(openDoorSEHandle_) || openDoorSEHandle_ == -1){
+
+						if (!Novice::IsPlayingAudio(openDoorSEHandle_) || openDoorSEHandle_ == -1) {
 							if (SECount_ == 0) {
 								openDoorSEHandle_ = Novice::PlayAudio(rs.openDoorSE_, 0, 0.12f);
 								SECount_++;
 							}
 						}
-		isEaseO_ = true;//扉を空けるフラグを立てる（Open）
+						isEaseO_ = true;//扉を空けるフラグを立てる（Open）
 					}
 
 
@@ -439,7 +470,7 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 				BCT_ += (1.0f / (BCEaseTimer_ / 2.0f)) * BCEaseDir_;
 				BCAddT_ = EaseInCubic(BCT_);
 				addBCColor_ = (1 - BCAddT_) * minBCColor_ + BCAddT_ * maxBCColor_;
-				
+
 				if (BCT_ >= 1.0f) {
 					BCT_ = 1.0f;
 					BCWaitTimer_ -= 1;
@@ -450,7 +481,7 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 						BCEaseDir_ *= -1;
 						if (stageReset) {
 							Scene::sceneNum_ = GAME;
-							
+
 						} else {
 							Scene::sceneNum_ = SELECT;
 						}
@@ -473,7 +504,7 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 				changeTime_ += 1;
 				if (changeTime_ >= 60) {
 					for (int i = 0; i < kMaxWall; i++) {
-					
+
 						if (wallT_ < 1.0f) {
 							wallT_ += (1.0f / wallMoveTime_);
 
@@ -581,10 +612,21 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 
 #pragma region"クリア画面の終了処理（クリアからセレクト）"
 
-		if (keys[DIK_SPACE] && !preKeys[DIK_SPACE]) {
-			if (CanCS && !isStartChange_ && !isEndChange_) {//クリア画面で全ての処理が終わったとき
-				isEndChange_ = true;
-				clearPushSEHandle_ = Novice::PlayAudio(rs.clearPushSE_, 0, soundVolume_[1]);
+		if (Global::controlMode_ == 0) {
+			if (keys[DIK_SPACE] && !preKeys[DIK_SPACE]) {
+				if (CanCS && !isStartChange_ && !isEndChange_) {//クリア画面で全ての処理が終わったとき
+					isEndChange_ = true;
+					clearPushSEHandle_ = Novice::PlayAudio(rs.clearPushSE_, 0, soundVolume_[1]);
+				}
+			}
+		} else {
+			if (Novice::IsTriggerButton(0, kPadButton10) or
+				Novice::IsTriggerButton(0, kPadButton11)) {
+
+				if (CanCS && !isStartChange_ && !isEndChange_) {//クリア画面で全ての処理が終わったとき
+					isEndChange_ = true;
+					clearPushSEHandle_ = Novice::PlayAudio(rs.clearPushSE_, 0, soundVolume_[1]);
+				}
 			}
 		}
 
