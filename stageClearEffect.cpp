@@ -21,11 +21,20 @@ void SCE::Update(StageClear stageColor, int starGetCount) {
 		//====================================================================================
 	case SELECT://							   ステージ選択
 		//====================================================================================
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < EFP_MAX; j++) {
+				isAlive_[i][j] = false;
+			}
+		}
 		break;
 		//====================================================================================
 	case GAME://								ゲーム本編
 		//====================================================================================
-
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < EFP_MAX; j++) {
+				isAlive_[i][j] = false;
+			}
+		}
 		break;
 		//====================================================================================
 	case CLEAR://								クリア画面
@@ -66,13 +75,6 @@ void SCE::Update(StageClear stageColor, int starGetCount) {
 
 
 		break;
-	}
-	if (Scene::sceneNum_ != CLEAR) {
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < EFP_MAX; j++) {
-				isAlive_[i][j] = false;
-			}
-		}
 	}
 }
 

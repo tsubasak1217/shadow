@@ -175,14 +175,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/*シーンチェンジ一番前*/
 		cs.Draw(door.GH_, door.color_, shadow.GetGoalPos(), shadow.GetGoalSize(), pause.isSelect_);
 
-		if (keys[DIK_H] && !preKeys[DIK_H]) {
-			if (cs.isEndChange_) {
-				cs.isEndChange_ = false;
-
-			} else {
-				cs.isEndChange_ = true;
-			}
-		}
 		//stageClear.Debug(keys, preKeys);
 		///
 		/// ↑描画処理ここまで

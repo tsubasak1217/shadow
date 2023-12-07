@@ -19,8 +19,12 @@ void SelectLightParticle::Update(const SelectDoor& Door, Light light) {
 		//====================================================================================
 	case SELECT://							   ステージ選択
 		//====================================================================================
+		
+		//パーティクルが表示される範囲の頂点
 		DrawStartPos = { Door.NumlightEllCPos_.x,-300 };
+		//左下頂点
 		DrawEndPosL = { Door.NumlightEllCPos_.x - Door.NumlightEllSize_.x,Door.NumlightEllCPos_.y };
+		//右下頂点
 		DrawEndPosR = { Door.NumlightEllCPos_.x + Door.NumlightEllSize_.x,Door.NumlightEllCPos_.y };
 
 
@@ -42,6 +46,7 @@ void SelectLightParticle::Update(const SelectDoor& Door, Light light) {
 		} else {
 
 			//lightの範囲内で行われる処理
+			//外積を使ってライトの三角形の範囲内のみに表示されるようにする
 			if (NoInitCross(DrawStartPos, DrawEndPosL, pos_) < 0 &&
 				NoInitCross(DrawStartPos, DrawEndPosR, pos_) > 0 &&
 				pos_.y < Door.NumlightEllCPos_.y + Door.NumlightEllSize_.y / 2) {
@@ -107,7 +112,7 @@ void SelectLightParticle::Update(const SelectDoor& Door, Light light) {
 
 			//lightの範囲内で行われる処理
 			if (NoInitCross(DrawStartPos, DrawEndPosL, pos_) > 0 &&
-				NoInitCross(DrawStartPos, DrawEndPosR, pos_) < 0 ) {
+				NoInitCross(DrawStartPos, DrawEndPosR, pos_) < 0) {
 				isDraw = true;//表示
 				pos_.x += theta_ * speed_;//移動処理
 				pos_.y += theta_ * speed_;//移動処理
@@ -141,7 +146,7 @@ void SelectLightParticle::Update(const SelectDoor& Door, Light light) {
 }
 
 void SelectLightParticle::Draw(char* keys) {
-	bool aaa = false;
+
 	switch (Scene::sceneNum_) {
 		//====================================================================================
 	case TITLE://							   タイトル画面
@@ -151,27 +156,16 @@ void SelectLightParticle::Draw(char* keys) {
 	case SELECT://							   ステージ選択
 		//====================================================================================
 
-
+		keys;
 
 		if (isAlive_ && isDraw) {
 			My::DrawTriangle(
 				pos_, radius_, 0.0f, 0xFFFFFF00 + alpha_
 			);
 		}
-		//	void DrawTriangle(Vec2 center, float radius, float theta, int color);
 
-		if (keys[DIK_P]) {
-			if (aaa) {
-				aaa = false;
-			} else {
-				aaa = true;
-			}
-		}
-		if (aaa) {
-			Novice::DrawLine(int(DrawStartPos.x), int(DrawStartPos.y), int(DrawEndPosL.x), int(DrawEndPosL.y), 0xFF0000FF);
-			Novice::DrawLine(int(DrawStartPos.x), int(DrawStartPos.y), int(DrawEndPosR.x), int(DrawEndPosR.y), 0xFF0000FF);
-			Novice::DrawLine(int(0), 605, 500, 605, 0xFF0000FF);
-		}
+
+
 		break;
 		//====================================================================================
 	case GAME://								ゲーム本編
@@ -183,20 +177,8 @@ void SelectLightParticle::Draw(char* keys) {
 				pos_, radius_, 0.0f, 0xFFFFFF00 + alpha_
 			);
 		}
-		//	void DrawTriangle(Vec2 center, float radius, float theta, int color);
 
-		if (keys[DIK_P]) {
-			if (aaa) {
-				aaa = false;
-			} else {
-				aaa = true;
-			}
-		}
-		if (aaa) {
-			Novice::DrawLine(int(DrawStartPos.x), int(DrawStartPos.y), int(DrawEndPosL.x), int(DrawEndPosL.y), 0xFF0000FF);
-			Novice::DrawLine(int(DrawStartPos.x), int(DrawStartPos.y), int(DrawEndPosR.x), int(DrawEndPosR.y), 0xFF0000FF);
-			Novice::DrawLine(int(0), 605, 500, 605, 0xFF0000FF);
-		}
+
 
 		break;
 		//====================================================================================
