@@ -171,7 +171,6 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 					}
 				}
 			}
-
 		}
 
 

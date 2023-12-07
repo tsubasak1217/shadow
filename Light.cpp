@@ -107,12 +107,14 @@ void Light::Update(char* keys, const ChangeScene& cs, Map map, float rangeTheta,
 							emitPos_.x += 2.0f;
 						}
 					} else {
-						if (Novice::IsPressButton(0, kPadButton18)) {
+						if (Novice::IsPressButton(0, kPadButton18) or
+							Novice::IsPressButton(0, kPadButton8)) {
 							Global::isMoveShadow_ = true;
 							emitPos_.x -= 2.0f;
 						}
 
-						if (Novice::IsPressButton(0, kPadButton19)) {
+						if (Novice::IsPressButton(0, kPadButton19) or
+							Novice::IsPressButton(0, kPadButton9)) {
 							Global::isMoveShadow_ = true;
 							emitPos_.x += 2.0f;
 						}

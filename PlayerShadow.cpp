@@ -1004,7 +1004,7 @@ void PlayerShadow::Draw(const Resources& rs, Screen screen, const Shadow& shadow
 						rs.changeGH_[1],
 						1, 1,
 						0.0f,
-						0x5555553f + int(float(0x2f) * cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))
+						0x1f1f1f3f + int(float(0x2f) * cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))
 					);
 
 				} else {
@@ -1018,7 +1018,7 @@ void PlayerShadow::Draw(const Resources& rs, Screen screen, const Shadow& shadow
 						rs.changeGH_[0],
 						1, 1,
 						0.0f,
-						0x5555553f + int(float(0x2f) * cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))
+						0x1f1f1f3f + int(float(0x2f) * cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))
 					);
 				}
 			}

@@ -194,8 +194,8 @@ void SelectDoor::Update(char* keys, char* preKeys, const Resources& rs, int star
 				}
 			} else {
 
-				if (Global::isTriggerLeftStick_RIGHT_ ||
-					Novice::IsTriggerButton(0,kPadButton3)) {
+				if (Global::leftStickValue_.x > 0 ||
+					Novice::IsPressButton(0,kPadButton3)) {
 
 					if (selectNum_ < DOOR_MAX - 1) {//ステージの右端以外なら動く
 						//ステージ番号インクリメント
@@ -210,8 +210,8 @@ void SelectDoor::Update(char* keys, char* preKeys, const Resources& rs, int star
 
 						isEaseM_ = true;//イージングで移動するフラグ(扉を移動)
 					}
-				} else if (Global::isTriggerLeftStick_LEFT_ ||
-					Novice::IsTriggerButton(0, kPadButton2)) {//左方向に移動
+				} else if (Global::leftStickValue_.x < 0 ||
+					Novice::IsPressButton(0, kPadButton2)) {//左方向に移動
 					if (selectNum_ > 0) {//ステージの左端以外なら動く
 						//ステージ番号をデクリメント
 						selectNum_--;
