@@ -90,7 +90,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		shadow.Update(keys, cs, rs, screen, map);
 
 		SCE.Update(stageClear, playerShadow.GetstarCount());
-		playerShadow.Update(keys, preKeys, rs, cs, screen, shadow, player, map, light, pause.isPause_);
+		playerShadow.Update(keys, preKeys, rs, cs, screen, shadow, player, map, light, pause.isPause_,pause.isStageReset_);
 		for (int i = 0; i < 120; i++) {
 			particle[i].Update(emitter, playerShadow, shadow, screen,keys);
 		}

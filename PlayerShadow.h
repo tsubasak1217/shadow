@@ -115,10 +115,10 @@ public:
 		pushSEHandle_=-1;
 	}
 
-	void Init(int sceneNum, Screen screen, Shadow shadow,const char* keys);
+	void Init(int sceneNum, Screen screen, Shadow shadow,const char* keys,bool &isStageReset_);
 	void InitStar();
 
-	void Update(char* keys, char* Prekeys, const Resources& rs, ChangeScene& cs, Screen& screen, Shadow& shadow, Player& player, Map& map, Light& light, bool isPause);
+	void Update(char* keys, char* Prekeys, const Resources& rs, ChangeScene& cs, Screen& screen, Shadow& shadow, Player& player, Map& map, Light& light, bool isPause, bool& isStageReset_);
 
 	void Draw(const char* keys, const Resources& rs, Screen screen,const Shadow& shadow);
 	void DrawResetAction(const Resources& rs, int timeCount, int kActionTime);
