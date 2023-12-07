@@ -2,8 +2,8 @@
 #include "Particle.h"
 #include "Shadow.h"
 
-void PlayerShadow::Init(int sceneNum, Screen screen, Shadow shadow, const char* keys) {
-
+void PlayerShadow::Init(int sceneNum, Screen screen, Shadow shadow, const char* keys,ChangeScene cs) {
+	
 	switch (sceneNum) {
 		//====================================================================================
 	case TITLE://							   タイトル画面
@@ -66,7 +66,8 @@ void PlayerShadow::Init(int sceneNum, Screen screen, Shadow shadow, const char* 
 		waitTimer_ = 0;
 		goalTutorialAlpha_ = 0;
 
-		if (keys[DIK_R]) {
+		if (keys[DIK_R] or
+			(cs.isStartChange_ && cs.preIsEndChange_)) {
 			starGetCount_ = 0;
 		}
 
@@ -94,7 +95,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 
 	//シーン遷移の始まった瞬間にシーンに合わせて初期化
 	if (cs.isStartChange_ && cs.preIsEndChange_) {
-		Init(Scene::sceneNum_, screen, shadow, keys);
+		Init(Scene::sceneNum_, screen, shadow, keys,cs);
 		InitStar();
 		prePos_ = pos_;
 	}
@@ -115,7 +116,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 		//Rで初期化
 		if (keys[DIK_R]) {
 			if (!cs.isEndChange_) {
-				Init(Scene::sceneNum_, screen, shadow, keys);
+				Init(Scene::sceneNum_, screen, shadow, keys,cs);
 				InitStar();
 			}
 		}
@@ -161,7 +162,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 					isBackToRespawnPos_ = true;
 
 					if (respawnTimeCount_ <= 0) {
-						Init(Scene::sceneNum_, screen, shadow, keys);
+						Init(Scene::sceneNum_, screen, shadow, keys,cs);
 
 						for (int i = 0; i < starFollowPos_.size(); i++) {
 
@@ -202,6 +203,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 
 				/*-------------------------------移動処理-------------------------------*/
 				velocity_ = { 0.0f,0.0f };
+				direction_ = { 0,0 };
 
 				//ジャンプ
 				if (isJump_) {

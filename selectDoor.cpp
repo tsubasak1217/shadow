@@ -158,23 +158,24 @@ void SelectDoor::Update(char* keys, char* preKeys, const Resources& rs, int star
 		if (!isChangeScene_ &&
 			!isEaseM_) {
 
-			if (keys[DIK_D] && preKeys[DIK_D] ||
-				keys[DIK_RIGHT] && preKeys[DIK_RIGHT]) {
+			if (Global::controlMode_ == 0) {
+				if (keys[DIK_D] && preKeys[DIK_D] ||
+					keys[DIK_RIGHT] && preKeys[DIK_RIGHT]) {
 
-				if (selectNum_ < DOOR_MAX - 1) {//ステージの右端以外なら動く
-					//ステージ番号インクリメント
-					selectNum_++;
-					moveT_ = 0.0f;
-					moveAddT_ = 0.0f;
+					if (selectNum_ < DOOR_MAX - 1) {//ステージの右端以外なら動く
+						//ステージ番号インクリメント
+						selectNum_++;
+						moveT_ = 0.0f;
+						moveAddT_ = 0.0f;
 
-					//扉自体をイージングするため、最大・最小座標をセット
-					selectCursorSEHandle_ = Novice::PlayAudio(rs.selectCursorSE_, 0, 0.12f);
-					moveMaxPos_.x = CPos_[0].x - float(Global::windowSize_.x * 0.65f);
-					moveMinPos_.x = CPos_[0].x;
+						//扉自体をイージングするため、最大・最小座標をセット
+						selectCursorSEHandle_ = Novice::PlayAudio(rs.selectCursorSE_, 0, 0.12f);
+						moveMaxPos_.x = CPos_[0].x - float(Global::windowSize_.x * 0.65f);
+						moveMinPos_.x = CPos_[0].x;
 
-					isEaseM_ = true;//イージングで移動するフラグ(扉を移動)
-				}
-			} else if (keys[DIK_A] && preKeys[DIK_A] ||
+						isEaseM_ = true;//イージングで移動するフラグ(扉を移動)
+					}
+				} else if (keys[DIK_A] && preKeys[DIK_A] ||
 					keys[DIK_LEFT] && preKeys[DIK_LEFT]) {//左方向に移動
 					if (selectNum_ > 0) {//ステージの左端以外なら動く
 						//ステージ番号をデクリメント
@@ -191,6 +192,42 @@ void SelectDoor::Update(char* keys, char* preKeys, const Resources& rs, int star
 					}
 
 				}
+			} else {
+
+				if (Global::isTriggerLeftStick_RIGHT_ ||
+					Novice::IsTriggerButton(0,kPadButton3)) {
+
+					if (selectNum_ < DOOR_MAX - 1) {//ステージの右端以外なら動く
+						//ステージ番号インクリメント
+						selectNum_++;
+						moveT_ = 0.0f;
+						moveAddT_ = 0.0f;
+
+						//扉自体をイージングするため、最大・最小座標をセット
+						selectCursorSEHandle_ = Novice::PlayAudio(rs.selectCursorSE_, 0, 0.12f);
+						moveMaxPos_.x = CPos_[0].x - float(Global::windowSize_.x * 0.65f);
+						moveMinPos_.x = CPos_[0].x;
+
+						isEaseM_ = true;//イージングで移動するフラグ(扉を移動)
+					}
+				} else if (Global::isTriggerLeftStick_LEFT_ ||
+					Novice::IsTriggerButton(0, kPadButton2)) {//左方向に移動
+					if (selectNum_ > 0) {//ステージの左端以外なら動く
+						//ステージ番号をデクリメント
+						selectNum_--;
+						moveT_ = 0.0f;
+						moveAddT_ = 0.0f;
+
+						//扉自体をイージングするため、最大・最小座標をセット
+						selectCursorSEHandle_ = Novice::PlayAudio(rs.selectCursorSE_, 0, 0.12f);
+						moveMaxPos_.x = CPos_[0].x + float(Global::windowSize_.x * 0.65f);
+						moveMinPos_.x = CPos_[0].x;
+
+						isEaseM_ = true;//イージングで移動するフラグ(扉を移動)
+					}
+
+				}
+			}
 		} 
 
 

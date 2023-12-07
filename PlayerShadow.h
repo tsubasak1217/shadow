@@ -115,7 +115,7 @@ public:
 		pushSEHandle_=-1;
 	}
 
-	void Init(int sceneNum, Screen screen, Shadow shadow,const char* keys);
+	void Init(int sceneNum, Screen screen, Shadow shadow,const char* keys, ChangeScene cs);
 	void InitStar();
 
 	void Update(char* keys, char* Prekeys, const Resources& rs, ChangeScene& cs, Screen& screen, Shadow& shadow, Player& player, Map& map, Light& light, bool isPause);
