@@ -1,9 +1,9 @@
 ﻿#include "ChangeScene.h"
 
 void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CPos[],
-	int selectNum, bool& CanCS, Vec2 goalPos, Vec2 goalSize, bool& isPauseSelect, bool& isTitlePush, bool& stageReset, const Resources& rs, int& selectLightSEHandle,
-	int BGMHandle_[3], float soundVolume_[3]) {
-
+	int selectNum, bool& CanCS, Vec2 goalPos, Vec2 goalSize, bool& isPauseSelect, bool& isTitlePush, bool& stageReset,const Resources &rs,int& selectLightSEHandle,
+	int BGMHandle_[3],float soundVolume_[3],bool &isEaseM) {
+	
 	preIsStartChange_ = isStartChange_;
 	preIsEndChange_ = isEndChange_;
 
@@ -12,7 +12,7 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 	case TITLE://							   タイトル画面
 		//====================================================================================
 		Reset();
-
+#pragma region"セレクトからタイトル（開始処理)"
 
 		//足す透明度をイージング
 		if (isStartChange_) {
@@ -38,7 +38,7 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 			BCColor_ = 0x00000000 + int(addBCColor_);//ここで透明度を足す
 		}
 
-
+#pragma endregion
 
 
 
@@ -827,7 +827,7 @@ void ChangeScene::Reset() {
 		isPushEscape_ = false;
 		//状態遷移イージング用
 		SCCPos_ = { -200,-100 };
-		SCSize_ = { 50,100 };
+		SCSize_ = { 200,400 };
 		for (int i = 0; i < 4; i++) {
 			SCVertex_[i] = { 0 };
 		}
@@ -871,11 +871,7 @@ void ChangeScene::Reset() {
 
 
 		//EndScene以外の時
-		/*
-		for (int i = 0; i < 4; i++) {
-			GCVertex_[i] = { 0 };//状態遷移用の扉の４頂点
-		}
-		*/
+
 		GCT_ = 0;//SceneChangeのｔ
 		GCAddT_ = 0;//SceneChangeのaddT
 		GCColor_ = 0xFFFFFFFF;//欄間から見える光の色

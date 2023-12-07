@@ -5,8 +5,8 @@ class Resources {
 
 public:
 
-	std::string mapCsv_[8];
-	std::string screenCsv_[8];
+	std::string mapCsv_[16];
+	std::string screenCsv_[16];
 	int whiteGH_;
 	int doorGH_;
 	int blockGH_[7] = {
@@ -44,6 +44,7 @@ public:
 	int stageClearFontGH_;
 	int selectFontGH_;
 	int creditFontGH_;
+	int slashGH_;
 
 	//sounds
 	int BGM[3] = {

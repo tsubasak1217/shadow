@@ -259,7 +259,7 @@ public:
 	void UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CPos[],
 		int selectNum, bool& CanCS, Vec2 goalPos, Vec2 goalSize, bool& isPauseSelect, bool& isTitlePush
 		, bool& stageReset, const Resources& rs, int& selectLightSEHandle,
-		int BGMHandle_[3], float soundVolume_[3]);
+		int BGMHandle_[3], float soundVolume_[3], bool& isEaseM);
 	void Draw(int GH, unsigned int DoorColor, Vec2 goalPos, Vec2 goalSize, bool& isPauseSelect);
 	void Reset();
 	//bool GetIsStart() { return isStartChange_; }
