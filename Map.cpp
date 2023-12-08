@@ -418,8 +418,9 @@ void Map::Update(char* keys, const Resources& rs, const ChangeScene cs) {
 		preIsPressSwitch_ = isPressSwitch_;
 
 		//falseで初期化
-		isPressSwitch_ = false;
-		
+		if (!cs.isEndChange_) {
+			isPressSwitch_ = false;
+		}
 		//マップチップの情報更新
 		for (int i = 0; i < mapChip_.size(); i++) {
 
