@@ -137,12 +137,14 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 				Novice::IsTriggerButton(0, kPadButton11)) {
 				if (!isPushEscape_) {//ESCAPE押されていないとき
 					if (!isChangeScene && !isEndChange_ && !isStartChange_) {
-						isChangeScene = true;
-						isEndChange_ = true;
-						isSetSCPos_ = true;
-						isChangeColor_ = true;
-						pushSEHandle_ = Novice::PlayAudio(rs.selectPushSE_, 0, 0.5f);
-						Novice::StopAudio(selectLightSEHandle);
+						if (!isEaseM) {
+							isChangeScene = true;
+							isEndChange_ = true;
+							isSetSCPos_ = true;
+							isChangeColor_ = true;
+							pushSEHandle_ = Novice::PlayAudio(rs.selectPushSE_, 0, 0.5f);
+							Novice::StopAudio(selectLightSEHandle);
+						}
 					}
 				}
 			}
