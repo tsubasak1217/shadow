@@ -17,6 +17,10 @@ public:
 	static bool isTriggerLeftStick_RIGHT_;
 	static bool isTriggerLeftStick_LEFT_;
 
+	static bool preIsB_;
+	static bool isB_;
+	static bool isReleaseB_;
+
 	Global();
 	~Global();
 

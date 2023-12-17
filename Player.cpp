@@ -157,7 +157,7 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 							isViewTelop_ = true;
 						}
 					} else {
-						if (!Novice::IsPressButton(0, kPadButton11)) {
+						if (!Novice::IsPressButton(0, kPadButton10)) {
 							isViewTelop_ = true;
 						}
 					}
@@ -407,7 +407,7 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 											}
 										} else {
 
-											if (Novice::IsPressButton(0, kPadButton11)) {
+											if (Novice::IsPressButton(0, kPadButton10)) {
 
 												if (velocity_.x > 0) {
 
@@ -732,7 +732,7 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 											}
 										} else {
 
-											if (Novice::IsPressButton(0, kPadButton11)) {
+											if (Novice::IsPressButton(0, kPadButton10)) {
 
 												if (velocity_.x > 0) {
 
@@ -1057,7 +1057,7 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 											}
 										} else {
 
-											if (Novice::IsPressButton(0, kPadButton11)) {
+											if (Novice::IsPressButton(0, kPadButton10)) {
 
 												if (velocity_.x > 0) {
 
@@ -1385,7 +1385,7 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 											}
 										} else {
 
-											if (Novice::IsPressButton(0, kPadButton11)) {
+											if (Novice::IsPressButton(0, kPadButton10)) {
 
 												if (velocity_.x > 0) {
 
@@ -1996,7 +1996,7 @@ void Player::Draw(const char* keys, const Resources& rs) {
 		rs.whiteGH_;
 
 		if (!isStopMove_) {
-			if ((keys[DIK_SPACE] && isBlockPushable_) or (Novice::IsPressButton(0, kPadButton11) && isBlockPushable_) or
+			if ((keys[DIK_SPACE] && isBlockPushable_) or (Novice::IsPressButton(0, kPadButton10) && isBlockPushable_) or
 				isMoveBlock_ or swapTimeCount_ == 3) {
 
 				if (Global::character_ == 1) {

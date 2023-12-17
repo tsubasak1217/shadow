@@ -12,6 +12,9 @@ bool Global::isTriggerLeftStick_UP_ = false;
 bool Global::isTriggerLeftStick_DOWN_ = false;
 bool Global::isTriggerLeftStick_RIGHT_ = false;
 bool Global::isTriggerLeftStick_LEFT_ = false;
+bool Global::isReleaseB_ = false;
+bool Global::isB_ = false;
+bool Global::preIsB_ = false;
 
 Global::Global() {
 }
@@ -32,8 +35,21 @@ void Global::Update(const char* keys,const char* preKeys) {
 	isTriggerLeftStick_RIGHT_ = false;
 	isTriggerLeftStick_LEFT_ = false;
 
+	isReleaseB_ = false;
+
+	//前フレームの状態保存
+	preIsB_ = isB_;
+
 	//スティックの状態を取得
 	Novice::GetAnalogInputLeft(0, &leftStickValue_.x, &leftStickValue_.y);
+
+	//キーの状態取得
+	isB_ = Novice::IsPressButton(0, kPadButton11);
+
+	//リリースフラグを立てる
+	if (!isB_ && preIsB_) {
+		isReleaseB_ = true;
+	}
 
 	if (preLeftStickValue_.x == 0 && preLeftStickValue_.y == 0) {
 
@@ -56,15 +72,17 @@ void Global::Update(const char* keys,const char* preKeys) {
 
 		if (controlMode_ == 0) {
 
-			if (keys[DIK_LSHIFT] && !preKeys[DIK_LSHIFT]) {
-				if (character_ == 0) {
+			if (character_ == 0) {
+				if (keys[DIK_S] && !preKeys[DIK_S]) {
 					character_ = 1;
-				} else {
+				}
+			} else {
+				if (keys[DIK_S] && !preKeys[DIK_S]) {
 					character_ = 0;
 				}
 			}
 		} else {
-			if (Novice::IsTriggerButton(0, kPadButton13)) {
+			if (Novice::IsTriggerButton(0,kPadButton11)) {
 
 				if (character_ == 0) {
 					character_ = 1;

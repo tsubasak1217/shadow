@@ -65,6 +65,7 @@ void PlayerShadow::Init(int sceneNum, Screen screen, Shadow shadow, const char* 
 		jumpTimer_ = 0;
 		waitTimer_ = 0;
 		goalTutorialAlpha_ = 0;
+		goalHoldTimer_ = 0;
 
 		if (keys[DIK_R] or
 			(cs.isStartChange_ && cs.preIsEndChange_)) {
@@ -235,7 +236,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 							}
 						} else {
 
-							if (Novice::IsPressButton(0, kPadButton11)) {
+							if (Novice::IsPressButton(0, kPadButton10)) {
 
 								if (Global::character_ == 0) {
 									isJump_ = true;
@@ -329,7 +330,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 						}
 					} else {
 
-						if (Novice::IsPressButton(0, kPadButton11)) {
+						if (Novice::IsPressButton(0, kPadButton10)) {
 
 							if (Global::character_ == 0) {
 								isJump_ = true;
@@ -786,10 +787,12 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 								pushSEHandle_ = Novice::PlayAudio(rs.selectPushSE_, 0, 0.5f);
 							}
 						} else {
-							if (Novice::IsTriggerButton(0, kPadButton10)) {
-								cs.isEndChange_ = true;
-								pushSEHandle_ = Novice::PlayAudio(rs.selectPushSE_, 0, 0.5f);
-							}
+							if (Novice::IsPressButton(0, kPadButton13)) {
+
+									cs.isEndChange_ = true;
+									pushSEHandle_ = Novice::PlayAudio(rs.selectPushSE_, 0, 0.5f);
+								}
+
 						}
 					}
 

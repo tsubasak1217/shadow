@@ -53,6 +53,7 @@ class PlayerShadow {
 
 	int starGetCount_;
 	int jumpTimer_;
+	int goalHoldTimer_;
 	int itemGetSEHandle_;
 
 	int killedSEHandle_;
@@ -103,6 +104,7 @@ public:
 
 		waitTimer_ = 0;
 		jumpTimer_ = 0;
+		goalHoldTimer_ = 0;
 
 		starGetCount_ = 0;
 		starFollowPos_.clear();

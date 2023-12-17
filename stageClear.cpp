@@ -212,8 +212,23 @@ void StageClear::Draw(Resources rs) {
 		);
 
 		/*押してくださいの文字*/
-		Novice::DrawSprite(int(PressKeyFontCPos_.x - PressKeyFontSize_.x / 2), int(PressKeyFontCPos_.y - PressKeyFontSize_.y / 2), rs.pressSpaceFontGH_, 0.5f, 0.5f, 0.0f, FColor_);
-
+		if (Global::controlMode_ == 0) {
+			Novice::DrawSprite(
+				int(PressKeyFontCPos_.x - PressKeyFontSize_.x / 2),
+				int(PressKeyFontCPos_.y - PressKeyFontSize_.y / 2),
+				rs.pressSpaceFontGH3_,
+				0.5f, 0.5f, 0.0f,
+				FColor_
+			);
+		} else {
+			Novice::DrawSprite(
+				int(PressKeyFontCPos_.x - PressKeyFontSize_.x / 2),
+				int(PressKeyFontCPos_.y - PressKeyFontSize_.y / 2),
+				rs.pressSpaceFontGH_,
+				0.5f, 0.5f, 0.0f,
+				FColor_
+			);
+		}
 
 
 

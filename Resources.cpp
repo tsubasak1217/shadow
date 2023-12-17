@@ -5,7 +5,9 @@ Resources::Resources() {
 	whiteGH_ = Novice::LoadTexture("white1x1.png");
 	doorGH_ = Novice::LoadTexture("./Resources/images/Door.png");
 	titleFontGH_ = Novice::LoadTexture("./Resources/images/title.png");
-	pressSpaceFontGH_ = Novice::LoadTexture("./Resources/images/space.png");
+	pressSpaceFontGH_ = Novice::LoadTexture("./Resources/images/space2.png");
+	pressSpaceFontGH2_ = Novice::LoadTexture("./Resources/images/space.png");
+	pressSpaceFontGH3_ = Novice::LoadTexture("./Resources/images/space3.png");
 	rengaGH_ = Novice::LoadTexture("./Resources/images/titleWall.png");
 	titleBGGH_ = Novice::LoadTexture("./Resources/images/titleBG.png");
 	pauseMenuGH_ = Novice::LoadTexture("./Resources/images/pauseMenu.png");

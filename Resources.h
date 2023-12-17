@@ -37,6 +37,8 @@ public:
 	int keysGH_;
 	int titleFontGH_;
 	int pressSpaceFontGH_;
+	int pressSpaceFontGH2_;
+	int pressSpaceFontGH3_;
 	int rengaGH_;
 	int titleBGGH_;
 	int pauseMenuGH_;
