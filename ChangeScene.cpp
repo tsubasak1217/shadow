@@ -566,8 +566,8 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 
 				}
 			}
-
-			if (changeTime_ >= 320) {
+			//扉の奥側から階段状の暗幕が下りたあとの時間が長かったため短縮した
+			if (changeTime_ >= 280) {
 				isEndChange_ = false;
 				isStartChange_ = true;
 				Scene::sceneNum_ = CLEAR;
@@ -586,7 +586,7 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 #pragma region"クリア画面の開始処理（ゲームからクリア）"
 		if (isStartChange_) {
 			if (BCWaitTimer_ > 0) {
-				BCWaitTimer_ -= 2;
+				BCWaitTimer_ -= 3;
 			} else {
 				WST_ += (1.0f / WSEaseTimer_) * WSEaseDir_;
 				WSAddT_ = EaseInOutBounce(WST_);
