@@ -1,4 +1,5 @@
 ﻿#include "Map.h"
+#include "SaveData.h"
 
 int Map::stageNum_ = 0;
 
@@ -529,6 +530,9 @@ void Map::Update(char* keys, const Resources& rs, const ChangeScene cs) {
 			touchable_.push_back(rowTouchable);
 		}
 
+
+		SaveData::map_ = mapChip_;
+
 		break;
 		//====================================================================================
 	case CLEAR://								クリア画面
@@ -606,167 +610,169 @@ void Map::DrawBG(const Resources& rs) {
 		Novice::SetBlendMode(kBlendModeNormal);
 
 
-			break;
-			//====================================================================================
+		break;
+		//====================================================================================
 	case CLEAR://								クリア画面
 		//====================================================================================
 		break;
 
 	default:
 		break;
-		}
-
-	};
-
-	void Map::Draw(const Resources & rs) {
-
-		switch (Scene::sceneNum_) {
-			//====================================================================================
-		case TITLE://							   タイトル画面
-			//====================================================================================
-			break;
-			//====================================================================================
-		case SELECT://							   ステージ選択
-			//====================================================================================
-			break;
-			//====================================================================================
-		case GAME://								ゲーム本編
-			//====================================================================================
-
-			for (int row = 0; row < mapChip_.size(); row++) {
-				for (int col = 0; col < mapChip_[0].size(); col++) {
-					if (mapChip_[row][col] == 1) {
-
-
-						Novice::DrawQuad(
-							int(pos_[row][col].x - size_.x * 0.5f),
-							int(pos_[row][col].y - size_.y * 0.5f),
-							int(pos_[row][col].x + size_.x * 0.5f),
-							int(pos_[row][col].y - size_.y * 0.5f),
-							int(pos_[row][col].x - size_.x * 0.5f),
-							int(pos_[row][col].y + size_.y * 0.5f),
-							int(pos_[row][col].x + size_.x * 0.5f),
-							int(pos_[row][col].y + size_.y * 0.5f),
-							0, 0,
-							64, 64,
-							rs.blockGH_[0],
-							0xffffffff
-						);
-
-					} else if (mapChip_[row][col] == 2) {
-
-						Novice::DrawQuad(
-							int(pos_[row][col].x - size_.x * 0.5f),
-							int(pos_[row][col].y - size_.y * 0.5f),
-							int(pos_[row][col].x + size_.x * 0.5f),
-							int(pos_[row][col].y - size_.y * 0.5f),
-							int(pos_[row][col].x - size_.x * 0.5f),
-							int(pos_[row][col].y + size_.y * 0.5f),
-							int(pos_[row][col].x + size_.x * 0.5f),
-							int(pos_[row][col].y + size_.y * 0.5f),
-							0, 0,
-							64, 64,
-							rs.blockGH_[1],
-							0xffffffff
-						);
-
-					} else if (mapChip_[row][col] == 8) {
-
-						//穴が開いて通れない地面
-						Novice::DrawQuad(
-							int(pos_[row][col].x - size_.x * 0.5f),
-							int(pos_[row][col].y - size_.y * 0.5f),
-							int(pos_[row][col].x + size_.x * 0.5f),
-							int(pos_[row][col].y - size_.y * 0.5f),
-							int(pos_[row][col].x - size_.x * 0.5f),
-							int(pos_[row][col].y + size_.y * 0.5f),
-							int(pos_[row][col].x + size_.x * 0.5f),
-							int(pos_[row][col].y + size_.y * 0.5f),
-							0, 0,
-							64, 64,
-							rs.blockGH_[2],
-							0xffffffff
-						);
-
-					}
-
-				}
-			}
-
-			break;
-			//====================================================================================
-		case CLEAR://								クリア画面
-			//====================================================================================
-			break;
-
-		default:
-			break;
-		}
 	}
 
-	void Map::DrawSwitch(const Resources& rs) {
-	
-		switch (Scene::sceneNum_) {
-			//====================================================================================
-		case TITLE://							   タイトル画面
-			//====================================================================================
-			break;
-			//====================================================================================
-		case SELECT://							   ステージ選択
-			//====================================================================================
-			break;
-			//====================================================================================
-		case GAME://								ゲーム本編
-			//====================================================================================
+}
 
-			for (int row = 0; row < mapChip_.size(); row++) {
-				for (int col = 0; col < mapChip_[0].size(); col++) {
+void Map::ReturnSavePoint() { mapChip_ = SaveData::savedMap_; }
 
-					if (mapChipCopy_[row][col] == -2) {
+void Map::Draw(const Resources& rs) {
 
-						//スイッチ
-						if (!isPressSwitch_) {
-							Novice::DrawQuad(
-								int(posCopy_[row][col].x - size_.x * 0.5f),
-								int(posCopy_[row][col].y - size_.y * 0.5f),
-								int(posCopy_[row][col].x + size_.x * 0.5f),
-								int(posCopy_[row][col].y - size_.y * 0.5f),
-								int(posCopy_[row][col].x - size_.x * 0.5f),
-								int(posCopy_[row][col].y + size_.y * 0.5f),
-								int(posCopy_[row][col].x + size_.x * 0.5f),
-								int(posCopy_[row][col].y + size_.y * 0.5f),
-								0, 0,
-								64, 64,
-								rs.blockGH_[3],
-								0xffffffff
-							);
-						} else {
-							Novice::DrawQuad(
-								int(posCopy_[row][col].x - size_.x * 0.5f),
-								int(posCopy_[row][col].y - size_.y * 0.5f),
-								int(posCopy_[row][col].x + size_.x * 0.5f),
-								int(posCopy_[row][col].y - size_.y * 0.5f),
-								int(posCopy_[row][col].x - size_.x * 0.5f),
-								int(posCopy_[row][col].y + size_.y * 0.5f),
-								int(posCopy_[row][col].x + size_.x * 0.5f),
-								int(posCopy_[row][col].y + size_.y * 0.5f),
-								0, 0,
-								64, 64,
-								rs.blockGH_[4],
-								0xffffffff
-							);
-						}
+	switch (Scene::sceneNum_) {
+		//====================================================================================
+	case TITLE://							   タイトル画面
+		//====================================================================================
+		break;
+		//====================================================================================
+	case SELECT://							   ステージ選択
+		//====================================================================================
+		break;
+		//====================================================================================
+	case GAME://								ゲーム本編
+		//====================================================================================
+
+		for (int row = 0; row < mapChip_.size(); row++) {
+			for (int col = 0; col < mapChip_[0].size(); col++) {
+				if (mapChip_[row][col] == 1) {
+
+
+					Novice::DrawQuad(
+						int(pos_[row][col].x - size_.x * 0.5f),
+						int(pos_[row][col].y - size_.y * 0.5f),
+						int(pos_[row][col].x + size_.x * 0.5f),
+						int(pos_[row][col].y - size_.y * 0.5f),
+						int(pos_[row][col].x - size_.x * 0.5f),
+						int(pos_[row][col].y + size_.y * 0.5f),
+						int(pos_[row][col].x + size_.x * 0.5f),
+						int(pos_[row][col].y + size_.y * 0.5f),
+						0, 0,
+						64, 64,
+						rs.blockGH_[0],
+						0xffffffff
+					);
+
+				} else if (mapChip_[row][col] == 2) {
+
+					Novice::DrawQuad(
+						int(pos_[row][col].x - size_.x * 0.5f),
+						int(pos_[row][col].y - size_.y * 0.5f),
+						int(pos_[row][col].x + size_.x * 0.5f),
+						int(pos_[row][col].y - size_.y * 0.5f),
+						int(pos_[row][col].x - size_.x * 0.5f),
+						int(pos_[row][col].y + size_.y * 0.5f),
+						int(pos_[row][col].x + size_.x * 0.5f),
+						int(pos_[row][col].y + size_.y * 0.5f),
+						0, 0,
+						64, 64,
+						rs.blockGH_[1],
+						0xffffffff
+					);
+
+				} else if (mapChip_[row][col] == 8) {
+
+					//穴が開いて通れない地面
+					Novice::DrawQuad(
+						int(pos_[row][col].x - size_.x * 0.5f),
+						int(pos_[row][col].y - size_.y * 0.5f),
+						int(pos_[row][col].x + size_.x * 0.5f),
+						int(pos_[row][col].y - size_.y * 0.5f),
+						int(pos_[row][col].x - size_.x * 0.5f),
+						int(pos_[row][col].y + size_.y * 0.5f),
+						int(pos_[row][col].x + size_.x * 0.5f),
+						int(pos_[row][col].y + size_.y * 0.5f),
+						0, 0,
+						64, 64,
+						rs.blockGH_[2],
+						0xffffffff
+					);
+
+				}
+
+			}
+		}
+
+		break;
+		//====================================================================================
+	case CLEAR://								クリア画面
+		//====================================================================================
+		break;
+
+	default:
+		break;
+	}
+}
+
+void Map::DrawSwitch(const Resources& rs) {
+
+	switch (Scene::sceneNum_) {
+		//====================================================================================
+	case TITLE://							   タイトル画面
+		//====================================================================================
+		break;
+		//====================================================================================
+	case SELECT://							   ステージ選択
+		//====================================================================================
+		break;
+		//====================================================================================
+	case GAME://								ゲーム本編
+		//====================================================================================
+
+		for (int row = 0; row < mapChip_.size(); row++) {
+			for (int col = 0; col < mapChip_[0].size(); col++) {
+
+				if (mapChipCopy_[row][col] == -2) {
+
+					//スイッチ
+					if (!isPressSwitch_) {
+						Novice::DrawQuad(
+							int(posCopy_[row][col].x - size_.x * 0.5f),
+							int(posCopy_[row][col].y - size_.y * 0.5f),
+							int(posCopy_[row][col].x + size_.x * 0.5f),
+							int(posCopy_[row][col].y - size_.y * 0.5f),
+							int(posCopy_[row][col].x - size_.x * 0.5f),
+							int(posCopy_[row][col].y + size_.y * 0.5f),
+							int(posCopy_[row][col].x + size_.x * 0.5f),
+							int(posCopy_[row][col].y + size_.y * 0.5f),
+							0, 0,
+							64, 64,
+							rs.blockGH_[3],
+							0xffffffff
+						);
+					} else {
+						Novice::DrawQuad(
+							int(posCopy_[row][col].x - size_.x * 0.5f),
+							int(posCopy_[row][col].y - size_.y * 0.5f),
+							int(posCopy_[row][col].x + size_.x * 0.5f),
+							int(posCopy_[row][col].y - size_.y * 0.5f),
+							int(posCopy_[row][col].x - size_.x * 0.5f),
+							int(posCopy_[row][col].y + size_.y * 0.5f),
+							int(posCopy_[row][col].x + size_.x * 0.5f),
+							int(posCopy_[row][col].y + size_.y * 0.5f),
+							0, 0,
+							64, 64,
+							rs.blockGH_[4],
+							0xffffffff
+						);
 					}
 				}
 			}
-
-			break;
-			//====================================================================================
-		case CLEAR://								クリア画面
-			//====================================================================================
-			break;
-
-		default:
-			break;
 		}
+
+		break;
+		//====================================================================================
+	case CLEAR://								クリア画面
+		//====================================================================================
+		break;
+
+	default:
+		break;
 	}
+}

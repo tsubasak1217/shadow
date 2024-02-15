@@ -49,5 +49,7 @@ public:
 	Vec2 GetEmitPos() { return emitPos_; }
 	Vec2 GetRightVec() { return rightVec_; }
 	Vec2 GetLeftVec() { return leftVec_; }
+
+	void ReturnSavePoint();
 };
 

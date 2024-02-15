@@ -13,6 +13,14 @@ struct Vector2 final {
 		return result;
 	}
 
+	Vector2 operator+(float obj) {
+		Vector2 result;
+		result.x = x + obj;
+		result.y = y + obj;
+
+		return result;
+	}
+
 	Vector2 operator-(Vector2 obj) {
 		Vector2 result;
 		result.x = x - obj.x;

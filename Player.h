@@ -98,5 +98,7 @@ public:
 	void SetSwitchPushable(bool flag) { isSwitchPushable_ = flag; }
 	bool GetIsSwapped() { return isSwappped_; }
 	bool GetIsMoveBlock() { return isMoveBlock_; }
+
+	void ReturnSavePoint();
 };
 

@@ -1,4 +1,6 @@
 ﻿#include "Player.h"
+#include "PlayerShadow.h"
+#include "SaveData.h"
 
 //====================================================初期化関数=============================================================
 void Player::Init(int sceneNum, Map map) {
@@ -162,6 +164,8 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 						}
 					}
 				}
+
+				if (!PlayerShadow::GetIsAlive()) { return; }
 
 				//動かせる状態かどうか取得-------------------------------------------------
 
@@ -1657,7 +1661,9 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 					//媒介変数を加算
 					if (blockMoveT_ < 1.0f) {
 
-						blockMoveT_ += (1.0f / moveTime_);
+						if (PlayerShadow::GetIsAlive()) {
+							blockMoveT_ += (1.0f / moveTime_);
+						}
 
 					} else if (blockMoveT_ >= 1.0f) {//-----------------------------------------------------
 
@@ -1792,11 +1798,28 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 							int(map.GetPos().size()), int(map.GetPos()[0].size())
 						);
 
+						if (PlayerShadow::GetIsAlive()) {
+							SaveData::playerPos_ = map.GetPos()[centerAddress_.y][centerAddress_.x];
+							SaveData::savedPlayerPos_ = SaveData::playerPos_;
+							SaveData::savedLightPos_ = SaveData::lightPos_;
+							SaveData::savedPlayerShadowPos_ = SaveData::playerShadowPos_;
+							SaveData::map_ = map.GetMapChip();
+							SaveData::savedMap_ = SaveData::map_;
+						}
 					}
+
 				} else {
 					Global::isMoveShadow_ = false;
+
+					if (PlayerShadow::GetIsAlive()) {
+						SaveData::map_ = map.GetMapChip();
+						SaveData::savedMap_ = SaveData::map_;
+						SaveData::playerPos_ = map.GetPos()[centerAddress_.y][centerAddress_.x];
+						SaveData::savedPlayerPos_ = SaveData::playerPos_;
+					}
 				}
 			}
+
 			/*map.SetPos(
 				3, 4,
 				{ 0.0f,0.0f }
@@ -1863,7 +1886,6 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 							isHitMapChip_
 						);
 
-
 						//プレイヤーの番地を再計算
 						CalcAddress(
 							address_,
@@ -1898,6 +1920,7 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 						centerAddress_.y = int((pos_.y - map.GetPuzzleLeftTop().y) / map.GetSize().y);
 
 						//マップチップの当たり判定
+
 						PushBackMapChip(
 							int(map.GetMapChip().size()), int(map.GetMapChip()[0].size()),
 							&pos_,
@@ -2000,7 +2023,7 @@ void Player::Draw(const char* keys, const Resources& rs) {
 				isMoveBlock_ or swapTimeCount_ == 3) {
 
 				if (Global::character_ == 1) {
-					DrawCat(pos_, size_.x * 1.2f, size_.y * 1.2f, 0xdfdfdfff);
+					DrawCat(pos_, size_.x * 1.4f, size_.y * 1.4f, 0xfff78cff);
 				} else {
 					DrawCat(
 						{
@@ -2141,7 +2164,7 @@ void Player::Draw(const char* keys, const Resources& rs) {
 		}
 
 		if (Global::character_ == 0) {
-		
+
 			if (Global::controlMode_ == 0) {
 				//W
 				Novice::DrawSpriteRect(
@@ -2181,4 +2204,8 @@ void Player::Draw(const char* keys, const Resources& rs) {
 		break;
 	}
 
+}
+
+void Player::ReturnSavePoint() { 
+	pos_ = SaveData::savedPlayerPos_;
 }

@@ -1,6 +1,9 @@
 ﻿#include "PlayerShadow.h"
 #include "Particle.h"
 #include "Shadow.h"
+#include "SaveData.h"
+
+bool PlayerShadow::isAlive_ = true;
 
 void PlayerShadow::Init(int sceneNum, Screen screen, Shadow shadow, const char* keys,ChangeScene cs) {
 	
@@ -154,16 +157,24 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 				} else if (respawnTimeCount_ < 80) {
 
 					if (respawnTimeCount_ == 79) {
-						map.Init(rs, Scene::sceneNum_);
-						player.Init(Scene::sceneNum_, map);
-						light.Init(Scene::sceneNum_, map);
-						screen.Init(Scene::sceneNum_, map, light);
+
+						map.Init(rs,Scene::sceneNum_);
+						map.ReturnSavePoint();
+
+						player.Init(Scene::sceneNum_,map);
+						player.ReturnSavePoint();
+
+						light.ReturnSavePoint();
+
+						pos_ = SaveData::savedPlayerShadowPos_;
+						//screen.ReturnSavePoint();
 					}
 
 					isBackToRespawnPos_ = true;
 
 					if (respawnTimeCount_ <= 0) {
 						Init(Scene::sceneNum_, screen, shadow, keys,cs);
+						pos_ = SaveData::savedPlayerShadowPos_;
 
 						for (int i = 0; i < starFollowPos_.size(); i++) {
 
@@ -852,7 +863,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 	}
 }
 
-void PlayerShadow::Draw(const Resources& rs, Screen screen, const Shadow& shadow) {
+void PlayerShadow::Draw(const Resources& rs, Screen screen) {
 
 	//シーンに応じて処理を分ける
 	switch (Scene::sceneNum_) {
@@ -1033,8 +1044,8 @@ void PlayerShadow::Draw(const Resources& rs, Screen screen, const Shadow& shadow
 				if (respawnTimeCount_ < 24) {
 					DrawCat(
 						{
-							shadow.firstPlayerPos_.x + screen.GetScreenLeftTop().x,
-							((shadow.firstPlayerPos_.y + screen.GetScreenLeftTop().y + 12) + 4.0f)
+							pos_.x,
+							(pos_.y)
 							- fabsf(4.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI)))
 						},
 						(size_.x + 8.0f) - fabsf(8.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI))),
@@ -1045,8 +1056,8 @@ void PlayerShadow::Draw(const Resources& rs, Screen screen, const Shadow& shadow
 					for (int i = 1; i < 5; i++) {
 						DrawCat(
 							{
-							shadow.firstPlayerPos_.x + screen.GetScreenLeftTop().x,
-							((shadow.firstPlayerPos_.y + screen.GetScreenLeftTop().y + 12) + 4.0f)
+							pos_.x,
+							pos_.y
 							- fabsf(4.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI)))
 							},
 							(size_.x + 8.0f) - fabsf(8.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI))) + i * 0.6f,
@@ -1057,8 +1068,8 @@ void PlayerShadow::Draw(const Resources& rs, Screen screen, const Shadow& shadow
 
 				for (int i = 0; i < 4; i++) {
 					Novice::DrawEllipse(
-						int(shadow.firstPlayerPos_.x + screen.GetScreenLeftTop().x),
-						int(shadow.firstPlayerPos_.y + screen.GetScreenLeftTop().y + 10),
+						int(pos_.x),
+						int(pos_.y),
 						int((size_.x - 4) * sinf(((45.0f - float(respawnTimeCount_)) / 45.0f) * float(M_PI)) + i * 2),
 						int((size_.y - 4) * sinf(((45.0f - float(respawnTimeCount_)) / 45.0f) * float(M_PI)) + i * 2),
 						0.0f,
@@ -1073,6 +1084,9 @@ void PlayerShadow::Draw(const Resources& rs, Screen screen, const Shadow& shadow
 				killedSEHandle_ = Novice::PlayAudio(rs.playerKilledSE_, 0, 0.5f);
 			}
 		}
+
+
+		SaveData::playerShadowPos_ = pos_;
 
 		break;
 
