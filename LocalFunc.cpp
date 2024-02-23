@@ -877,7 +877,7 @@ int PushBackBox_Ball(char* keys,
 
 					NormalizedVec = Normalize({ 0.0f,0.0f }, VerticleVec(leftTop, rightTop));
 					ballPos = newCrossPos.operator+(NormalizedVec.operator*({ -ballRadius,-ballRadius }));
-					ballPos.y--;
+					//ballPos.y--;
 
 					isDrop = false;
 					isJump = false;
