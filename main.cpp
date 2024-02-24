@@ -96,7 +96,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 
 		title.Update(keys, preKeys,rs);
-		door.Update(keys, preKeys, rs, playerShadow.GetstarCount());
+		door.Update(keys, preKeys, rs, playerShadow.GetstarCount(),cs.isStartChange_);
 		stageClear.Update(cs.isStartChange_, playerShadow.GetstarCount());
 
 		pause.Update(cs, keys, preKeys,rs,audio.BGMHandle_[0],audio.soundVolume_[0]);
