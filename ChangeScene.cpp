@@ -120,7 +120,7 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 			if (keys[DIK_SPACE] && !preKeys[DIK_SPACE] ||
 				keys[DIK_RETURN] && !preKeys[DIK_RETURN]) {
 				if (!isPushEscape_) {//ESCAPE押されていないとき
-					if (!isChangeScene && !isEndChange_ && !isStartChange_) {
+					if ( !isEndChange_ && !isStartChange_) {
 						if (!isEaseM) {
 							isChangeScene = true;
 							isEndChange_ = true;
@@ -136,7 +136,7 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 			if (Novice::IsTriggerButton(0, kPadButton10) or
 				Novice::IsTriggerButton(0, kPadButton11)) {
 				if (!isPushEscape_) {//ESCAPE押されていないとき
-					if (!isChangeScene && !isEndChange_ && !isStartChange_) {
+					if (!isEndChange_ && !isStartChange_) {
 						if (!isEaseM) {
 							isChangeScene = true;
 							isEndChange_ = true;
