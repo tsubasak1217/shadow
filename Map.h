@@ -61,6 +61,8 @@ public:
 	//スイッチが押されたかどうかのアクセッサ
 	void SetIsPressSwitch(bool flag) { isPressSwitch_ = flag; }
 	bool GetIsPressSwitch() { return isPressSwitch_; }
+
+	void ReturnSavePoint();
 };
 
 enum BlockType {

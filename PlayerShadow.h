@@ -14,7 +14,7 @@ class PlayerShadow {
 	Vector2<int>preAddress_[4];
 	float speed_;
 
-	bool isAlive_;
+	static bool isAlive_;
 	bool preIsAlive_;
 	bool isBackToRespawnPos_;
 	bool preIsBackToRespawnPos_;
@@ -36,6 +36,7 @@ class PlayerShadow {
 	int blockCount;
 
 	int boardingBlock_;
+	int preBordingBlock_;
 	Vec2 boardingPos_;
 	float preBoadingVecRatio_;
 	float boadingVecRatio_;
@@ -98,6 +99,7 @@ public:
 		isHitRect_ = false;
 		blockCount = 0;
 		boardingBlock_ = -1;
+		preBordingBlock_ = -1;
 		boardingPos_ = { 0.0f,0.0f };
 		boadingVecRatio_ = 0.0f;
 		preBoadingVecRatio_ = boadingVecRatio_;
@@ -122,7 +124,7 @@ public:
 
 	void Update(char* keys, char* Prekeys, const Resources& rs, ChangeScene& cs, Screen& screen, Shadow& shadow, Player& player, Map& map, Light& light, bool isPause);
 
-	void Draw(const Resources& rs, Screen screen,const Shadow& shadow);
+	void Draw(const Resources& rs, Screen screen);
 	void DrawResetAction(const Resources& rs, int timeCount, int kActionTime);
 	void DrawFrame(Map map,Screen screen);
 
@@ -132,7 +134,7 @@ public:
 	Vec2 GetPos() { return pos_; }
 	Vec2 GetSize() { return size_; }
 
-	bool GetIsAlive() { return isAlive_; }
+	static bool GetIsAlive() { return isAlive_; }
 	bool GetIsPreAlive() { return preIsAlive_; }
 
 	bool GetIsBackToResPawnPos() { return isBackToRespawnPos_; }

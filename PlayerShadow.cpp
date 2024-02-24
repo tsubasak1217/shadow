@@ -1,9 +1,12 @@
 ﻿#include "PlayerShadow.h"
 #include "Particle.h"
 #include "Shadow.h"
+#include "SaveData.h"
 
-void PlayerShadow::Init(int sceneNum, Screen screen, Shadow shadow, const char* keys,ChangeScene cs) {
-	
+bool PlayerShadow::isAlive_ = true;
+
+void PlayerShadow::Init(int sceneNum, Screen screen, Shadow shadow, const char* keys, ChangeScene cs) {
+
 	switch (sceneNum) {
 		//====================================================================================
 	case TITLE://							   タイトル画面
@@ -96,7 +99,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 
 	//シーン遷移の始まった瞬間にシーンに合わせて初期化
 	if (cs.isStartChange_ && cs.preIsEndChange_) {
-		Init(Scene::sceneNum_, screen, shadow, keys,cs);
+		Init(Scene::sceneNum_, screen, shadow, keys, cs);
 		InitStar();
 		prePos_ = pos_;
 	}
@@ -117,7 +120,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 		//Rで初期化
 		if (keys[DIK_R]) {
 			if (!cs.isEndChange_) {
-				Init(Scene::sceneNum_, screen, shadow, keys,cs);
+				Init(Scene::sceneNum_, screen, shadow, keys, cs);
 				InitStar();
 			}
 		}
@@ -154,16 +157,24 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 				} else if (respawnTimeCount_ < 80) {
 
 					if (respawnTimeCount_ == 79) {
+
 						map.Init(rs, Scene::sceneNum_);
+						map.ReturnSavePoint();
+
 						player.Init(Scene::sceneNum_, map);
-						light.Init(Scene::sceneNum_, map);
-						screen.Init(Scene::sceneNum_, map, light);
+						player.ReturnSavePoint();
+
+						light.ReturnSavePoint();
+
+						pos_ = SaveData::savedPlayerShadowPos_;
+						//screen.ReturnSavePoint();
 					}
 
 					isBackToRespawnPos_ = true;
 
 					if (respawnTimeCount_ <= 0) {
-						Init(Scene::sceneNum_, screen, shadow, keys,cs);
+						Init(Scene::sceneNum_, screen, shadow, keys, cs);
+						pos_ = SaveData::savedPlayerShadowPos_;
 
 						for (int i = 0; i < starFollowPos_.size(); i++) {
 
@@ -253,7 +264,6 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 				}
 
 				if (pos_.y < (screen.GetScreenLeftTop().y + screen.GetSize().y) - size_.y * 0.5f) {
-
 					isDrop_ = true;
 				}
 
@@ -380,6 +390,8 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 
 
 				//乗っている影ブロックが動けば一緒に動く--------------------------------------
+				preBordingBlock_ = boardingBlock_;
+
 				if (boardingBlock_ >= 0) {
 					if (isJump_) {
 						boardingBlock_ = -1;
@@ -393,41 +405,35 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 					hitSurface_[i] = 0;
 
 					//
-					if (boardingBlock_ >= 0) {
+					int a = (boardingBlock_ | preBordingBlock_);
+
+					if ( a >= 0) {
 
 						boardingPos_ = CrossPos(
-							screen.GetPos(boardingBlock_, 0), screen.GetPos(boardingBlock_, 1),
+							screen.GetPos(a, 0), screen.GetPos(a, 1),
 							pos_, { pos_.x,pos_.y + 1.0f }
 						);
 
 						boadingVecRatio_ = Dot(
-							screen.GetPos(boardingBlock_, 0), screen.GetPos(boardingBlock_, 1),
+							screen.GetPos(a, 0), screen.GetPos(a, 1),
 							pos_
 						);
 
 
-						if (boadingVecRatio_ >= 0.0f &&
-							boadingVecRatio_ <= CheckLength(screen.GetPos(boardingBlock_, 0), screen.GetPos(boardingBlock_, 1))) {
-							if (Global::isMoveShadow_ && player.swapTimeCount_ == 0) {
-								pos_.x = screen.GetPos(boardingBlock_, 0).x +
-									Normalize(screen.GetPos(boardingBlock_, 1), screen.GetPos(boardingBlock_, 0)).x * preBoadingVecRatio_;
+						if (Global::isMoveShadow_ && player.swapTimeCount_ == 0) {
+							pos_.x = screen.GetPos(a, 0).x +
+								Normalize(screen.GetPos(a, 1), screen.GetPos(a, 0)).x * preBoadingVecRatio_;
 
-								isDrop_ = false;
-							} else {
-								boardingBlock_ = -1;
+							if (!isJump_) {
+								pos_.y = screen.GetPos(a, 0).y - (size_.y * 0.5f - 1);
 							}
 
-						} else {
-							boardingBlock_ = -1;
+							isDrop_ = false;
 						}
 					}
 				}
 
-				if (!Global::isMoveShadow_) {
-					boardingBlock_ = -1;
-				}
-
-				/*-------------------------------押し戻し-------------------------------*/
+				/*------------------------------- 押し戻し-------------------------------*/
 
 				isHitMapChip_ = false;
 				isHitRect_ = false;
@@ -446,7 +452,6 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 					//上に出た時
 				} else if (pos_.y <= screen.GetScreenLeftTop().y + size_.y * 0.5f) {
 					pos_.y = screen.GetScreenLeftTop().y + size_.y * 0.5f;
-
 				}
 
 				//左右===============================================
@@ -494,11 +499,18 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 								pos_, prePos_, size_.x * 0.5f,
 								isDrop_, isJump_, dropSpeed_, jumpSpeed_, hitCount_, hitSurface_[i], preHitSurface_[i]
 							) == Top) {
+
+
 							boardingBlock_ = i;
 							boadingVecRatio_ = Dot(
 								screen.GetPos(boardingBlock_, 0), screen.GetPos(boardingBlock_, 1),
 								pos_
 							);
+
+							break;
+
+						} else {
+							boardingBlock_ = -1;
 						}
 
 					} else if (screen.GetPos(i, 7).x <= screen.GetPos(i, 3).x && screen.GetPos(i, 6).x <= screen.GetPos(i, 2).x) {
@@ -515,6 +527,11 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 								screen.GetPos(boardingBlock_, 0), screen.GetPos(boardingBlock_, 1),
 								pos_
 							);
+
+							break;
+
+						} else {
+							boardingBlock_ = -1;
 						}
 
 					} else if (screen.GetPos(i, 6).x >= screen.GetPos(i, 2).x && screen.GetPos(i, 7).x <= screen.GetPos(i, 3).x) {
@@ -531,6 +548,11 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 								screen.GetPos(boardingBlock_, 0), screen.GetPos(boardingBlock_, 1),
 								pos_
 							);
+
+							break;
+
+						} else {
+							boardingBlock_ = -1;
 						}
 					}
 				}
@@ -789,9 +811,9 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 						} else {
 							if (Novice::IsPressButton(0, kPadButton13)) {
 
-									cs.isEndChange_ = true;
-									pushSEHandle_ = Novice::PlayAudio(rs.selectPushSE_, 0, 0.5f);
-								}
+								cs.isEndChange_ = true;
+								pushSEHandle_ = Novice::PlayAudio(rs.selectPushSE_, 0, 0.5f);
+							}
 
 						}
 					}
@@ -852,7 +874,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 	}
 }
 
-void PlayerShadow::Draw(const Resources& rs, Screen screen, const Shadow& shadow) {
+void PlayerShadow::Draw(const Resources& rs, Screen screen) {
 
 	//シーンに応じて処理を分ける
 	switch (Scene::sceneNum_) {
@@ -867,6 +889,9 @@ void PlayerShadow::Draw(const Resources& rs, Screen screen, const Shadow& shadow
 		//====================================================================================
 	case GAME://								ゲーム本編
 		//====================================================================================
+
+		Novice::ScreenPrintf(5, 5, "%d", boardingBlock_);
+		Novice::ScreenPrintf(5, 25, "%f", boadingVecRatio_);
 
 		if (isAlive_) {
 
@@ -1033,8 +1058,8 @@ void PlayerShadow::Draw(const Resources& rs, Screen screen, const Shadow& shadow
 				if (respawnTimeCount_ < 24) {
 					DrawCat(
 						{
-							shadow.firstPlayerPos_.x + screen.GetScreenLeftTop().x,
-							((shadow.firstPlayerPos_.y + screen.GetScreenLeftTop().y + 12) + 4.0f)
+							pos_.x,
+							(pos_.y)
 							- fabsf(4.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI)))
 						},
 						(size_.x + 8.0f) - fabsf(8.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI))),
@@ -1045,8 +1070,8 @@ void PlayerShadow::Draw(const Resources& rs, Screen screen, const Shadow& shadow
 					for (int i = 1; i < 5; i++) {
 						DrawCat(
 							{
-							shadow.firstPlayerPos_.x + screen.GetScreenLeftTop().x,
-							((shadow.firstPlayerPos_.y + screen.GetScreenLeftTop().y + 12) + 4.0f)
+							pos_.x,
+							pos_.y
 							- fabsf(4.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI)))
 							},
 							(size_.x + 8.0f) - fabsf(8.0f * cosf((float(Global::timeCount_) / 56.0f) * float(M_PI))) + i * 0.6f,
@@ -1057,8 +1082,8 @@ void PlayerShadow::Draw(const Resources& rs, Screen screen, const Shadow& shadow
 
 				for (int i = 0; i < 4; i++) {
 					Novice::DrawEllipse(
-						int(shadow.firstPlayerPos_.x + screen.GetScreenLeftTop().x),
-						int(shadow.firstPlayerPos_.y + screen.GetScreenLeftTop().y + 10),
+						int(pos_.x),
+						int(pos_.y),
 						int((size_.x - 4) * sinf(((45.0f - float(respawnTimeCount_)) / 45.0f) * float(M_PI)) + i * 2),
 						int((size_.y - 4) * sinf(((45.0f - float(respawnTimeCount_)) / 45.0f) * float(M_PI)) + i * 2),
 						0.0f,
@@ -1073,6 +1098,9 @@ void PlayerShadow::Draw(const Resources& rs, Screen screen, const Shadow& shadow
 				killedSEHandle_ = Novice::PlayAudio(rs.playerKilledSE_, 0, 0.5f);
 			}
 		}
+
+
+		SaveData::playerShadowPos_ = pos_;
 
 		break;
 

@@ -1,5 +1,6 @@
 ﻿#include "Light.h"
 #include "PlayerShadow.h"
+#include "SaveData.h"
 
 //=========================================================初期化関数==============================================================
 void Light::Init(int sceneNum, Map map) {
@@ -128,6 +129,16 @@ void Light::Update(char* keys, const ChangeScene& cs, Map map, float rangeTheta,
 
 			} else if (emitPos_.x < 32.0f) {
 				emitPos_.x = 32.0f;
+			}
+
+			if (PlayerShadow::GetIsAlive()) {
+				
+				if (!Novice::IsPressButton(0, kPadButton18) &&
+					!Novice::IsPressButton(0, kPadButton8) &&
+					!Novice::IsPressButton(0, kPadButton19) &&
+					!Novice::IsPressButton(0, kPadButton9)) {
+					SaveData::lightPos_ = emitPos_;
+				}
 			}
 
 		break;
@@ -268,4 +279,6 @@ void Light::Draw(const Resources& rs,Map map, ChangeScene CS) {
 		break;
 	}
 
-};
+}
+
+void Light::ReturnSavePoint() { emitPos_ = SaveData::savedLightPos_; }

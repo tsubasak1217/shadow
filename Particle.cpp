@@ -21,7 +21,7 @@ void Particle::Init(float theta, Vec2 pos, Vec2 size, float speed) {
 	speed_ = speed;
 }
 
-void Particle::Update(Emitter emitter, PlayerShadow pShadow,const Shadow& shadow,Screen screen,const char* keys) {
+void Particle::Update(Emitter emitter, PlayerShadow pShadow, Screen screen, const char* keys) {
 
 	switch (Scene::sceneNum_) {
 		//====================================================================================
@@ -50,10 +50,10 @@ void Particle::Update(Emitter emitter, PlayerShadow pShadow,const Shadow& shadow
 					Init(
 						float(rand()),
 						{
-							pShadow.GetPos().x + cosf(float(rand())) * (emitter.GetRange_().x/8.0f),
-							pShadow.GetPos().y + sinf(float(rand())) * (emitter.GetRange_().y/8.0f)
+							pShadow.GetPos().x + cosf(float(rand())) * (emitter.GetRange_().x / 8.0f),
+							pShadow.GetPos().y + sinf(float(rand())) * (emitter.GetRange_().y / 8.0f)
 						},
-						{pShadow.GetSize().x * 0.5f, pShadow.GetSize().y * 0.5f},
+						{ pShadow.GetSize().x * 0.5f, pShadow.GetSize().y * 0.5f },
 						float(rand() % 300) / 100.0f
 					);
 
@@ -67,15 +67,15 @@ void Particle::Update(Emitter emitter, PlayerShadow pShadow,const Shadow& shadow
 						Init(
 							float(rand()),
 							{
-								shadow.firstPlayerPos_.x + screen.GetScreenLeftTop().x + cosf(float(rand())) * float(rand()%180),
-								(shadow.firstPlayerPos_.y + screen.GetScreenLeftTop().y + 10) + sinf(float(rand())) * float(rand() % 180)
+								pShadow.GetPos().x + cosf(float(rand())) * float(rand() % 180),
+								(pShadow.GetPos().y) + sinf(float(rand())) * float(rand() % 180)
 							},
 							{ float(rand() % 80),float(rand() % 80) },
 							float(rand() % 300) / 100.0f
 						);
 
-						moveVec_.x = (shadow.firstPlayerPos_.x + screen.GetScreenLeftTop().x) - pos_.x;
-						moveVec_.y = (shadow.firstPlayerPos_.y + screen.GetScreenLeftTop().y + 10) - pos_.y;
+						moveVec_.x = (pShadow.GetPos().x) - pos_.x;
+						moveVec_.y = (pShadow.GetPos().y) - pos_.y;
 
 						startPos_ = pos_;
 						lifeTime_ = 80;
@@ -116,22 +116,22 @@ void Particle::Update(Emitter emitter, PlayerShadow pShadow,const Shadow& shadow
 						theta_ = 0.0f;
 						speed_ = float(rand() % 30) / 10.0f;
 					}
-				
+
 				} else if (pShadow.GetIsBackToResPawnPos()) {//プレイヤーがリスポーン地点に収束する処理
 
 					lifeTime_--;
-					
+
 					pos_.x = startPos_.x + (moveVec_.x * (EaseInOutQuint(1.0f - (float(lifeTime_) / 80.0f))));
 					pos_.y = startPos_.y + (moveVec_.y * (EaseInOutQuint(1.0f - (float(lifeTime_) / 80.0f))));
 
 					theta_ += ((1.0f / 60.0f) * float(M_PI)) * speed_;
 
-					size_.x --;
+					size_.x--;
 					if (size_.x < 16.0f) {
 						size_.x = 16.0f;
 					}
 
-					alpha_ += int( 0xFF / 160);
+					alpha_ += int(0xFF / 160);
 					if (alpha_ > 0xff) {
 						alpha_ = 0xff;
 					}
@@ -162,11 +162,11 @@ void Particle::Update(Emitter emitter, PlayerShadow pShadow,const Shadow& shadow
 void Particle::Draw() {
 
 	//if (isAlive_) {
-		My::DrawTriangle(
-			pos_,
-			size_.x,
-			theta_,
-			0x3f3f3f00 + alpha_
-		);
+	My::DrawTriangle(
+		pos_,
+		size_.x,
+		theta_,
+		0x3f3f3f00 + alpha_
+	);
 	//}
 }
