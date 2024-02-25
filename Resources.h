@@ -34,6 +34,12 @@ public:
 		Novice::LoadTexture("./Resources/images/change2.png")
 	};
 
+	int crossKeyGH_[2] = {
+		Novice::LoadTexture("./Resources/images/crossKey.png"),
+		Novice::LoadTexture("./Resources/images/crossKey2.png")
+	};
+
+	int A_;
 	int keysGH_;
 	int titleFontGH_;
 	int pressSpaceFontGH_;

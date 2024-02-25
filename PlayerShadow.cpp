@@ -201,6 +201,9 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 				}
 
 				for (int i = 0; i < shadow.GetPos().size(); i++) {
+
+					hitSurface2_.clear();
+
 					for (int j = 0; j < shadow.GetPos()[0].size(); j++) {
 
 						if (shadow.GetMapChip()[i][j] == 1 or shadow.GetMapChip()[i][j] == 11) {
@@ -773,7 +776,10 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 							loopCount = 0;
 							isHitRect_ = false;
 
-							isAlive_ = false;
+							//if (player.killSwitch_) {
+								isAlive_ = false;
+							//}
+
 							break;
 						}
 
@@ -809,12 +815,11 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 								pushSEHandle_ = Novice::PlayAudio(rs.selectPushSE_, 0, 0.5f);
 							}
 						} else {
-							if (Novice::IsPressButton(0, kPadButton13)) {
+							if (Novice::IsPressButton(0, kPadButton11)) {
 
 								cs.isEndChange_ = true;
 								pushSEHandle_ = Novice::PlayAudio(rs.selectPushSE_, 0, 0.5f);
 							}
-
 						}
 					}
 
@@ -1038,7 +1043,7 @@ void PlayerShadow::Draw(const Resources& rs, Screen screen) {
 				} else {
 
 					//W
-					Novice::DrawSpriteRect(
+					/*Novice::DrawSpriteRect(
 						int(pos_.x - size_.x * 1.0f),
 						int(pos_.y - size_.y * 0.5f - 32) - int(4.0f * fabsf(cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))),
 						0, 0,
@@ -1047,7 +1052,9 @@ void PlayerShadow::Draw(const Resources& rs, Screen screen) {
 						1, 1,
 						0.0f,
 						0x1f1f1f3f + int(float(0x2f) * cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))
-					);
+					);*/
+
+					
 				}
 			}
 
@@ -1099,6 +1106,9 @@ void PlayerShadow::Draw(const Resources& rs, Screen screen) {
 			}
 		}
 
+		
+
+
 
 		SaveData::playerShadowPos_ = pos_;
 
@@ -1145,15 +1155,18 @@ void PlayerShadow::DrawResetAction(const Resources& rs, int timeCount, int kActi
 
 
 			//ゴール
-			Novice::DrawSpriteRect(
-				int(pos_.x - 42),
-				int(pos_.y - 80),
+			My::DrawQuad(
+				{
+					pos_.x,
+					pos_.y - 55.0f
+				},
+				{ 46.0f,46.0f },
 				0, 0,
-				128,
-				64,
-				rs.tutorial_[1],
-				(128.0f / 256.0f) * 0.7f,
-				(64.0f / 128.0f) * 0.7f,
+				32,
+				32,
+				1.0f,
+				1.0f,
+				rs.changeGH_[0],
 				0.0f,
 				0xffffff00 + goalTutorialAlpha_
 			);

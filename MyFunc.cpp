@@ -257,6 +257,10 @@ Vec2 VerticleVec(Vec2 pos1, Vec2 pos2) {
 	return { pos2.y - pos1.y,-(pos2.x - pos1.x) };
 }
 
+int Opp(bool flag) {
+	return flag? 1 : -1;
+}
+
 
 //================================================================
 //                        行列関数

@@ -2507,7 +2507,7 @@ void Player::Draw(const char* keys, const Resources& rs) {
 			} else {
 
 				//W
-				Novice::DrawSpriteRect(
+				/*Novice::DrawSpriteRect(
 					int(pos_.x - size_.x * 1.0f),
 					int(pos_.y - size_.y * 0.5f - 32) - int(4.0f * fabsf(cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))),
 					0, 0,
@@ -2516,7 +2516,7 @@ void Player::Draw(const char* keys, const Resources& rs) {
 					1, 1,
 					0.0f,
 					0xffffff3f + int(float(0x2f) * cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))
-				);
+				);*/
 			}
 		}
 		break;

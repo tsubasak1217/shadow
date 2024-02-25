@@ -164,6 +164,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		playerShadow.DrawFrame(map, screen);
 		DrawTutorial(rs);
+		global.Draw(rs);
 
 		playerShadow.PlayerShadowManager(rs, playerShadow);
 
@@ -213,15 +214,17 @@ void DrawTutorial(const Resources& rs) {
 			kFillModeSolid
 		);
 
-		Novice::DrawBox(
-			int(Global::windowSize_.x - 90 - i * 2),
-			int(-10 - i * 2),
-			128 + i * 4,
-			64 + i * 4,
-			0.0f,
-			0x00000015,
-			kFillModeSolid
-		);
+		if (Global::controlMode_ == 0) {
+			Novice::DrawBox(
+				int(Global::windowSize_.x - 90 - i * 2),
+				int(-10 - i * 2),
+				128 + i * 4,
+				64 + i * 4,
+				0.0f,
+				0x00000015,
+				kFillModeSolid
+			);
+		}
 	}
 
 		//esc
@@ -238,16 +241,18 @@ void DrawTutorial(const Resources& rs) {
 
 
 		//reset
-		Novice::DrawSpriteRect(
-			Global::windowSize_.x - 110, 0,
-			0, 64,
-			128, 64,
-			rs.tutorial_[1],
-			(128.0f / 256.0f),
-			(64.0f / 128.0f),
-			0.0f,
-			0xffffffff
-		);
+		if (Global::controlMode_ == 0) {
+			Novice::DrawSpriteRect(
+				Global::windowSize_.x - 110, 0,
+				0, 64,
+				128, 64,
+				rs.tutorial_[1],
+				(128.0f / 256.0f),
+				(64.0f / 128.0f),
+				0.0f,
+				0xffffffff
+			);
+		}
 
 
 	}

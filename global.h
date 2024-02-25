@@ -25,4 +25,5 @@ public:
 	~Global();
 
 	void Update(const char* keys, const char* preKeys);
+	void Draw(const Resources& rs);
 };
