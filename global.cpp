@@ -6,7 +6,7 @@ int Global::timeCount_ = 0;
 int Global::controlMode_ = 0;
 int Global::character_ = 0;
 
-Vector2<int> Global::leftStickValue_ = {0,0};
+Vector2<int> Global::leftStickValue_ = { 0,0 };
 Vector2<int> Global::preLeftStickValue_ = { 0,0 };
 bool Global::isTriggerLeftStick_UP_ = false;
 bool Global::isTriggerLeftStick_DOWN_ = false;
@@ -16,13 +16,15 @@ bool Global::isReleaseB_ = false;
 bool Global::isB_ = false;
 bool Global::preIsB_ = false;
 
+int Global::aliveTimer_ = 0;
+
 Global::Global() {
 }
 
 Global::~Global() {
 }
 
-void Global::Update(const char* keys,const char* preKeys) {
+void Global::Update(const char* keys, const char* preKeys) {
 	timeCount_++;
 
 	//前フレームのスティックの状態を保存
@@ -56,7 +58,7 @@ void Global::Update(const char* keys,const char* preKeys) {
 		//右トリガー
 		if (leftStickValue_.x > 0) {
 			isTriggerLeftStick_RIGHT_ = true;
-		} else if(leftStickValue_.x < 0) {//左トリガー
+		} else if (leftStickValue_.x < 0) {//左トリガー
 			isTriggerLeftStick_LEFT_ = true;
 		}
 
@@ -82,14 +84,57 @@ void Global::Update(const char* keys,const char* preKeys) {
 				}
 			}
 		} else {
-			if (Novice::IsTriggerButton(0,kPadButton11)) {
+			/*if (Novice::IsTriggerButton(0,kPadButton11)) {
 
 				if (character_ == 0) {
 					character_ = 1;
 				} else {
 					character_ = 0;
 				}
+			}*/
+
+			if (character_ == 0) {
+				if (Novice::IsTriggerButton(0, kPadButton1)) {
+					character_ = 1;
+				}
+			} else {
+				if (Novice::IsTriggerButton(0, kPadButton0)) {
+					character_ = 0;
+				}
 			}
 		}
+	}
+}
+
+void Global::Draw(const Resources& rs) {
+
+	if (Scene::sceneNum_ == GAME) {
+
+		float sin = sinf((float(timeCount_) / 64.0f) * float(M_PI));
+		Vec2 pos = { 436.0f,415.0f };
+
+		// 右側のキャラ切り替えの十字キー説明表示
+		Novice::DrawSpriteRect(
+			int(pos.x),
+			int(pos.y),
+			0, 0,
+			1121, 1121,
+			rs.crossKeyGH_[character_ == 0],
+			0.03f,
+			0.03f,
+			0.0f,
+			0xffffff5f + int(32.0f * sin)
+		);
+
+
+		My::DrawTriangle(
+			pos.operator+({
+				17.0f,
+				-17.0f + (68.0f * (character_ == 0)) + (fabsf(-6.0f * sin) * Opp((character_ == 0)))
+				}),
+			8.0f,
+			3.14f * (character_ == 0),
+			0xffffff5f + int(32.0f * sin)
+		);
 	}
 }

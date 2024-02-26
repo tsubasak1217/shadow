@@ -36,6 +36,14 @@ struct Vector2 final {
 
 		return result;
 	}
+
+	Vector2 operator/(Vector2 obj) {
+		Vector2 result;
+		result.x = x / obj.x;
+		result.y = y / obj.y;
+
+		return result;
+	}
 };
 using Vec2 = Vector2<float>;
 

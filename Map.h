@@ -13,7 +13,7 @@ class Map
 	std::vector<std::vector<Vec3>>vertex_;//マップのブロックの各頂点座標(疑似的な三次元)
 
 	Vec3 size_;//ブロックの縦横奥ゆき
-	Vec2 puzzleLeftTop_;//パズル(画面下半分ののマップチップ)の左上座標
+	static Vec2 puzzleLeftTop_;//パズル(画面下半分ののマップチップ)の左上座標
 	Vec2 puzzleMapSize_;//パズル画面の縦横幅
 
 
@@ -45,7 +45,7 @@ public:
 	std::vector<std::vector<int>>GetMapChipCopy() { return mapChipCopy_; }
 
 	Vec3 GetSize() { return size_; }
-	Vec2 GetPuzzleLeftTop() { return puzzleLeftTop_; }
+	static Vec2 GetPuzzleLeftTop() { return puzzleLeftTop_; }
 	Vec2 GetPuzzleMapSize() { return puzzleMapSize_; }
 
 	std::vector<std::vector<Vec2>>GetPos() { return pos_; }

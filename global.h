@@ -21,8 +21,11 @@ public:
 	static bool isB_;
 	static bool isReleaseB_;
 
+	static int aliveTimer_;
+
 	Global();
 	~Global();
 
 	void Update(const char* keys, const char* preKeys);
+	void Draw(const Resources& rs);
 };

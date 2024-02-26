@@ -2,6 +2,7 @@
 #include "SaveData.h"
 
 int Map::stageNum_ = 0;
+Vec2 Map::puzzleLeftTop_ = {0.0f,0.0f};
 
 //コンストラクタ============================================================================================
 Map::Map(const Resources& rs) {

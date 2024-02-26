@@ -50,7 +50,7 @@ void Light::Init(int sceneNum, Map map) {
 }
 
 //====================================================アップデート=============================================================
-void Light::Update(char* keys, const ChangeScene& cs, Map map, float rangeTheta,bool isPause,PlayerShadow ps) {
+void Light::Update(char* keys, const ChangeScene& cs, Map map, float rangeTheta, bool isPause, PlayerShadow ps) {
 
 	//シーン遷移の始まった瞬間にシーンに合わせて初期化
 	if (cs.isStartChange_ && cs.preIsEndChange_) {
@@ -97,27 +97,32 @@ void Light::Update(char* keys, const ChangeScene& cs, Map map, float rangeTheta,
 			if (!cs.isStartChange_) {
 				if (ps.GetIsAlive()) {
 
-					if (Global::controlMode_ == 0) {
-						if (keys[DIK_A]) {
-							Global::isMoveShadow_ = true;
-							emitPos_.x -= 2.0f;
-						}
+					if (Global::aliveTimer_ > 0) {
 
-						if (keys[DIK_D]) {
-							Global::isMoveShadow_ = true;
-							emitPos_.x += 2.0f;
-						}
-					} else {
-						if (Novice::IsPressButton(0, kPadButton18) or
-							Novice::IsPressButton(0, kPadButton8)) {
-							Global::isMoveShadow_ = true;
-							emitPos_.x -= 2.0f;
-						}
+						if (Global::controlMode_ == 0) {
+							if (keys[DIK_A]) {
+								Global::isMoveShadow_ = true;
+								emitPos_.x -= 2.0f;
+							}
 
-						if (Novice::IsPressButton(0, kPadButton19) or
-							Novice::IsPressButton(0, kPadButton9)) {
-							Global::isMoveShadow_ = true;
-							emitPos_.x += 2.0f;
+							if (keys[DIK_D]) {
+								Global::isMoveShadow_ = true;
+								emitPos_.x += 2.0f;
+							}
+						} else {
+
+
+							if (Novice::IsPressButton(0, kPadButton18) or
+								Novice::IsPressButton(0, kPadButton8)) {
+								Global::isMoveShadow_ = true;
+								emitPos_.x -= 2.0f;
+							}
+
+							if (Novice::IsPressButton(0, kPadButton19) or
+								Novice::IsPressButton(0, kPadButton9)) {
+								Global::isMoveShadow_ = true;
+								emitPos_.x += 2.0f;
+							}
 						}
 					}
 				}
@@ -132,16 +137,19 @@ void Light::Update(char* keys, const ChangeScene& cs, Map map, float rangeTheta,
 			}
 
 			if (PlayerShadow::GetIsAlive()) {
-				
+
 				if (!Novice::IsPressButton(0, kPadButton18) &&
 					!Novice::IsPressButton(0, kPadButton8) &&
 					!Novice::IsPressButton(0, kPadButton19) &&
 					!Novice::IsPressButton(0, kPadButton9)) {
+				}
+
+				if (PlayerShadow::GetIsPreAlive()) {
 					SaveData::lightPos_ = emitPos_;
 				}
 			}
 
-		break;
+			break;
 
 
 			//====================================================================================
@@ -157,7 +165,7 @@ void Light::Update(char* keys, const ChangeScene& cs, Map map, float rangeTheta,
 
 
 //====================================================描画=============================================================
-void Light::Draw(const Resources& rs,Map map, ChangeScene CS) {
+void Light::Draw(const Resources& rs, Map map, ChangeScene CS) {
 
 	switch (Scene::sceneNum_) {
 		//====================================================================================
@@ -248,7 +256,7 @@ void Light::Draw(const Resources& rs,Map map, ChangeScene CS) {
 				0, 64,
 				32, 32,
 				rs.keysGH_,
-				(32.0f / 128.0f) + ((32.0f / 128.0f) * 0.2f) * Novice::IsPressButton(0,kPadButton18),
+				(32.0f / 128.0f) + ((32.0f / 128.0f) * 0.2f) * Novice::IsPressButton(0, kPadButton18),
 				(32.0f / 94.0f) + ((32.0f / 94.0f) * 0.2f) * Novice::IsPressButton(0, kPadButton18),
 				0.0f,
 				0xffffff5f + int(float(0x4f) * cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))

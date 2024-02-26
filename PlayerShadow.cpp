@@ -4,6 +4,7 @@
 #include "SaveData.h"
 
 bool PlayerShadow::isAlive_ = true;
+bool PlayerShadow::preIsAlive_ = true;
 
 void PlayerShadow::Init(int sceneNum, Screen screen, Shadow shadow, const char* keys, ChangeScene cs) {
 
@@ -96,6 +97,7 @@ void PlayerShadow::InitStar() {
 
 void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, ChangeScene& cs, Screen& screen,
 	Shadow& shadow, Player& player, Map& map, Light& light, bool isPause) {
+	Vec2 tmp = { 0.0f };
 
 	//シーン遷移の始まった瞬間にシーンに合わせて初期化
 	if (cs.isStartChange_ && cs.preIsEndChange_) {
@@ -148,6 +150,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 
 			/*----------------------------死んだときの処理-----------------------------*/
 			if (!isAlive_) {
+				Global::aliveTimer_ = 0;
 				respawnTimeCount_--;
 
 				if (respawnTimeCount_ == 135) {
@@ -184,6 +187,8 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 				}
 			} else {
 
+				Global::aliveTimer_++;
+
 				//殺す
 				if (player.killSwitch_) {
 					isAlive_ = false;
@@ -200,6 +205,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 					}
 				}
 
+				hitSurface2_.clear();
 				for (int i = 0; i < shadow.GetPos().size(); i++) {
 					for (int j = 0; j < shadow.GetPos()[0].size(); j++) {
 
@@ -407,7 +413,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 					//
 					int a = (boardingBlock_ | preBordingBlock_);
 
-					if ( a >= 0) {
+					if (a >= 0) {
 
 						boardingPos_ = CrossPos(
 							screen.GetPos(a, 0), screen.GetPos(a, 1),
@@ -419,8 +425,15 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 							pos_
 						);
 
+						if (player.GetIsMoveBlock()) {
 
-						if (Global::isMoveShadow_ && player.swapTimeCount_ == 0) {
+							pos_.x = screen.GetPos(a, 0).x +
+								Normalize(screen.GetPos(a, 1), screen.GetPos(a, 0)).x * preBoadingVecRatio_;
+
+							if (!isJump_) {
+								pos_.y = screen.GetPos(a, 0).y - (size_.y * 0.5f - 1);
+							}
+						}else if (Global::isMoveShadow_ && player.swapTimeCount_ == 0) {
 							pos_.x = screen.GetPos(a, 0).x +
 								Normalize(screen.GetPos(a, 1), screen.GetPos(a, 0)).x * preBoadingVecRatio_;
 
@@ -430,6 +443,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 
 							isDrop_ = false;
 						}
+						
 					}
 				}
 
@@ -527,8 +541,6 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 								screen.GetPos(boardingBlock_, 0), screen.GetPos(boardingBlock_, 1),
 								pos_
 							);
-
-							break;
 
 						} else {
 							boardingBlock_ = -1;
@@ -773,7 +785,10 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 							loopCount = 0;
 							isHitRect_ = false;
 
+							//if (player.killSwitch_) {
 							isAlive_ = false;
+							//}
+
 							break;
 						}
 
@@ -809,12 +824,11 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 								pushSEHandle_ = Novice::PlayAudio(rs.selectPushSE_, 0, 0.5f);
 							}
 						} else {
-							if (Novice::IsPressButton(0, kPadButton13)) {
+							if (Novice::IsPressButton(0, kPadButton11)) {
 
 								cs.isEndChange_ = true;
 								pushSEHandle_ = Novice::PlayAudio(rs.selectPushSE_, 0, 0.5f);
 							}
-
 						}
 					}
 
@@ -862,6 +876,38 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 			}
 
 
+			// 下にとげがあるとき以外に座標を保存する
+			tmp = (pos_ - screen.GetScreenLeftTop()) / shadow.GetSize();
+			centerAddress_ = { int(tmp.y),int(tmp.x) };
+
+			for (int i = 0; i < shadow.GetMapChip().size(); i++) {
+
+				if (i <= centerAddress_.x) { continue; }
+
+				if (shadow.GetMapChip()[i][centerAddress_.y] != 0) {
+
+
+					if (shadow.GetMapChip()[i][centerAddress_.y] == 1) {
+						SaveData::playerShadowPos_ = pos_.operator+({ 0.0f,-1.0f });// 通常影
+						break;
+
+					} else if (shadow.GetMapChip()[i][centerAddress_.y] == 11) {// スイッチ影
+						if (map.GetIsPressSwitch()) {
+							SaveData::playerShadowPos_ = pos_.operator+({ 0.0f,-1.0f });
+							break;
+						}
+					} else if (shadow.GetMapChip()[i][centerAddress_.y] == 2) {// とげ
+						break;
+					}
+				} else {
+
+					if (i == shadow.GetMapChip().size() - 1) {
+						SaveData::playerShadowPos_ = pos_.operator+({ 0.0f,-1.0f });// 一番下に到達したとき
+						break;
+					}
+				}
+			}
+
 			break;
 			//====================================================================================
 	case CLEAR://								クリア画面
@@ -890,7 +936,7 @@ void PlayerShadow::Draw(const Resources& rs, Screen screen) {
 	case GAME://								ゲーム本編
 		//====================================================================================
 
-		Novice::ScreenPrintf(5, 5, "%d", boardingBlock_);
+		Novice::ScreenPrintf(5, 5, "%d", boardingBlock_ | preBordingBlock_);
 		Novice::ScreenPrintf(5, 25, "%f", boadingVecRatio_);
 
 		if (isAlive_) {
@@ -1038,7 +1084,7 @@ void PlayerShadow::Draw(const Resources& rs, Screen screen) {
 				} else {
 
 					//W
-					Novice::DrawSpriteRect(
+					/*Novice::DrawSpriteRect(
 						int(pos_.x - size_.x * 1.0f),
 						int(pos_.y - size_.y * 0.5f - 32) - int(4.0f * fabsf(cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))),
 						0, 0,
@@ -1047,7 +1093,9 @@ void PlayerShadow::Draw(const Resources& rs, Screen screen) {
 						1, 1,
 						0.0f,
 						0x1f1f1f3f + int(float(0x2f) * cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))
-					);
+					);*/
+
+
 				}
 			}
 
@@ -1100,7 +1148,6 @@ void PlayerShadow::Draw(const Resources& rs, Screen screen) {
 		}
 
 
-		SaveData::playerShadowPos_ = pos_;
 
 		break;
 
@@ -1145,15 +1192,18 @@ void PlayerShadow::DrawResetAction(const Resources& rs, int timeCount, int kActi
 
 
 			//ゴール
-			Novice::DrawSpriteRect(
-				int(pos_.x - 42),
-				int(pos_.y - 80),
+			My::DrawQuad(
+				{
+					pos_.x,
+					pos_.y - 55.0f
+				},
+				{ 46.0f,46.0f },
 				0, 0,
-				128,
-				64,
-				rs.tutorial_[1],
-				(128.0f / 256.0f) * 0.7f,
-				(64.0f / 128.0f) * 0.7f,
+				32,
+				32,
+				1.0f,
+				1.0f,
+				rs.changeGH_[0],
 				0.0f,
 				0xffffff00 + goalTutorialAlpha_
 			);
