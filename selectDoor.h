@@ -192,7 +192,7 @@ public:
 
 	void Draw(Resources rs);
 
-	void Update(char* keys, char* preKeys, const Resources& rs, int starGetCount);
+	void Update(char* keys, char* preKeys, const Resources& rs, int starGetCount,bool startChange );
 	void Debug(char* keys, char* preKeys);
 	void Reset();
 };

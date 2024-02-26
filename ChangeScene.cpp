@@ -1,9 +1,9 @@
 ﻿#include "ChangeScene.h"
 
 void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CPos[],
-	int selectNum, bool& CanCS, Vec2 goalPos, Vec2 goalSize, bool& isPauseSelect, bool& isTitlePush, bool& stageReset,const Resources &rs,int& selectLightSEHandle,
-	int BGMHandle_[3],float soundVolume_[3],bool &isEaseM) {
-	
+	int selectNum, bool& CanCS, Vec2 goalPos, Vec2 goalSize, bool& isPauseSelect, bool& isTitlePush, bool& stageReset, const Resources& rs, int& selectLightSEHandle,
+	int BGMHandle_[3], float soundVolume_[3], bool& isEaseM) {
+
 	preIsStartChange_ = isStartChange_;
 	preIsEndChange_ = isEndChange_;
 
@@ -85,7 +85,7 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 #pragma region"ステージ選択の開始処理（クリアからセレクト||ゲームポーズ画面からセレクト）"
 
 		//足す透明度をイージング
-		if (isStartChange_) {
+		if (isStartChange_ && !isEndChange_) {
 			BCT_ += (1.0f / BCEaseTimer_) * BCEaseDir_;
 			BCAddT_ = EaseInOutBounce(BCT_);
 			addBCColor_ = (1 - BCAddT_) * minBCColor_ + BCAddT_ * maxBCColor_;
@@ -112,7 +112,7 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 
 #pragma region"ステージ画面の終了処理(ステージからゲーム画面||ステージからタイトル画面)"
 
-		/*-------------------------------シーンチェンジフラグが立つと開始--------------------------------*/
+		/*-------------------------------シーンチェンジフラグが立つと開始-------------------------------*/
 
 #pragma region"シーンチェンジで開始"
 
@@ -120,7 +120,7 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 			if (keys[DIK_SPACE] && !preKeys[DIK_SPACE] ||
 				keys[DIK_RETURN] && !preKeys[DIK_RETURN]) {
 				if (!isPushEscape_) {//ESCAPE押されていないとき
-					if (!isChangeScene && !isEndChange_ && !isStartChange_) {
+					if (!isEndChange_ && !isStartChange_) {
 						if (!isEaseM) {
 							isChangeScene = true;
 							isEndChange_ = true;
@@ -136,7 +136,7 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 			if (Novice::IsTriggerButton(0, kPadButton10) or
 				Novice::IsTriggerButton(0, kPadButton11)) {
 				if (!isPushEscape_) {//ESCAPE押されていないとき
-					if (!isChangeScene && !isEndChange_ && !isStartChange_) {
+					if (!isEndChange_ && !isStartChange_) {
 						if (!isEaseM) {
 							isChangeScene = true;
 							isEndChange_ = true;
@@ -163,7 +163,7 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 				}
 			}
 		} else {
-			if (Novice::IsTriggerButton(0,kPadButton4) or Novice::IsTriggerButton(0, kPadButton5)) {
+			if (Novice::IsTriggerButton(0, kPadButton4) or Novice::IsTriggerButton(0, kPadButton5)) {
 				if (!isPushEscape_) {//ESCAPE押されていないとき
 					if (!isChangeScene && !isEndChange_ && !isStartChange_) {
 						isChangeScene = true;
@@ -214,7 +214,7 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 
 			} else {//ESCAPE押されていないとき
 
-				/*--------------------------------状態遷移用の扉を設置-----------------------------------------*/
+				/*--------------------------------状態遷移用の扉を設置----------------------------------------*/
 
 #pragma region"設置"
 
@@ -566,8 +566,8 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 
 				}
 			}
-
-			if (changeTime_ >= 320) {
+			//扉の奥側から階段状の暗幕が下りたあとの時間が長かったため短縮した
+			if (changeTime_ >= 280) {
 				isEndChange_ = false;
 				isStartChange_ = true;
 				Scene::sceneNum_ = CLEAR;
@@ -586,7 +586,7 @@ void ChangeScene::UpDate(char* keys, char* preKeys, bool& isChangeScene, Vec2 CP
 #pragma region"クリア画面の開始処理（ゲームからクリア）"
 		if (isStartChange_) {
 			if (BCWaitTimer_ > 0) {
-				BCWaitTimer_ -= 2;
+				BCWaitTimer_ -= 3;
 			} else {
 				WST_ += (1.0f / WSEaseTimer_) * WSEaseDir_;
 				WSAddT_ = EaseInOutBounce(WST_);

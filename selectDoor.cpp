@@ -134,7 +134,7 @@ void SelectDoor::Draw(Resources rs) {
 
 
 
-void SelectDoor::Update(char* keys, char* preKeys, const Resources& rs, int starGetCount) {
+void SelectDoor::Update(char* keys, char* preKeys, const Resources& rs, int starGetCount,bool startChange) {
 
 	switch (Scene::sceneNum_) {
 		//====================================================================================
@@ -156,7 +156,8 @@ void SelectDoor::Update(char* keys, char* preKeys, const Resources& rs, int star
 	/*----------------------------選択範囲の移動--------------------------------------*/
 		/*シーン遷移が行われていないとき、かつ扉が移動していないとき*/
 		if (!isChangeScene_ &&
-			!isEaseM_) {
+			!isEaseM_ &&
+			!startChange) {
 
 			if (Global::controlMode_ == 0) {
 				if (keys[DIK_D] && preKeys[DIK_D] ||
