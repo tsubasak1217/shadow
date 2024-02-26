@@ -12,10 +12,11 @@ class PlayerShadow {
 	Vec2 velocity_;
 	Vector2<int>address_[4];
 	Vector2<int>preAddress_[4];
+	Vector2<int>centerAddress_;
 	float speed_;
 
 	static bool isAlive_;
-	bool preIsAlive_;
+	static bool preIsAlive_;
 	bool isBackToRespawnPos_;
 	bool preIsBackToRespawnPos_;
 	int respawnTimeCount_;
@@ -135,7 +136,7 @@ public:
 	Vec2 GetSize() { return size_; }
 
 	static bool GetIsAlive() { return isAlive_; }
-	bool GetIsPreAlive() { return preIsAlive_; }
+	static bool GetIsPreAlive() { return preIsAlive_; }
 
 	bool GetIsBackToResPawnPos() { return isBackToRespawnPos_; }
 	bool GetPreIsBackToResPawnPos() { return preIsBackToRespawnPos_; }

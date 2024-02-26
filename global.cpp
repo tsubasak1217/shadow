@@ -16,6 +16,8 @@ bool Global::isReleaseB_ = false;
 bool Global::isB_ = false;
 bool Global::preIsB_ = false;
 
+int Global::aliveTimer_ = 0;
+
 Global::Global() {
 }
 

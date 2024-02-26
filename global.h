@@ -21,6 +21,8 @@ public:
 	static bool isB_;
 	static bool isReleaseB_;
 
+	static int aliveTimer_;
+
 	Global();
 	~Global();
 

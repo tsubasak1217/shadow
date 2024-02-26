@@ -165,7 +165,7 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 					}
 				}
 
-				if (!PlayerShadow::GetIsAlive()) { return; }
+				//if (!PlayerShadow::GetIsAlive()) { return; }
 
 				//動かせる状態かどうか取得-------------------------------------------------
 
@@ -1892,11 +1892,13 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 
 				/*-------------------------------移動処理-------------------------------*/
 
-				if (Global::character_ == 1) {
-					if (!isStopMove_) {
-						if (!isMoveBlock_) {
-							pos_.x += velocity_.x;
-							pos_.y += velocity_.y;
+				if (PlayerShadow::GetIsAlive()) {
+					if (Global::character_ == 1) {
+						if (!isStopMove_) {
+							if (!isMoveBlock_) {
+								pos_.x += velocity_.x;
+								pos_.y += velocity_.y;
+							}
 						}
 					}
 				}
@@ -2125,6 +2127,10 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 						);
 
 						if (PlayerShadow::GetIsAlive()) {
+
+							centerAddress_.x = int((pos_.x - map.GetPuzzleLeftTop().x) / map.GetSize().x);
+							centerAddress_.y = int((pos_.y - map.GetPuzzleLeftTop().y) / map.GetSize().y);
+
 							SaveData::playerPos_ = map.GetPos()[centerAddress_.y][centerAddress_.x];
 							SaveData::savedPlayerPos_ = SaveData::playerPos_;
 							SaveData::savedLightPos_ = SaveData::lightPos_;
@@ -2138,8 +2144,14 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 					Global::isMoveShadow_ = false;
 
 					if (PlayerShadow::GetIsAlive()) {
+
+						centerAddress_.x = int((pos_.x - map.GetPuzzleLeftTop().x) / map.GetSize().x);
+						centerAddress_.y = int((pos_.y - map.GetPuzzleLeftTop().y) / map.GetSize().y);
+
 						SaveData::map_ = map.GetMapChip();
 						SaveData::savedMap_ = SaveData::map_;
+						SaveData::savedLightPos_ = SaveData::lightPos_;
+						SaveData::savedPlayerShadowPos_ = SaveData::playerShadowPos_;
 						SaveData::playerPos_ = map.GetPos()[centerAddress_.y][centerAddress_.x];
 						SaveData::savedPlayerPos_ = SaveData::playerPos_;
 					}
