@@ -1,5 +1,7 @@
 ﻿#include "global.h"
 
+
+
 Vector2<int> Global::windowSize_ = { 480,720 };
 bool Global::isMoveShadow_ = false;
 int Global::timeCount_ = 0;
@@ -17,6 +19,9 @@ bool Global::isB_ = false;
 bool Global::preIsB_ = false;
 
 int Global::aliveTimer_ = 0;
+
+bool Global::isFirstBoot_ = true;
+int Global::firstBootLimit_ = 180;
 
 Global::Global() {
 }

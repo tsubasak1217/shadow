@@ -12,6 +12,7 @@ public:
 
 	// 保存されたマップ
 	static std::vector<std::vector<int>>savedMap_;
+	static  std::vector<std::vector<int>>savedShadowMap_;
 
 	// その他いろいろ保存
 	static Vec2 savedPlayerPos_;
@@ -23,6 +24,7 @@ public:
 	static Vec2 playerShadowPos_;
 	static Vec2 lightPos_;
 	static std::vector<std::vector<int>>map_;
+	static std::vector<std::vector<int>>shadowMap_;
 
 	void Init();
 };

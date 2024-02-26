@@ -23,6 +23,9 @@ public:
 
 	static int aliveTimer_;
 
+	static bool isFirstBoot_;
+	static int firstBootLimit_;
+
 	Global();
 	~Global();
 

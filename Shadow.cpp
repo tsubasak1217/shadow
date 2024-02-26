@@ -171,6 +171,10 @@ void Shadow::Init(const Resources& rs, Screen screen, int sceneNum) {
 		}
 
 		VectorVertexS(goalVertex_, goalPos_, goalSize_.x, goalSize_.y);
+		
+		SaveData::shadowMap_ = mapChip_;
+		SaveData::savedShadowMap_ = SaveData::shadowMap_;
+		
 		break;
 
 	case CLEAR:

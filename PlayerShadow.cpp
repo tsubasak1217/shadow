@@ -168,10 +168,12 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 						player.ReturnSavePoint(map);
 
 						light.ReturnSavePoint();
-						shadow.Init(rs,screen,Scene::sceneNum_);
+						//shadow.Init(rs,screen,Scene::sceneNum_);
 
 						pos_ = SaveData::savedPlayerShadowPos_;
 						//screen.ReturnSavePoint();
+
+						shadow.ReturnSavePoint();
 					}
 
 					isBackToRespawnPos_ = true;
@@ -391,7 +393,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 				velocity_.x *= speed_;
 
 				if (hitCount_ < 2) {
-					pos_.x += velocity_.x;
+					pos_.x += velocity_.x * (1.0f - (0.15f * isJump_));
 					pos_.y += velocity_.y;
 				}
 
@@ -593,6 +595,8 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 								starTheta_.push_back(0.0f);
 								itemGetSEHandle_ = Novice::PlayAudio(rs.itemGetSE_, 0, 0.4f);
 								shadow.SetMapChip(i2, j2, 0);
+								SaveData::shadowMap_ = shadow.GetMapChip();
+								SaveData::savedShadowMap_ = SaveData::shadowMap_;
 							}
 						}
 

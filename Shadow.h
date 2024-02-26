@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Screen.h"
 #include "Player.h"
+#include "SaveData.h"
 
 class Shadow {
 
@@ -43,5 +44,7 @@ public:
 	void SetMapChip(int row,int col,int mapchip) { mapChip_[row][col] = mapchip; }
 	std::vector<std::vector<Vec2>>GetPos() { return pos_; }
 	std::vector<std::vector<bool>>GetTouchable() { return touchable_; }
+
+	void ReturnSavePoint() { mapChip_ = SaveData::savedShadowMap_; }
 };
 
