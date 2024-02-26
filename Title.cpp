@@ -2,6 +2,10 @@
 
 
 void Title::Draw(Resources rs) {
+
+	int padSizeX = 64;
+	int padSizeY = 48;
+
 	switch (Scene::sceneNum_) {
 		//====================================================================================
 	case TITLE://							   タイトル画面
@@ -50,7 +54,18 @@ void Title::Draw(Resources rs) {
 
 		Novice::DrawSprite(int(TitlefontPos_.x - TitlefontSize_.x / 2), int(TitlefontPos_.y - TitlefontSize_.y / 2), rs.creditFontGH_, 0.5f, 0.5f, 0.0f, 0xFFFFFFFF);
 
-		break;
+		Novice::DrawQuad(
+			10, Global::windowSize_.y - (10 + padSizeY),
+			10 + padSizeX, Global::windowSize_.y - (10 + padSizeY),
+			10, Global::windowSize_.y - 10,
+			10 + padSizeX, Global::windowSize_.y - 10,
+			0, 0,
+			1600, 1200,
+			rs.padGH_,
+			0xffffffff
+		);
+
+			break;
 		//====================================================================================
 	case SELECT://							   ステージ選択
 		//====================================================================================
@@ -77,13 +92,13 @@ void Title::Update(char* keys, char* preKeys, Resources& rs) {
 	case TITLE://							   タイトル画面
 		//====================================================================================
 		if (keys[DIK_SPACE] && !preKeys[DIK_SPACE]) {
-			if (!isTMove && !isPush_) {
-				isTMove = true;//タイトルロゴを移動
-				isPush_ = true;//スペースキーの透明度低下
-				titlePushSEHandle_ = Novice::PlayAudio(rs.titlePushSE_, 0, 0.4f);
+			//if (!isTMove && !isPush_) {
+			//	isTMove = true;//タイトルロゴを移動
+			//	isPush_ = true;//スペースキーの透明度低下
+			//	titlePushSEHandle_ = Novice::PlayAudio(rs.titlePushSE_, 0, 0.4f);
 
-				Global::controlMode_ = 0;
-			}
+			//	Global::controlMode_ = 0;
+			//}
 
 		} else if (
 			Novice::IsPressButton(0, kPadButton10) or
