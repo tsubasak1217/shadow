@@ -99,6 +99,6 @@ public:
 	bool GetIsSwapped() { return isSwappped_; }
 	bool GetIsMoveBlock() { return isMoveBlock_; }
 
-	void ReturnSavePoint();
+	void ReturnSavePoint(Map map);
 };
 

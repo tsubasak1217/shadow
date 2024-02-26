@@ -2544,6 +2544,18 @@ void Player::Draw(const char* keys, const Resources& rs) {
 
 }
 
-void Player::ReturnSavePoint() {
+void Player::ReturnSavePoint(Map map) {
 	pos_ = SaveData::savedPlayerPos_;
+
+	//プレイヤーの番地を再計算
+	CalcAddress(
+		address_,
+		{ pos_.x - map.GetPuzzleLeftTop().x + 1,pos_.y - map.GetPuzzleLeftTop().y + 1 },
+		{ map.GetSize().x,map.GetSize().y },
+		size_.x * 0.5f,
+		int(map.GetPos().size()), int(map.GetPos()[0].size())
+	);
+
+	centerAddress_.x = int((pos_.x - map.GetPuzzleLeftTop().x) / map.GetSize().x);
+	centerAddress_.y = int((pos_.y - map.GetPuzzleLeftTop().y) / map.GetSize().y);
 }

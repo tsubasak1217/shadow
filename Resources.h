@@ -40,6 +40,7 @@ public:
 	};
 
 	int A_;
+	int padGH_;
 	int keysGH_;
 	int titleFontGH_;
 	int pressSpaceFontGH_;
