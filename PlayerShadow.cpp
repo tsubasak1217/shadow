@@ -889,13 +889,19 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 
 			for (int i = 0; i < shadow.GetMapChip().size(); i++) {
 
-				if (i < centerAddress_.x) { continue; }
 
 
 				if (i == shadow.GetMapChip().size() - 1) {
+
+					if (shadow.GetMapChip()[i][centerAddress_.y] == 2) {// とげ
+						break;
+					}
+
 					SaveData::playerShadowPos_ = pos_.operator+({ 0.0f,-1.0f });// 一番下に到達したとき
 					break;
 				} else {
+
+					if (i <= centerAddress_.x) { continue; }
 
 					if (shadow.GetMapChip()[i][centerAddress_.y] != 0) {
 
