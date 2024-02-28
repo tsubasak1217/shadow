@@ -21,6 +21,22 @@ void Title::Draw(Resources rs) {
 
 		//if (Global::isFirstBoot_) {
 
+		// "推奨"の文字
+		My::DrawQuad(
+			{
+				float(Global::windowSize_.x) * 0.5f,
+				float(Global::windowSize_.y * 0.5f) - (selectSize.y * 0.5f + 10) - (selectSize.y * 0.5f + 32.0f),
+			},
+			{103.0f,64.0f},
+			0, 0,
+			320,
+			512,
+			1.0f, 1.0f,
+			rs.recmGH_,
+			0.0f,
+			0xffffff00 + int((((0x08 + (0x08 * sin)) * (Global::controlMode_ == 1))) * Global::titleAlphaEase_ * (Global::PADTime_ / 16.0f))
+			);
+
 		My::DrawQuad(
 			{
 				float(Global::windowSize_.x) * 0.5f,

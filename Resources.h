@@ -57,6 +57,7 @@ public:
 	int slashGH_;
 	int WS_;
 	int keyboardGH_;
+	int recmGH_;
 
 	//sounds
 	int BGM[3] = {

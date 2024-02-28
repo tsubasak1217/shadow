@@ -21,7 +21,7 @@ Resources::Resources() {
 	padGH_ = Novice::LoadTexture("./Resources/images/pad.png");
 	WS_ = Novice::LoadTexture("./Resources/images/WS.png");
 	keyboardGH_ = Novice::LoadTexture("./Resources/images/keyboard.png");
-
+	recmGH_ = Novice::LoadTexture("./Resources/images/recommend.png");
 
 
 	mapCsv_[0] = "./Resources/csv/stage1/mapChip.csv";
