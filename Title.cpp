@@ -3,19 +3,57 @@
 
 void Title::Draw(Resources rs) {
 
+	float alp = 1.0f - Global::titleAlphaEase_;
+
 	int padSizeX = 64;
 	int padSizeY = 48;
+
+	Vec2 selectSize = { 240.0f,180.0f };
+	float sin = fabsf(sinf((Global::timeCount_ / 120.0f) * 3.14f));
 
 	switch (Scene::sceneNum_) {
 		//====================================================================================
 	case TITLE://							   タイトル画面
 		//====================================================================================
 		/*背景*/
-
 		Novice::DrawSprite(0, 0, rs.titleBGGH_, 1, 1, 0.0f, 0xFFFFFFFF);
-
 		Novice::DrawBox(0, 0, int(Global::windowSize_.x), int(Global::windowSize_.y), 0.0f, 0x000000FD, kFillModeSolid);
-		//ライト
+
+		//if (Global::isFirstBoot_) {
+
+		My::DrawQuad(
+			{
+				float(Global::windowSize_.x) * 0.5f,
+				float(Global::windowSize_.y * 0.5f) - (selectSize.y * 0.5f + 10),
+			},
+			selectSize * (1.0f - 0.2f * (1.0f - EaseOutBack(Global::PADTime_ / 16.0f))),
+			0, 0,
+			1200,
+			1600,
+			1.0f, 1.0f,
+			rs.padGH_,
+			0.0f,
+			0xffffff00 + int((0x3a + ((0x3f + (0x7f * sin)) * (Global::controlMode_ == 1))) * Global::titleAlphaEase_)
+			);
+
+		My::DrawQuad(
+			{
+				float(Global::windowSize_.x) * 0.5f,
+				float(Global::windowSize_.y * 0.5f) + (selectSize.y * 0.5f + 10),
+			},
+			selectSize * (1.0f - 0.2f * (1.0f - EaseOutBack(Global::KBTime_ / 16.0f))),
+			0, 0,
+			960,
+			1280,
+			1.0f, 1.0f,
+			rs.keyboardGH_,
+			0.0f,
+			0xffffff00 + int((0x3a + ((0x3f + (0x7f * sin)) * (Global::controlMode_ == 0))) * Global::titleAlphaEase_)
+			);
+
+		//} else {
+
+			//ライト
 		for (int i = 0; i < 2; i++) {
 			for (int j = 0; j < 3; j++) {
 				Novice::DrawSprite(int(lightPos_[i].x - lightRadius_), int(lightPos_[i].y - lightRadius_), rs.rengaGH_, 1, 1, 0.0f, WallColor_[i]);
@@ -44,28 +82,53 @@ void Title::Draw(Resources rs) {
 				int(titleVertex[i][1].x), int(titleVertex[i][1].y),
 				int(titleVertex[i][2].x), int(titleVertex[i][2].y),
 				int(titleVertex[i][3].x), int(titleVertex[i][3].y),
-				int(drawSize_[i]), 0, int(titleFontSize_.x), int(titleFontSize_.y), rs.titleFontGH_, 0xFFFFFFDD);
+				int(drawSize_[i]), 0, int(titleFontSize_.x), int(titleFontSize_.y), rs.titleFontGH_, 0xFFFFFF00 + int(200.0f * alp));
 		}
 
-		Novice::DrawSprite(
-			int(spaceFontPos_.x), int(spaceFontPos_.y),
-			rs.pressSpaceFontGH_, 0.5f, 0.5f, 0.0f, spaceFontColor_);
+
+		// クレジット
+			Novice::DrawSprite(
+				int(TitlefontPos_.x - TitlefontSize_.x / 2),
+				int(TitlefontPos_.y - TitlefontSize_.y / 2),
+				rs.creditFontGH_, 0.5f, 0.5f, 0.0f, 0xFFFFFF00 + int(255.0f * alp)
+			);
+
+		if (Global::controlMode_ == 1) {
+			Novice::DrawQuad(
+				10, Global::windowSize_.y - (10 + padSizeY),
+				10 + padSizeX, Global::windowSize_.y - (10 + padSizeY),
+				10, Global::windowSize_.y - 10,
+				10 + padSizeX, Global::windowSize_.y - 10,
+				0, 0,
+				1600, 1200,
+				rs.padGH_,
+				0xffffff00 + int(255.0f * alp)
+			);
 
 
-		Novice::DrawSprite(int(TitlefontPos_.x - TitlefontSize_.x / 2), int(TitlefontPos_.y - TitlefontSize_.y / 2), rs.creditFontGH_, 0.5f, 0.5f, 0.0f, 0xFFFFFFFF);
+			Novice::DrawSprite(
+				int(spaceFontPos_.x), int(spaceFontPos_.y),
+				rs.pressSpaceFontGH_, 0.5f, 0.5f, 0.0f, spaceFontColor_);
 
-		Novice::DrawQuad(
-			10, Global::windowSize_.y - (10 + padSizeY),
-			10 + padSizeX, Global::windowSize_.y - (10 + padSizeY),
-			10, Global::windowSize_.y - 10,
-			10 + padSizeX, Global::windowSize_.y - 10,
-			0, 0,
-			1600, 1200,
-			rs.padGH_,
-			0xffffffff
-		);
+		} else {
+			Novice::DrawQuad(
+				10, Global::windowSize_.y - (10 + padSizeY),
+				10 + padSizeX, Global::windowSize_.y - (10 + padSizeY),
+				10, Global::windowSize_.y - 10,
+				10 + padSizeX, Global::windowSize_.y - 10,
+				0, 0,
+				1280, 960,
+				rs.keyboardGH_,
+				0xffffff00 + int(255.0f * alp)
+			);
 
-			break;
+			Novice::DrawSprite(
+				int(spaceFontPos_.x), int(spaceFontPos_.y),
+				rs.pressSpaceFontGH3_, 0.5f, 0.5f, 0.0f, spaceFontColor_);
+		}
+
+		//}
+		break;
 		//====================================================================================
 	case SELECT://							   ステージ選択
 		//====================================================================================
@@ -87,33 +150,53 @@ void Title::Draw(Resources rs) {
 
 
 void Title::Update(char* keys, char* preKeys, Resources& rs) {
+
+	float alp = 1.0f - Global::titleAlphaEase_;
+
 	switch (Scene::sceneNum_) {
 		//====================================================================================
 	case TITLE://							   タイトル画面
 		//====================================================================================
-		if (keys[DIK_SPACE] && !preKeys[DIK_SPACE]) {
-			//if (!isTMove && !isPush_) {
-			//	isTMove = true;//タイトルロゴを移動
-			//	isPush_ = true;//スペースキーの透明度低下
-			//	titlePushSEHandle_ = Novice::PlayAudio(rs.titlePushSE_, 0, 0.4f);
 
-			//	Global::controlMode_ = 0;
-			//}
+		if (Global::firstBootLimit_ <= 0) {
 
-		} else if (
-			Novice::IsPressButton(0, kPadButton10) or
-			Novice::IsPressButton(0, kPadButton11)
-			) {
+			if (Global::controlMode_ == 0) {
+				if (keys[DIK_SPACE] && !preKeys[DIK_SPACE]) {
+					if (!isTMove && !isPush_) {
+						isTMove = true;//タイトルロゴを移動
+						isPush_ = true;//スペースキーの透明度低下
+						titlePushSEHandle_ = Novice::PlayAudio(rs.titlePushSE_, 0, 0.4f);
 
-			if (!isTMove && !isPush_) {
-				isTMove = true;//タイトルロゴを移動
-				isPush_ = true;//スペースキーの透明度低下
-				titlePushSEHandle_ = Novice::PlayAudio(rs.titlePushSE_, 0, 0.4f);
+						rs.tutorial_[0] = Novice::LoadTexture("./Resources/images/tutorial1.png");
+						rs.tutorial_[1] = Novice::LoadTexture("./Resources/images/tutorial2.png");
+						rs.keysGH_ = Novice::LoadTexture("./Resources/images/keys1.png");
+						//Global::controlMode_ = 0;
+					}
 
-				rs.tutorial_[0] = Novice::LoadTexture("./Resources/images/tutorial2_1.png");
-				rs.tutorial_[1] = Novice::LoadTexture("./Resources/images/tutorial2_2.png");
-				rs.keysGH_ = Novice::LoadTexture("./Resources/images/keys2.png");
-				Global::controlMode_ = 1;
+				}
+			}
+			
+			if (Global::controlMode_ == 1) {
+				if (
+					Novice::IsPressButton(0, kPadButton10) or
+					Novice::IsPressButton(0, kPadButton11)
+					) {
+
+					if (!isTMove && !isPush_) {
+						isTMove = true;//タイトルロゴを移動
+						isPush_ = true;//スペースキーの透明度低下
+						titlePushSEHandle_ = Novice::PlayAudio(rs.titlePushSE_, 0, 0.4f);
+
+						rs.tutorial_[0] = Novice::LoadTexture("./Resources/images/tutorial2_1.png");
+						rs.tutorial_[1] = Novice::LoadTexture("./Resources/images/tutorial2_2.png");
+						rs.keysGH_ = Novice::LoadTexture("./Resources/images/keys2.png");
+						//Global::controlMode_ = 1;
+					}
+				}
+			}
+
+			if (keys[DIK_ESCAPE] or Novice::IsTriggerButton(0, kPadButton4) or Novice::IsTriggerButton(0, kPadButton5)) {
+				Global::isFirstBoot_ = true;
 			}
 		}
 
@@ -167,8 +250,8 @@ void Title::Update(char* keys, char* preKeys, Resources& rs) {
 
 
 				//Novice::ScreenPrintf(0, 150, "SCColor=%x", SCColor_);
-				lightColor_[i] = 0xFFFFFF00 + int(addLightColor_[i]);//で透明度を足す
-				WallColor_[i] = 0xFFFFFF00 + int(addWallColor_[i]);//で透明度を足す
+				lightColor_[i] = 0xFFFFFF00 + int(addLightColor_[i] * alp);//で透明度を足す
+				WallColor_[i] = 0xFFFFFF00 + int(addWallColor_[i] * alp);//で透明度を足す
 
 			}
 		}
@@ -227,7 +310,7 @@ void Title::Update(char* keys, char* preKeys, Resources& rs) {
 
 			opacity_ = (1 - SFT_) * startOpacity_ + SFT_ * endOpacity_;
 		}
-		spaceFontColor_ = 0xFFFFFF00 + int(opacity_);
+		spaceFontColor_ = 0xFFFFFF00 + int(opacity_ * alp);
 #pragma endregion
 
 

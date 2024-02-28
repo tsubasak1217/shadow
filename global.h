@@ -25,10 +25,13 @@ public:
 
 	static bool isFirstBoot_;
 	static int firstBootLimit_;
+	static float titleAlphaEase_;
+	static int PADTime_;
+	static int KBTime_;
 
 	Global();
 	~Global();
 
-	void Update(const char* keys, const char* preKeys);
+	void Update(const char* keys, const char* preKeys, Resources rs);
 	void Draw(const Resources& rs);
 };

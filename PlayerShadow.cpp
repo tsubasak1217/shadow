@@ -1081,7 +1081,7 @@ void PlayerShadow::Draw(const Resources& rs, Screen screen) {
 
 				if (Global::controlMode_ == 0) {
 					//W
-					Novice::DrawSpriteRect(
+					/*Novice::DrawSpriteRect(
 						int(pos_.x - size_.x * 1.5f),
 						int(pos_.y - size_.y * 0.5f - 32) - int(4.0f * fabsf(cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))),
 						0, 0,
@@ -1090,7 +1090,7 @@ void PlayerShadow::Draw(const Resources& rs, Screen screen) {
 						1, 1,
 						0.0f,
 						0x1f1f1f3f + int(float(0x2f) * cosf((float(Global::timeCount_) / 64.0f) * float(M_PI)))
-					);
+					);*/
 
 				} else {
 
@@ -1202,22 +1202,43 @@ void PlayerShadow::DrawResetAction(const Resources& rs, int timeCount, int kActi
 			}
 
 
-			//ゴール
-			My::DrawQuad(
-				{
-					pos_.x,
-					pos_.y - 55.0f
-				},
-				{ 46.0f,46.0f },
-				0, 0,
-				32,
-				32,
-				1.0f,
-				1.0f,
-				rs.changeGH_[0],
-				0.0f,
-				0xffffff00 + goalTutorialAlpha_
-			);
+			if (Global::controlMode_ == 1) {
+
+				//ゴール
+				My::DrawQuad(
+					{
+						pos_.x,
+						pos_.y - 55.0f
+					},
+					{ 46.0f,46.0f },
+					0, 0,
+					32,
+					32,
+					1.0f,
+					1.0f,
+					rs.changeGH_[0],
+					0.0f,
+					0xffffff00 + goalTutorialAlpha_
+				);
+
+			} else {
+				//ゴール
+				My::DrawQuad(
+					{
+						pos_.x + 2.0f,
+						pos_.y - 60.0f
+					},
+					{ 92.0f,46.0f },
+					0, 0,
+					64,
+					128,
+					1.0f,
+					1.0f,
+					rs.tutorial_[1],
+					0.0f,
+					0xffffff00 + goalTutorialAlpha_
+				);
+			}
 		}
 
 

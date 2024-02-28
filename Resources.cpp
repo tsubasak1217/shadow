@@ -19,6 +19,10 @@ Resources::Resources() {
 	slashGH_ = Novice::LoadTexture("./Resources/images/slash.png");
 	A_ = Novice::LoadTexture("./Resources/images/A.png");
 	padGH_ = Novice::LoadTexture("./Resources/images/pad.png");
+	WS_ = Novice::LoadTexture("./Resources/images/WS.png");
+	keyboardGH_ = Novice::LoadTexture("./Resources/images/keyboard.png");
+
+
 
 	mapCsv_[0] = "./Resources/csv/stage1/mapChip.csv";
 	mapCsv_[1] = "./Resources/csv/stage2/mapChip.csv";
