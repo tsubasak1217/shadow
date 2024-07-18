@@ -64,9 +64,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Pause pause;
 
 	SelectLightParticle SLParticle[120];
+	Novice::AllowWindowSizeChanged(true);
 
 	// ウィンドウの×ボタンが押されるまでループ
-	while (Novice::ProcessMessage() == 0) {
+	while(Novice::ProcessMessage() == 0) {
 		// フレームの開始
 		Novice::BeginFrame();
 
@@ -77,63 +78,65 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		/// ↓更新処理ここから
 		///
-		global.Update(keys,preKeys,rs);
+
+
+		global.Update(keys, preKeys, rs);
 
 		cs.UpDate(keys, preKeys, door.isChangeScene_, door.CPos_, door.selectNum_, stageClear.canSceneChange,
-			shadow.GetGoalPos(), shadow.GetGoalSize(), pause.isSelect_, title.isPush_,pause.isStageReset_,rs,door.lightSEHandle_,audio.BGMHandle_, audio.soundVolume_,door.isEaseM_);
+			shadow.GetGoalPos(), shadow.GetGoalSize(), pause.isSelect_, title.isPush_, pause.isStageReset_, rs, door.lightSEHandle_, audio.BGMHandle_, audio.soundVolume_, door.isEaseM_);
 
 		map.Update(keys, rs, cs);
-		player.Update(keys, cs, map, pause.isPause_,rs);
-		light.Update(keys, cs, map, ((3.0f / 4.0f) * float(M_PI)), pause.isPause_,playerShadow);
+		player.Update(keys, cs, map, pause.isPause_, rs);
+		light.Update(keys, cs, map, ((3.0f / 4.0f) * float(M_PI)), pause.isPause_, playerShadow);
 
 		screen.Update(keys, cs, map, light);
 		shadow.Update(keys, cs, rs, screen, map);
 
 		SCE.Update(stageClear, playerShadow.GetstarCount());
 		playerShadow.Update(keys, preKeys, rs, cs, screen, shadow, player, map, light, pause.isPause_);
-		for (int i = 0; i < 120; i++) {
-			particle[i].Update(emitter, playerShadow, screen,keys);
+		for(int i = 0; i < 120; i++) {
+			particle[i].Update(emitter, playerShadow, screen, keys);
 		}
 
-		title.Update(keys, preKeys,rs);
-		door.Update(keys, preKeys, rs, playerShadow.GetstarCount(),cs.isStartChange_);
+		title.Update(keys, preKeys, rs);
+		door.Update(keys, preKeys, rs, playerShadow.GetstarCount(), cs.isStartChange_);
 		stageClear.Update(cs.isStartChange_, playerShadow.GetstarCount());
 
-		pause.Update(cs, keys, preKeys,rs,audio.BGMHandle_[0],audio.soundVolume_[0]);
+		pause.Update(cs, keys, preKeys, rs, audio.BGMHandle_[0], audio.soundVolume_[0]);
 
-		for (int i = 0; i < 120; i++) {
+		for(int i = 0; i < 120; i++) {
 			SLParticle[i].Update(door, light);
 		}
 
 
 
 		//デバックでのみ操作可能
-#if _DEBUG
-		/*シーン遷移が終了した状態でしかシーンを移動できない*/
-		if (!cs.isEndChange_ && !cs.isStartChange_) {
-			if (keys[DIK_1]) {
+	#if _DEBUG
+			/*シーン遷移が終了した状態でしかシーンを移動できない*/
+		if(!cs.isEndChange_ && !cs.isStartChange_) {
+			if(keys[DIK_1]) {
 				Scene::sceneNum_ = TITLE;
-			} else if (keys[DIK_2]) {
+			} else if(keys[DIK_2]) {
 				Scene::sceneNum_ = SELECT;
-			} else if (keys[DIK_3]) {
+			} else if(keys[DIK_3]) {
 				Scene::sceneNum_ = GAME;
-			} else if (keys[DIK_4]) {
+			} else if(keys[DIK_4]) {
 				Scene::sceneNum_ = CLEAR;
 			}
 		}
 
 
-//		door.Debug(keys, preKeys);
+		//		door.Debug(keys, preKeys);
 
-#endif DEBUG
+	#endif DEBUG
 
-		///
-		/// ↑更新処理ここまで
-		///
+			///
+			/// ↑更新処理ここまで
+			///
 
-		///
-		/// ↓描画処理ここから
-		///
+			///
+			/// ↓描画処理ここから
+			///
 
 		map.DrawBG(rs);
 		map.DrawSwitch(rs);
@@ -143,7 +146,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		playerShadow.Draw(rs, screen);
 		screen.Draw(map, rs, light);
 
-		for (int i = 0; i < 120; i++) {
+		for(int i = 0; i < 120; i++) {
 			particle[i].Draw();
 
 		}
@@ -158,7 +161,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		stageClear.Draw(rs);
 
 
-		for (int i = 0; i < 120; i++) {
+		for(int i = 0; i < 120; i++) {
 			SLParticle[i].Draw(keys);
 		}
 
@@ -173,12 +176,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		pause.Draw(rs);
 
 		audio.Draw(rs);
-		
+
 		/*シーンチェンジ一番前*/
 		cs.Draw(door.GH_, door.color_, shadow.GetGoalPos(), shadow.GetGoalSize(), pause.isSelect_);
 
-		if (keys[DIK_H] && !preKeys[DIK_H]) {
-			if (cs.isEndChange_) {
+		if(keys[DIK_H] && !preKeys[DIK_H]) {
+			if(cs.isEndChange_) {
 				cs.isEndChange_ = false;
 
 			} else {
@@ -201,31 +204,31 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 void DrawTutorial(const Resources& rs) {
 
-	if (Scene::sceneNum_ == GAME) {
+	if(Scene::sceneNum_ == GAME) {
 
-	for (int i = 0; i < 5; i++) {//下地
+		for(int i = 0; i < 5; i++) {//下地
 
-		Novice::DrawBox(
-			-67 - i * 2,-5 - i * 2,
-			128 + i * 4,
-			64 + i * 4,
-			0.0f,
-			0x00000015,
-			kFillModeSolid
-		);
-
-		if (Global::controlMode_ == 0) {
 			Novice::DrawBox(
-				int(Global::windowSize_.x - 90 - i * 2),
-				int(-10 - i * 2),
+				-67 - i * 2, -5 - i * 2,
 				128 + i * 4,
 				64 + i * 4,
 				0.0f,
 				0x00000015,
 				kFillModeSolid
 			);
+
+			if(Global::controlMode_ == 0) {
+				Novice::DrawBox(
+					int(Global::windowSize_.x - 90 - i * 2),
+					int(-10 - i * 2),
+					128 + i * 4,
+					64 + i * 4,
+					0.0f,
+					0x00000015,
+					kFillModeSolid
+				);
+			}
 		}
-	}
 
 		//esc
 		Novice::DrawSpriteRect(
@@ -241,7 +244,7 @@ void DrawTutorial(const Resources& rs) {
 
 
 		//reset
-		if (Global::controlMode_ == 0) {
+		if(Global::controlMode_ == 0) {
 			Novice::DrawSpriteRect(
 				Global::windowSize_.x - 110, 0,
 				0, 64,
