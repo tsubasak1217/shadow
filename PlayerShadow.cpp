@@ -436,6 +436,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 							if (!isJump_) {
 								pos_.y = screen.GetPos(a, 0).y - (size_.y * 0.5f - 1);
 							}
+
 						} else if (Global::isMoveShadow_ && player.swapTimeCount_ == 0) {
 							pos_.x = screen.GetPos(a, 0).x +
 								Normalize(screen.GetPos(a, 1), screen.GetPos(a, 0)).x * preBoadingVecRatio_;
