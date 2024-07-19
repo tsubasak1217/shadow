@@ -643,6 +643,7 @@ void Map::Draw(const Resources& rs) {
 
 		for(int row = 0; row < mapChip_.size(); row++) {
 			for(int col = 0; col < mapChip_[0].size(); col++) {
+
 				if(mapChip_[row][col] == 1) {
 
 
@@ -697,6 +698,20 @@ void Map::Draw(const Resources& rs) {
 					);
 
 				}
+
+
+
+				int alpha = int(float(0x03) + (float(0x8) * fabsf(sinf((float(Global::timeCount_) / 120.0f) * 3.14f))));
+
+				Novice::DrawBox(
+					int(pos_[row][col].x - size_.x * 0.5f),
+					int(pos_[row][col].y - size_.y * 0.5f),
+					int(size_.x),
+					int(size_.y),
+					0.0f,
+					0xffffff00 + alpha,
+					kFillModeWireFrame
+				);
 
 			}
 		}
