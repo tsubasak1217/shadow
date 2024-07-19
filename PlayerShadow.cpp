@@ -428,20 +428,9 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 							pos_
 						);
 
+						if(!isHitMapchipShadow_ && !preIsHitMapchipShadow_){
+							if(player.GetIsMoveBlock()) {
 
-						if(player.GetIsMoveBlock()) {
-
-							if(pos_.x >= screen.GetPos(boardingBlock_, 0).x && pos_.x <= screen.GetPos(boardingBlock_, 1).x){
-								pos_.x = screen.GetPos(a, 0).x +
-									Normalize(screen.GetPos(a, 1), screen.GetPos(a, 0)).x * preBoadingVecRatio_;
-
-								if(!isJump_) {
-									pos_.y = screen.GetPos(a, 0).y - (size_.y * 0.5f - 1);
-								}
-							}
-
-						} else if(Global::isMoveShadow_ && player.swapTimeCount_ == 0) {
-							if(CheckLength({ 0.0f,0.0f }, { float(padDirection.x),float(padDirection.y) }) == 0.0f){
 								if(pos_.x >= screen.GetPos(boardingBlock_, 0).x && pos_.x <= screen.GetPos(boardingBlock_, 1).x){
 									pos_.x = screen.GetPos(a, 0).x +
 										Normalize(screen.GetPos(a, 1), screen.GetPos(a, 0)).x * preBoadingVecRatio_;
@@ -449,8 +438,20 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 									if(!isJump_) {
 										pos_.y = screen.GetPos(a, 0).y - (size_.y * 0.5f - 1);
 									}
+								}
 
-									isDrop_ = false;
+							} else if(Global::isMoveShadow_ && player.swapTimeCount_ == 0) {
+								if(CheckLength({ 0.0f,0.0f }, { float(padDirection.x),float(padDirection.y) }) == 0.0f){
+									if(pos_.x >= screen.GetPos(boardingBlock_, 0).x && pos_.x <= screen.GetPos(boardingBlock_, 1).x){
+										pos_.x = screen.GetPos(a, 0).x +
+											Normalize(screen.GetPos(a, 1), screen.GetPos(a, 0)).x * preBoadingVecRatio_;
+
+										if(!isJump_) {
+											pos_.y = screen.GetPos(a, 0).y - (size_.y * 0.5f - 1);
+										}
+
+										isDrop_ = false;
+									}
 								}
 							}
 						}
@@ -581,6 +582,8 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 					}
 				}
 
+				preIsHitMapchipShadow_ = isHitMapchipShadow_;
+				isHitMapchipShadow_ = false;
 
 				//マップチップの当たり判定
 				for(int i2 = 0; i2 < shadow.GetPos().size(); i2++) {
@@ -631,18 +634,23 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 								blockCount++;
 
 								if(shadow.GetTouchable()[i2][j2]) {
-									PushBackBox_Ball(keys,
-										{ shadow.GetPos()[i2][j2].x - shadow.GetSize().x * 0.5f,shadow.GetPos()[i2][j2].y - shadow.GetSize().y * 0.5f },
-										{ shadow.GetPos()[i2][j2].x + shadow.GetSize().x * 0.5f,shadow.GetPos()[i2][j2].y - shadow.GetSize().y * 0.5f },
-										{ shadow.GetPos()[i2][j2].x - shadow.GetSize().x * 0.5f,shadow.GetPos()[i2][j2].y + shadow.GetSize().y * 0.5f },
-										{ shadow.GetPos()[i2][j2].x + shadow.GetSize().x * 0.5f,shadow.GetPos()[i2][j2].y + shadow.GetSize().y * 0.5f },
-										{ shadow.GetPos()[i2][j2].x - shadow.GetSize().x * 0.5f,shadow.GetPos()[i2][j2].y - shadow.GetSize().y * 0.5f },
-										{ shadow.GetPos()[i2][j2].x + shadow.GetSize().x * 0.5f,shadow.GetPos()[i2][j2].y - shadow.GetSize().y * 0.5f },
-										{ shadow.GetPos()[i2][j2].x - shadow.GetSize().x * 0.5f,shadow.GetPos()[i2][j2].y + shadow.GetSize().y * 0.5f },
-										{ shadow.GetPos()[i2][j2].x + shadow.GetSize().x * 0.5f,shadow.GetPos()[i2][j2].y + shadow.GetSize().y * 0.5f },
-										pos_, prePos_, size_.x * 0.5f,
-										isDrop_, isJump_, dropSpeed_, jumpSpeed_, hitCount_, hitSurface2_[blockCount - 1], preHitSurface2_[blockCount - 1]
-									);
+									if(
+										PushBackBox_Ball(keys,
+											{ shadow.GetPos()[i2][j2].x - shadow.GetSize().x * 0.5f,shadow.GetPos()[i2][j2].y - shadow.GetSize().y * 0.5f },
+											{ shadow.GetPos()[i2][j2].x + shadow.GetSize().x * 0.5f,shadow.GetPos()[i2][j2].y - shadow.GetSize().y * 0.5f },
+											{ shadow.GetPos()[i2][j2].x - shadow.GetSize().x * 0.5f,shadow.GetPos()[i2][j2].y + shadow.GetSize().y * 0.5f },
+											{ shadow.GetPos()[i2][j2].x + shadow.GetSize().x * 0.5f,shadow.GetPos()[i2][j2].y + shadow.GetSize().y * 0.5f },
+											{ shadow.GetPos()[i2][j2].x - shadow.GetSize().x * 0.5f,shadow.GetPos()[i2][j2].y - shadow.GetSize().y * 0.5f },
+											{ shadow.GetPos()[i2][j2].x + shadow.GetSize().x * 0.5f,shadow.GetPos()[i2][j2].y - shadow.GetSize().y * 0.5f },
+											{ shadow.GetPos()[i2][j2].x - shadow.GetSize().x * 0.5f,shadow.GetPos()[i2][j2].y + shadow.GetSize().y * 0.5f },
+											{ shadow.GetPos()[i2][j2].x + shadow.GetSize().x * 0.5f,shadow.GetPos()[i2][j2].y + shadow.GetSize().y * 0.5f },
+											pos_, prePos_, size_.x * 0.5f,
+											isDrop_, isJump_, dropSpeed_, jumpSpeed_, hitCount_, hitSurface2_[blockCount - 1], preHitSurface2_[blockCount - 1]
+										)
+										)
+									{
+										isHitMapchipShadow_ = true;
+									}
 								}
 							}
 						}

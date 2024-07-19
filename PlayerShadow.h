@@ -21,6 +21,9 @@ class PlayerShadow {
 	bool preIsBackToRespawnPos_;
 	int respawnTimeCount_;
 
+	bool isHitMapchipShadow_ = false;
+	bool preIsHitMapchipShadow_ = false;
+
 	bool isJump_;
 	bool  isDrop_;
 	float jumpSpeed_;
