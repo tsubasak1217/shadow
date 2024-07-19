@@ -1,8 +1,9 @@
 ﻿#include "Map.h"
 #include "SaveData.h"
+#include "PlayerShadow.h"
 
 int Map::stageNum_ = 0;
-Vec2 Map::puzzleLeftTop_ = {0.0f,0.0f};
+Vec2 Map::puzzleLeftTop_ = { 0.0f,0.0f };
 
 //コンストラクタ============================================================================================
 Map::Map(const Resources& rs) {
@@ -37,12 +38,12 @@ Map::Map(const Resources& rs) {
 
 
 	//読み込んだマップチップの情報決定
-	for (int i = 0; i < mapChip_.size(); i++) {
+	for(int i = 0; i < mapChip_.size(); i++) {
 
 		std::vector<Vec2>rowPos;
 		std::vector<bool>rowTouchable;
 
-		for (int j = 0; j < mapChip_[0].size(); j++) {
+		for(int j = 0; j < mapChip_[0].size(); j++) {
 
 			//座標決定
 			rowPos.push_back(
@@ -53,14 +54,14 @@ Map::Map(const Resources& rs) {
 			);
 
 			//存在フラグ決定
-			if (mapChip_[i][j] == -1) {
+			if(mapChip_[i][j] == -1) {
 				firstPlayerPos_ = {
 			size_.x + (j * size_.x) - (size_.x * 0.5f),
 			size_.y + (i * size_.y) - (size_.y * 0.5f)
 				};
 			}
 
-			if (mapChip_[i][j] >= 0) {
+			if(mapChip_[i][j] >= 0) {
 				rowTouchable.push_back(true);
 
 			} else {
@@ -68,7 +69,7 @@ Map::Map(const Resources& rs) {
 			}
 
 			//各頂点の座標計算(3d)------------------------------------------------
-			if (mapChip_[i][j] == 1 or mapChip_[i][j] == 2) {
+			if(mapChip_[i][j] == 1 or mapChip_[i][j] == 2) {
 				std::vector<Vec3>objVertex;
 				float zRate = 2;
 
@@ -156,8 +157,8 @@ Map::Map(const Resources& rs) {
 	puzzleLeftTop_.y = Global::windowSize_.y - ((mapChip_.size() * size_.y) + ((mapChip_.size() * size_.y) * 0.4f));
 
 	//読み込んだマップチップの情報決定
-	for (int i = 0; i < mapChip_.size(); i++) {
-		for (int j = 0; j < mapChip_[0].size(); j++) {
+	for(int i = 0; i < mapChip_.size(); i++) {
+		for(int j = 0; j < mapChip_[0].size(); j++) {
 
 			pos_[i][j].x += puzzleLeftTop_.x;
 			pos_[i][j].y += puzzleLeftTop_.y;
@@ -165,8 +166,8 @@ Map::Map(const Resources& rs) {
 		}
 	}
 
-	for (int i = 0; i < vertex_.size(); i++) {
-		for (int j = 0; j < vertex_[0].size(); j++) {
+	for(int i = 0; i < vertex_.size(); i++) {
+		for(int j = 0; j < vertex_[0].size(); j++) {
 
 			vertex_[i][j].x += puzzleLeftTop_.x;
 			vertex_[i][j].y += puzzleLeftTop_.y;
@@ -186,7 +187,7 @@ Map::Map(const Resources& rs) {
 //=========================================================初期化関数==============================================================
 void Map::Init(const Resources& rs, int sceneNum) {
 
-	switch (sceneNum) {
+	switch(sceneNum) {
 		//====================================================================================
 	case TITLE://							   タイトル画面
 		//====================================================================================
@@ -227,12 +228,12 @@ void Map::Init(const Resources& rs, int sceneNum) {
 
 
 		//読み込んだマップチップの情報決定
-		for (int i = 0; i < mapChip_.size(); i++) {
+		for(int i = 0; i < mapChip_.size(); i++) {
 
 			std::vector<Vec2>rowPos;
 			std::vector<bool>rowTouchable;
 
-			for (int j = 0; j < mapChip_[0].size(); j++) {
+			for(int j = 0; j < mapChip_[0].size(); j++) {
 
 				//座標決定
 				rowPos.push_back(
@@ -243,14 +244,14 @@ void Map::Init(const Resources& rs, int sceneNum) {
 				);
 
 				//存在フラグ決定
-				if (mapChip_[i][j] == -1) {
+				if(mapChip_[i][j] == -1) {
 					firstPlayerPos_ = {
 				size_.x + (j * size_.x) - (size_.x * 0.5f),
 				size_.y + (i * size_.y) - (size_.y * 0.5f)
 					};
 				}
 
-				if (mapChip_[i][j] >= 0) {
+				if(mapChip_[i][j] >= 0) {
 					rowTouchable.push_back(true);
 
 				} else {
@@ -258,7 +259,7 @@ void Map::Init(const Resources& rs, int sceneNum) {
 				}
 
 				//各頂点の座標計算(3d)------------------------------------------------
-				if (mapChip_[i][j] == 1 or mapChip_[i][j] == 2) {
+				if(mapChip_[i][j] == 1 or mapChip_[i][j] == 2) {
 					std::vector<Vec3>objVertex;
 					float zRate = (5.0f / 3.0f);
 
@@ -346,8 +347,8 @@ void Map::Init(const Resources& rs, int sceneNum) {
 		puzzleLeftTop_.y = Global::windowSize_.y - ((mapChip_.size() * size_.y) + ((mapChip_.size() * size_.y) * 0.4f));
 
 		//読み込んだマップチップの情報決定
-		for (int i = 0; i < mapChip_.size(); i++) {
-			for (int j = 0; j < mapChip_[0].size(); j++) {
+		for(int i = 0; i < mapChip_.size(); i++) {
+			for(int j = 0; j < mapChip_[0].size(); j++) {
 
 				pos_[i][j].x += puzzleLeftTop_.x;
 				pos_[i][j].y += puzzleLeftTop_.y;
@@ -355,8 +356,8 @@ void Map::Init(const Resources& rs, int sceneNum) {
 			}
 		}
 
-		for (int i = 0; i < vertex_.size(); i++) {
-			for (int j = 0; j < vertex_[0].size(); j++) {
+		for(int i = 0; i < vertex_.size(); i++) {
+			for(int j = 0; j < vertex_[0].size(); j++) {
 
 				vertex_[i][j].x += puzzleLeftTop_.x;
 				vertex_[i][j].y += puzzleLeftTop_.y;
@@ -386,11 +387,11 @@ void Map::Init(const Resources& rs, int sceneNum) {
 void Map::Update(char* keys, const Resources& rs, const ChangeScene cs) {
 
 	//シーン遷移の始まった瞬間にシーンに合わせて初期化
-	if (cs.isStartChange_ && cs.preIsEndChange_) {
+	if(cs.isStartChange_ && cs.preIsEndChange_) {
 		Init(rs, Scene::sceneNum_);
 	}
 
-	switch (Scene::sceneNum_) {
+	switch(Scene::sceneNum_) {
 		//====================================================================================
 	case TITLE://							   タイトル画面
 		//====================================================================================
@@ -405,8 +406,8 @@ void Map::Update(char* keys, const Resources& rs, const ChangeScene cs) {
 		//====================================================================================
 
 		//Rで初期化
-		if (keys[DIK_R]) {
-			if (!cs.isEndChange_) {
+		if(keys[DIK_R]) {
+			if(!cs.isEndChange_) {
 				Init(rs, Scene::sceneNum_);
 			}
 		}
@@ -420,29 +421,29 @@ void Map::Update(char* keys, const Resources& rs, const ChangeScene cs) {
 		preIsPressSwitch_ = isPressSwitch_;
 
 		//falseで初期化
-		if (!cs.isEndChange_) {
+		if(!cs.isEndChange_) {
 			isPressSwitch_ = false;
 		}
 		//マップチップの情報更新
-		for (int i = 0; i < mapChip_.size(); i++) {
+		for(int i = 0; i < mapChip_.size(); i++) {
 
 			std::vector<Vec2>rowPos;
 			std::vector<bool>rowTouchable;
 
-			for (int j = 0; j < mapChip_[0].size(); j++) {
+			for(int j = 0; j < mapChip_[0].size(); j++) {
 
 				//座標決定
 				rowPos.push_back(pos_[i][j]);
 
 				//存在フラグ決定
-				if (mapChip_[i][j] == -1) {
+				if(mapChip_[i][j] == -1) {
 					firstPlayerPos_ = {
 				size_.x + (j * size_.x) - (size_.x * 0.5f),
 				size_.y + (i * size_.y) - (size_.y * 0.5f)
 					};
 				}
 
-				if (mapChip_[i][j] > 0) {
+				if(mapChip_[i][j] > 0) {
 					rowTouchable.push_back(true);
 
 				} else {
@@ -450,7 +451,7 @@ void Map::Update(char* keys, const Resources& rs, const ChangeScene cs) {
 				}
 
 				//各頂点の座標計算(3d)------------------------------------------------
-				if (mapChip_[i][j] == 1 or mapChip_[i][j] == 2) {
+				if(mapChip_[i][j] == 1 or mapChip_[i][j] == 2) {
 					std::vector<Vec3>objVertex;
 					float zRate = (5.0f / 3.0f);
 
@@ -532,7 +533,7 @@ void Map::Update(char* keys, const Resources& rs, const ChangeScene cs) {
 		}
 
 
-		SaveData::map_ = mapChip_;
+		//SaveData::map_ = mapChip_;
 
 		break;
 		//====================================================================================
@@ -550,7 +551,7 @@ void Map::Update(char* keys, const Resources& rs, const ChangeScene cs) {
 //====================================================描画=============================================================
 void Map::DrawBG(const Resources& rs) {
 
-	switch (Scene::sceneNum_) {
+	switch(Scene::sceneNum_) {
 		//====================================================================================
 	case TITLE://							   タイトル画面
 		//====================================================================================
@@ -573,8 +574,8 @@ void Map::DrawBG(const Resources& rs) {
 			kFillModeSolid
 		);
 
-		for (int row = 0; row < mapChip_.size(); row++) {
-			for (int col = 0; col < mapChip_[0].size(); col++) {
+		for(int row = 0; row < mapChip_.size(); row++) {
+			for(int col = 0; col < mapChip_[0].size(); col++) {
 				//地面
 				Novice::DrawQuad(
 					int(posCopy_[row][col].x - size_.x * 0.5f),
@@ -627,7 +628,7 @@ void Map::ReturnSavePoint() { mapChip_ = SaveData::savedMap_; }
 
 void Map::Draw(const Resources& rs) {
 
-	switch (Scene::sceneNum_) {
+	switch(Scene::sceneNum_) {
 		//====================================================================================
 	case TITLE://							   タイトル画面
 		//====================================================================================
@@ -640,9 +641,9 @@ void Map::Draw(const Resources& rs) {
 	case GAME://								ゲーム本編
 		//====================================================================================
 
-		for (int row = 0; row < mapChip_.size(); row++) {
-			for (int col = 0; col < mapChip_[0].size(); col++) {
-				if (mapChip_[row][col] == 1) {
+		for(int row = 0; row < mapChip_.size(); row++) {
+			for(int col = 0; col < mapChip_[0].size(); col++) {
+				if(mapChip_[row][col] == 1) {
 
 
 					Novice::DrawQuad(
@@ -660,7 +661,7 @@ void Map::Draw(const Resources& rs) {
 						0xffffffff
 					);
 
-				} else if (mapChip_[row][col] == 2) {
+				} else if(mapChip_[row][col] == 2) {
 
 					Novice::DrawQuad(
 						int(pos_[row][col].x - size_.x * 0.5f),
@@ -677,7 +678,7 @@ void Map::Draw(const Resources& rs) {
 						0xffffffff
 					);
 
-				} else if (mapChip_[row][col] == 8) {
+				} else if(mapChip_[row][col] == 8) {
 
 					//穴が開いて通れない地面
 					Novice::DrawQuad(
@@ -713,7 +714,7 @@ void Map::Draw(const Resources& rs) {
 
 void Map::DrawSwitch(const Resources& rs) {
 
-	switch (Scene::sceneNum_) {
+	switch(Scene::sceneNum_) {
 		//====================================================================================
 	case TITLE://							   タイトル画面
 		//====================================================================================
@@ -726,13 +727,13 @@ void Map::DrawSwitch(const Resources& rs) {
 	case GAME://								ゲーム本編
 		//====================================================================================
 
-		for (int row = 0; row < mapChip_.size(); row++) {
-			for (int col = 0; col < mapChip_[0].size(); col++) {
+		for(int row = 0; row < mapChip_.size(); row++) {
+			for(int col = 0; col < mapChip_[0].size(); col++) {
 
-				if (mapChipCopy_[row][col] == -2) {
+				if(mapChipCopy_[row][col] == -2) {
 
 					//スイッチ
-					if (!isPressSwitch_) {
+					if(!isPressSwitch_) {
 						Novice::DrawQuad(
 							int(posCopy_[row][col].x - size_.x * 0.5f),
 							int(posCopy_[row][col].y - size_.y * 0.5f),

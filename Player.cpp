@@ -2475,18 +2475,20 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 							int(map.GetPos().size()), int(map.GetPos()[0].size())
 						);
 
-						if (PlayerShadow::GetIsAlive()) {
+						//if (PlayerShadow::GetIsAlive()) {
 
-							centerAddress_.x = int((pos_.x - map.GetPuzzleLeftTop().x) / map.GetSize().x);
-							centerAddress_.y = int((pos_.y - map.GetPuzzleLeftTop().y) / map.GetSize().y);
+							//if(!isSwappped_){
+							//	centerAddress_.x = int((pos_.x - map.GetPuzzleLeftTop().x) / map.GetSize().x);
+							//	centerAddress_.y = int((pos_.y - map.GetPuzzleLeftTop().y) / map.GetSize().y);
 
-							SaveData::playerPos_ = map.GetPos()[centerAddress_.y][centerAddress_.x];
-							SaveData::savedPlayerPos_ = SaveData::playerPos_;
-							SaveData::savedLightPos_ = SaveData::lightPos_;
-							SaveData::savedPlayerShadowPos_ = SaveData::playerShadowPos_;
-							SaveData::map_ = map.GetMapChip();
-							SaveData::savedMap_ = SaveData::map_;
-						}
+							//	SaveData::map_ = map.GetMapChip();
+							//	SaveData::savedMap_ = SaveData::map_;
+							//	SaveData::playerPos_ = map.GetPos()[centerAddress_.y][centerAddress_.x];
+							//	SaveData::savedPlayerPos_ = SaveData::playerPos_;
+							//	SaveData::savedLightPos_ = SaveData::lightPos_;
+							//	SaveData::savedPlayerShadowPos_ = SaveData::playerShadowPos_;
+							//}
+						//}
 					}
 
 				} else {
@@ -2494,15 +2496,17 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 
 					if (PlayerShadow::GetIsAlive()) {
 
-						centerAddress_.x = int((pos_.x - map.GetPuzzleLeftTop().x) / map.GetSize().x);
-						centerAddress_.y = int((pos_.y - map.GetPuzzleLeftTop().y) / map.GetSize().y);
+						if(!isSwappped_){
+							centerAddress_.x = int((pos_.x - map.GetPuzzleLeftTop().x) / map.GetSize().x);
+							centerAddress_.y = int((pos_.y - map.GetPuzzleLeftTop().y) / map.GetSize().y);
 
-						SaveData::map_ = map.GetMapChip();
-						SaveData::savedMap_ = SaveData::map_;
-						SaveData::savedLightPos_ = SaveData::lightPos_;
-						SaveData::savedPlayerShadowPos_ = SaveData::playerShadowPos_;
-						SaveData::playerPos_ = map.GetPos()[centerAddress_.y][centerAddress_.x];
-						SaveData::savedPlayerPos_ = SaveData::playerPos_;
+							SaveData::map_ = map.GetMapChip();
+							SaveData::savedMap_ = SaveData::map_;
+							SaveData::savedLightPos_ = SaveData::lightPos_;
+							SaveData::savedPlayerShadowPos_ = SaveData::playerShadowPos_;
+							SaveData::playerPos_ = map.GetPos()[centerAddress_.y][centerAddress_.x];
+							SaveData::savedPlayerPos_ = SaveData::playerPos_;
+						}
 					}
 				}
 			}

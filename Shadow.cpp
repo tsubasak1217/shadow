@@ -499,6 +499,33 @@ void Shadow::Draw(const Resources& rs) {
 						0x3f3f3f1f + int(float(0x20) * EaseInOutExpo(float(pressTimeCount_) / 32.0f))
 					);
 				}
+
+				float pressRate = (float(pressTimeCount_) / 32.0f);
+				int tmpColor = 
+					int(float(0x7f) + (float(0x3f) * fabsf(sinf((float(Global::timeCount_) / 120.0f) * 3.14f))) * pressRate);
+				int alpha = int((float(0x3f) + float(0x3f) * pressRate) * pressRate);
+
+
+				Novice::DrawBox(
+					int(pos_[i][j].x - size_.x * 0.45f),
+					int(pos_[i][j].y - size_.y * 0.45f),
+					int(size_.x * 0.9f),
+					int(size_.y * 0.9f),
+					0.0f,
+					(tmpColor << 8) + (tmpColor << 16) + (tmpColor << 24) + alpha,
+					kFillModeWireFrame
+				);
+
+				Novice::DrawBox(
+					int(pos_[i][j].x - size_.x * 0.45f) + 2,
+					int(pos_[i][j].y - size_.y * 0.45f) + 2,
+					int(size_.x * 0.9f) - 4,
+					int(size_.y * 0.9f) - 4,
+					0.0f,
+					(tmpColor << 8) + (tmpColor << 16) + (tmpColor << 24) + (alpha/2),
+					kFillModeWireFrame
+				);
+
 			}
 		}
 	}
