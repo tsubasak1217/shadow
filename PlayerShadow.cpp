@@ -8,7 +8,7 @@ bool PlayerShadow::preIsAlive_ = true;
 
 void PlayerShadow::Init(int sceneNum, Screen screen, Shadow shadow, const char* keys, ChangeScene cs) {
 
-	switch (sceneNum) {
+	switch(sceneNum) {
 		//====================================================================================
 	case TITLE://							   タイトル画面
 		//====================================================================================
@@ -32,7 +32,7 @@ void PlayerShadow::Init(int sceneNum, Screen screen, Shadow shadow, const char* 
 		direction_ = { 0.0f,0.0f };
 		velocity_ = { 0.0f,0.0f };
 		speed_ = 4.0f;
-		for (int i = 0; i < 4; i++) {
+		for(int i = 0; i < 4; i++) {
 			address_[i] = { 0,0 };
 			preAddress_[i] = address_[i];
 		}
@@ -71,7 +71,7 @@ void PlayerShadow::Init(int sceneNum, Screen screen, Shadow shadow, const char* 
 		goalTutorialAlpha_ = 0;
 		goalHoldTimer_ = 0;
 
-		if (keys[DIK_R] or
+		if(keys[DIK_R] or
 			(cs.isStartChange_ && cs.preIsEndChange_)) {
 			starGetCount_ = 0;
 		}
@@ -100,13 +100,13 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 	Vec2 tmp = { 0.0f };
 
 	//シーン遷移の始まった瞬間にシーンに合わせて初期化
-	if (cs.isStartChange_ && cs.preIsEndChange_) {
+	if(cs.isStartChange_ && cs.preIsEndChange_) {
 		Init(Scene::sceneNum_, screen, shadow, keys, cs);
 		InitStar();
 		prePos_ = pos_;
 	}
 
-	switch (Scene::sceneNum_) {
+	switch(Scene::sceneNum_) {
 		//====================================================================================
 	case TITLE://							   タイトル画面
 		//====================================================================================
@@ -120,13 +120,13 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 		//====================================================================================
 
 		//Rで初期化
-		if (keys[DIK_R]) {
-			if (!cs.isEndChange_) {
+		if(keys[DIK_R]) {
+			if(!cs.isEndChange_) {
 				Init(Scene::sceneNum_, screen, shadow, keys, cs);
 				InitStar();
 			}
 		}
-		if (!isPause && !cs.isEndChange_ && !cs.isStartChange_) {
+		if(!isPause && !cs.isEndChange_ && !cs.isStartChange_) {
 			//前のフレームの情報保存に関するもの
 			prePos_ = pos_;
 			preIsAlive_ = isAlive_;
@@ -134,14 +134,14 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 
 			//動いてないとき、待機時間タイマーを加算
 			//動いていないとき、動いていない時間タイマーを加算
-			if (Global::controlMode_ == 0) {
-				if (!keys[DIK_UP] && !keys[DIK_LEFT] && !keys[DIK_RIGHT]) {
+			if(Global::controlMode_ == 0) {
+				if(!keys[DIK_UP] && !keys[DIK_LEFT] && !keys[DIK_RIGHT]) {
 					waitTimer_++;
 				} else {
 					waitTimer_ = 0;
 				}
 			} else {
-				if (velocity_.x == 0 && int(velocity_.y) == 0) {
+				if(velocity_.x == 0 && int(velocity_.y) == 0) {
 					waitTimer_++;
 				} else {
 					waitTimer_ = 0;
@@ -149,17 +149,17 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 			}
 
 			/*----------------------------死んだときの処理-----------------------------*/
-			if (!isAlive_) {
+			if(!isAlive_) {
 				Global::aliveTimer_ = 0;
 				respawnTimeCount_--;
 
-				if (respawnTimeCount_ == 135) {
+				if(respawnTimeCount_ == 135) {
 					//復活音
 					Novice::PlayAudio(rs.playerRespawnSE_, 0, 0.12f);
 
-				} else if (respawnTimeCount_ < 80) {
+				} else if(respawnTimeCount_ < 80) {
 
-					if (respawnTimeCount_ == 79) {
+					if(respawnTimeCount_ == 79) {
 
 						map.Init(rs, Scene::sceneNum_);
 						map.ReturnSavePoint();
@@ -178,11 +178,11 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 
 					isBackToRespawnPos_ = true;
 
-					if (respawnTimeCount_ <= 0) {
+					if(respawnTimeCount_ <= 0) {
 						Init(Scene::sceneNum_, screen, shadow, keys, cs);
 						pos_ = SaveData::savedPlayerShadowPos_;
 
-						for (int i = 0; i < starFollowPos_.size(); i++) {
+						for(int i = 0; i < starFollowPos_.size(); i++) {
 
 							starFollowPos_[i] = pos_;
 						}
@@ -193,26 +193,26 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 				Global::aliveTimer_++;
 
 				//殺す
-				if (player.killSwitch_) {
+				if(player.killSwitch_) {
 					isAlive_ = false;
 				}
 
 				//配列数の決定
-				if (hitSurface_.size() != screen.GetPos().size()) {
+				if(hitSurface_.size() != screen.GetPos().size()) {
 
 					hitSurface_.clear();
 
-					for (int i = 0; i < screen.GetPos().size(); i++) {
+					for(int i = 0; i < screen.GetPos().size(); i++) {
 
 						hitSurface_.push_back(0);
 					}
 				}
 
 				hitSurface2_.clear();
-				for (int i = 0; i < shadow.GetPos().size(); i++) {
-					for (int j = 0; j < shadow.GetPos()[0].size(); j++) {
+				for(int i = 0; i < shadow.GetPos().size(); i++) {
+					for(int j = 0; j < shadow.GetPos()[0].size(); j++) {
 
-						if (shadow.GetMapChip()[i][j] == 1 or shadow.GetMapChip()[i][j] == 11) {
+						if(shadow.GetMapChip()[i][j] == 1 or shadow.GetMapChip()[i][j] == 11) {
 
 							hitSurface2_.push_back(0);
 						}
@@ -227,11 +227,11 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 				direction_ = { 0,0 };
 
 				//ジャンプ
-				if (isJump_) {
+				if(isJump_) {
 					jumpSpeed_ = jumpVelocity_;
 					jumpTimer_++;
 
-					if (jumpTimer_ > 32) {
+					if(jumpTimer_ > 32) {
 						jumpTimer_ = 32;
 					}
 
@@ -239,13 +239,13 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 
 					jumpTimer_ = 0;
 
-					if (!isDrop_) {
+					if(!isDrop_) {
 
 
-						if (Global::controlMode_ == 0) {
-							if (keys[DIK_UP]) {
+						if(Global::controlMode_ == 0) {
+							if(keys[DIK_UP]) {
 
-								if (Global::character_ == 0) {
+								if(Global::character_ == 0) {
 									isJump_ = true;
 									isDrop_ = true;
 									jumpSpeed_ = jumpVelocity_;
@@ -256,9 +256,9 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 							}
 						} else {
 
-							if (Novice::IsPressButton(0, kPadButton10)) {
+							if(Novice::IsPressButton(0, kPadButton10)) {
 
-								if (Global::character_ == 0) {
+								if(Global::character_ == 0) {
 									isJump_ = true;
 									isDrop_ = true;
 									jumpSpeed_ = jumpVelocity_;
@@ -272,30 +272,30 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 
 				}
 
-				if (pos_.y < (screen.GetScreenLeftTop().y + screen.GetSize().y) - size_.y * 0.5f) {
+				if(pos_.y < (screen.GetScreenLeftTop().y + screen.GetSize().y) - size_.y * 0.5f) {
 					isDrop_ = true;
 				}
 
-				if (address_[LeftBottom].y + 1 < shadow.GetMapChip().size()) {
-					if (shadow.GetMapChip()[address_[LeftBottom].y + 1][address_[LeftBottom].x] > 0 or
+				if(address_[LeftBottom].y + 1 < shadow.GetMapChip().size()) {
+					if(shadow.GetMapChip()[address_[LeftBottom].y + 1][address_[LeftBottom].x] > 0 or
 						shadow.GetMapChip()[address_[RightBottom].y + 1][address_[RightBottom].x] > 0) {
 
-						if (shadow.GetMapChip()[address_[LeftBottom].y + 1][address_[LeftBottom].x] != 2 &&
+						if(shadow.GetMapChip()[address_[LeftBottom].y + 1][address_[LeftBottom].x] != 2 &&
 							shadow.GetMapChip()[address_[RightBottom].y + 1][address_[RightBottom].x] != 2) {
 
-							if (shadow.GetMapChip()[address_[LeftBottom].y + 1][address_[LeftBottom].x] != 8 &&
+							if(shadow.GetMapChip()[address_[LeftBottom].y + 1][address_[LeftBottom].x] != 8 &&
 								shadow.GetMapChip()[address_[RightBottom].y + 1][address_[RightBottom].x] != 8) {
 
-								if (shadow.GetMapChip()[address_[LeftBottom].y + 1][address_[LeftBottom].x] != 7 &&
+								if(shadow.GetMapChip()[address_[LeftBottom].y + 1][address_[LeftBottom].x] != 7 &&
 									shadow.GetMapChip()[address_[RightBottom].y + 1][address_[RightBottom].x] != 7) {
 
-									if ((pos_.y <= shadow.GetPos()[address_[LeftBottom].y + 1][address_[LeftBottom].x].y - (size_.y * 0.5f) - (shadow.GetSize().y * 0.5f) + 1.0f &&
+									if((pos_.y <= shadow.GetPos()[address_[LeftBottom].y + 1][address_[LeftBottom].x].y - (size_.y * 0.5f) - (shadow.GetSize().y * 0.5f) + 1.0f &&
 										pos_.y >= shadow.GetPos()[address_[LeftBottom].y + 1][address_[LeftBottom].x].y - (size_.y * 0.5f) - (shadow.GetSize().y * 0.5f) - 2.0f) or
 										(pos_.y <= shadow.GetPos()[address_[RightBottom].y + 1][address_[RightBottom].x].y - (size_.y * 0.5f) - (shadow.GetSize().y * 0.5f) + 1.0f &&
 											pos_.y >= shadow.GetPos()[address_[RightBottom].y + 1][address_[RightBottom].x].y - (size_.y * 0.5f) - (shadow.GetSize().y * 0.5f) - 2.0f)
 										) {
 
-										if (shadow.GetTouchable()[address_[RightBottom].y + 1][address_[RightBottom].x] or
+										if(shadow.GetTouchable()[address_[RightBottom].y + 1][address_[RightBottom].x] or
 											shadow.GetTouchable()[address_[LeftBottom].y + 1][address_[LeftBottom].x]) {
 											isJump_ = false;
 											isDrop_ = false;
@@ -322,8 +322,8 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 
 				}
 
-				if (address_[2].y >= 0 && address_[2].y + 1 < shadow.GetMapChip().size()) {
-					if ((shadow.GetMapChip()[address_[2].y + 1][address_[2].x] == 7 &&
+				if(address_[2].y >= 0 && address_[2].y + 1 < shadow.GetMapChip().size()) {
+					if((shadow.GetMapChip()[address_[2].y + 1][address_[2].x] == 7 &&
 						shadow.GetMapChip()[address_[3].y + 1][address_[3].x] == 7) or
 						(shadow.GetMapChip()[address_[2].y][address_[2].x] == 7 or
 							shadow.GetMapChip()[address_[3].y][address_[3].x] == 7)) {
@@ -332,13 +332,13 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 				}
 
 				//ジャンプ
-				if (!isJump_) {
+				if(!isJump_) {
 
 
-					if (Global::controlMode_ == 0) {
-						if (keys[DIK_UP]) {
+					if(Global::controlMode_ == 0) {
+						if(keys[DIK_UP]) {
 
-							if (Global::character_ == 0) {
+							if(Global::character_ == 0) {
 								isJump_ = true;
 								isDrop_ = true;
 								jumpSpeed_ = jumpVelocity_;
@@ -349,9 +349,9 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 						}
 					} else {
 
-						if (Novice::IsPressButton(0, kPadButton10)) {
+						if(Novice::IsPressButton(0, kPadButton10)) {
 
-							if (Global::character_ == 0) {
+							if(Global::character_ == 0) {
 								isJump_ = true;
 								isDrop_ = true;
 								jumpSpeed_ = jumpVelocity_;
@@ -365,7 +365,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 
 
 				//落下
-				if (isDrop_) {
+				if(isDrop_) {
 
 					dropSpeed_ += gravity_;
 				} else {
@@ -380,8 +380,8 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 				Vector2<int>padDirection;
 				Novice::GetAnalogInputLeft(0, &padDirection.x, &padDirection.y);
 
-				if (Global::character_ == 0) {
-					if (Global::controlMode_ == 0) {
+				if(Global::character_ == 0) {
+					if(Global::controlMode_ == 0) {
 						direction_.x = float(keys[DIK_RIGHT] - keys[DIK_LEFT]);
 					} else {
 						direction_.x = float(-padDirection.x);
@@ -392,7 +392,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 
 				velocity_.x *= speed_;
 
-				if (hitCount_ < 2) {
+				if(hitCount_ < 2) {
 					pos_.x += velocity_.x * (1.0f - (0.15f * isJump_));
 					pos_.y += velocity_.y;
 				}
@@ -401,22 +401,22 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 				//乗っている影ブロックが動けば一緒に動く--------------------------------------
 				preBordingBlock_ = boardingBlock_;
 
-				if (boardingBlock_ >= 0) {
-					if (isJump_) {
+				if(boardingBlock_ >= 0) {
+					if(isJump_) {
 						boardingBlock_ = -1;
 					}
 				}
 
 				preBoadingVecRatio_ = boadingVecRatio_;
 
-				for (int i = 0; i < screen.GetPos().size(); i++) {
+				for(int i = 0; i < screen.GetPos().size(); i++) {
 
 					hitSurface_[i] = 0;
 
 					//
 					int a = (boardingBlock_ | preBordingBlock_);
 
-					if (a >= 0) {
+					if(a >= 0) {
 
 						boardingPos_ = CrossPos(
 							screen.GetPos(a, 0), screen.GetPos(a, 1),
@@ -428,26 +428,32 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 							pos_
 						);
 
-						if (player.GetIsMoveBlock()) {
 
-							pos_.x = screen.GetPos(a, 0).x +
-								Normalize(screen.GetPos(a, 1), screen.GetPos(a, 0)).x * preBoadingVecRatio_;
+						if(player.GetIsMoveBlock()) {
 
-							if (!isJump_) {
-								pos_.y = screen.GetPos(a, 0).y - (size_.y * 0.5f - 1);
+							if(pos_.x >= screen.GetPos(boardingBlock_, 0).x && pos_.x <= screen.GetPos(boardingBlock_, 1).x){
+								pos_.x = screen.GetPos(a, 0).x +
+									Normalize(screen.GetPos(a, 1), screen.GetPos(a, 0)).x * preBoadingVecRatio_;
+
+								if(!isJump_) {
+									pos_.y = screen.GetPos(a, 0).y - (size_.y * 0.5f - 1);
+								}
 							}
 
-						} else if (Global::isMoveShadow_ && player.swapTimeCount_ == 0) {
-							pos_.x = screen.GetPos(a, 0).x +
-								Normalize(screen.GetPos(a, 1), screen.GetPos(a, 0)).x * preBoadingVecRatio_;
+						} else if(Global::isMoveShadow_ && player.swapTimeCount_ == 0) {
+							if(CheckLength({ 0.0f,0.0f }, { float(padDirection.x),float(padDirection.y) }) == 0.0f){
+								if(pos_.x >= screen.GetPos(boardingBlock_, 0).x && pos_.x <= screen.GetPos(boardingBlock_, 1).x){
+									pos_.x = screen.GetPos(a, 0).x +
+										Normalize(screen.GetPos(a, 1), screen.GetPos(a, 0)).x * preBoadingVecRatio_;
 
-							if (!isJump_) {
-								pos_.y = screen.GetPos(a, 0).y - (size_.y * 0.5f - 1);
+									if(!isJump_) {
+										pos_.y = screen.GetPos(a, 0).y - (size_.y * 0.5f - 1);
+									}
+
+									isDrop_ = false;
+								}
 							}
-
-							isDrop_ = false;
 						}
-
 					}
 				}
 
@@ -459,7 +465,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 
 				//上下===============================================
 				//下に出た時
-				if (pos_.y >= (screen.GetScreenLeftTop().y + screen.GetSize().y) - size_.y * 0.5f) {
+				if(pos_.y >= (screen.GetScreenLeftTop().y + screen.GetSize().y) - size_.y * 0.5f) {
 					pos_.y = (screen.GetScreenLeftTop().y + screen.GetSize().y) - size_.y * 0.5f;
 
 					isJump_ = false;
@@ -468,29 +474,29 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 					jumpSpeed_ = 0.0f;
 
 					//上に出た時
-				} else if (pos_.y <= screen.GetScreenLeftTop().y + size_.y * 0.5f) {
+				} else if(pos_.y <= screen.GetScreenLeftTop().y + size_.y * 0.5f) {
 					pos_.y = screen.GetScreenLeftTop().y + size_.y * 0.5f;
 				}
 
 				//左右===============================================
 				//右に出た時
-				if (pos_.x >= (screen.GetScreenLeftTop().x + screen.GetSize().x) - size_.x * 0.5f) {
+				if(pos_.x >= (screen.GetScreenLeftTop().x + screen.GetSize().x) - size_.x * 0.5f) {
 					pos_.x = (screen.GetScreenLeftTop().x + screen.GetSize().x) - size_.x * 0.5f - 1;
 
 					//左に出た時
-				} else if (pos_.x <= screen.GetScreenLeftTop().x + size_.x * 0.5f) {
+				} else if(pos_.x <= screen.GetScreenLeftTop().x + size_.x * 0.5f) {
 					pos_.x = screen.GetScreenLeftTop().x + size_.x * 0.5f;
 
 				}
 
 				//前フレーム番地の保存
-				for (int i = 0; i < 4; i++) {
+				for(int i = 0; i < 4; i++) {
 					preAddress_[i] = address_[i];
 
 				}
 
 
-				if (player.GetIsSwapped()) {
+				if(player.GetIsSwapped()) {
 					pos_.y -= 2;
 					prePos_ = pos_;
 				}
@@ -505,12 +511,12 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 				);
 
 
-				for (int i = 0; i < screen.GetPos().size(); i++) {
+				for(int i = 0; i < screen.GetPos().size(); i++) {
 
 					//影の矩形との当たり判定
-					if (screen.GetPos(i, 6).x >= screen.GetPos(i, 2).x && screen.GetPos(i, 7).x >= screen.GetPos(i, 3).x) {
+					if(screen.GetPos(i, 6).x >= screen.GetPos(i, 2).x && screen.GetPos(i, 7).x >= screen.GetPos(i, 3).x) {
 
-						if (
+						if(
 							PushBackBox_Ball(keys,
 								screen.GetPos(i, 0), screen.GetPos(i, 1), screen.GetPos(i, 2), screen.GetPos(i, 7),
 								screen.GetPrePos(i, 0), screen.GetPrePos(i, 1), screen.GetPrePos(i, 2), screen.GetPrePos(i, 7),
@@ -531,9 +537,9 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 							boardingBlock_ = -1;
 						}
 
-					} else if (screen.GetPos(i, 7).x <= screen.GetPos(i, 3).x && screen.GetPos(i, 6).x <= screen.GetPos(i, 2).x) {
+					} else if(screen.GetPos(i, 7).x <= screen.GetPos(i, 3).x && screen.GetPos(i, 6).x <= screen.GetPos(i, 2).x) {
 
-						if (
+						if(
 							PushBackBox_Ball(keys,
 								screen.GetPos(i, 0), screen.GetPos(i, 1), screen.GetPos(i, 6), screen.GetPos(i, 3),
 								screen.GetPrePos(i, 0), screen.GetPrePos(i, 1), screen.GetPrePos(i, 6), screen.GetPrePos(i, 3),
@@ -552,9 +558,9 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 							boardingBlock_ = -1;
 						}
 
-					} else if (screen.GetPos(i, 6).x >= screen.GetPos(i, 2).x && screen.GetPos(i, 7).x <= screen.GetPos(i, 3).x) {
+					} else if(screen.GetPos(i, 6).x >= screen.GetPos(i, 2).x && screen.GetPos(i, 7).x <= screen.GetPos(i, 3).x) {
 
-						if (
+						if(
 							PushBackBox_Ball(keys,
 								screen.GetPos(i, 0), screen.GetPos(i, 1), screen.GetPos(i, 2), screen.GetPos(i, 3),
 								screen.GetPrePos(i, 0), screen.GetPrePos(i, 1), screen.GetPrePos(i, 2), screen.GetPrePos(i, 3),
@@ -577,12 +583,12 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 
 
 				//マップチップの当たり判定
-				for (int i2 = 0; i2 < shadow.GetPos().size(); i2++) {
-					for (int j2 = 0; j2 < shadow.GetPos()[0].size(); j2++) {
+				for(int i2 = 0; i2 < shadow.GetPos().size(); i2++) {
+					for(int j2 = 0; j2 < shadow.GetPos()[0].size(); j2++) {
 
 						//星アイテムの取得
-						if (shadow.GetMapChip()[i2][j2] == 8) {
-							if (ColisionBox_Ball(
+						if(shadow.GetMapChip()[i2][j2] == 8) {
+							if(ColisionBox_Ball(
 								{ shadow.GetPos()[i2][j2].x - shadow.GetSize().x * 0.5f,shadow.GetPos()[i2][j2].y - shadow.GetSize().y * 0.5f },
 								{ shadow.GetPos()[i2][j2].x + shadow.GetSize().x * 0.5f,shadow.GetPos()[i2][j2].y - shadow.GetSize().y * 0.5f },
 								{ shadow.GetPos()[i2][j2].x - shadow.GetSize().x * 0.5f,shadow.GetPos()[i2][j2].y + shadow.GetSize().y * 0.5f },
@@ -602,8 +608,8 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 						}
 
 						//プレイヤーがスイッチを押したら現れるブロックと重なっていたらスイッチを押せなくする
-						if (shadow.GetMapChip()[i2][j2] == 11) {
-							if (ColisionBox_Ball(
+						if(shadow.GetMapChip()[i2][j2] == 11) {
+							if(ColisionBox_Ball(
 								{ shadow.GetPos()[i2][j2].x - shadow.GetSize().x * 0.5f,shadow.GetPos()[i2][j2].y - shadow.GetSize().y * 0.5f },
 								{ shadow.GetPos()[i2][j2].x + shadow.GetSize().x * 0.5f,shadow.GetPos()[i2][j2].y - shadow.GetSize().y * 0.5f },
 								{ shadow.GetPos()[i2][j2].x - shadow.GetSize().x * 0.5f,shadow.GetPos()[i2][j2].y + shadow.GetSize().y * 0.5f },
@@ -611,7 +617,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 								pos_,
 								size_.x * 0.35f
 							)) {
-								if (!shadow.GetTouchable()[i2][j2]) {
+								if(!shadow.GetTouchable()[i2][j2]) {
 									player.SetSwitchPushable(false);
 								}
 							} else {
@@ -619,12 +625,12 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 							}
 						}
 
-						if (shadow.GetMapChip()[i2][j2] != 2 && shadow.GetMapChip()[i2][j2] != 7 && shadow.GetMapChip()[i2][j2] != 8) {
-							if (shadow.GetMapChip()[i2][j2] == 1 or shadow.GetMapChip()[i2][j2] == 11) {
+						if(shadow.GetMapChip()[i2][j2] != 2 && shadow.GetMapChip()[i2][j2] != 7 && shadow.GetMapChip()[i2][j2] != 8) {
+							if(shadow.GetMapChip()[i2][j2] == 1 or shadow.GetMapChip()[i2][j2] == 11) {
 
 								blockCount++;
 
-								if (shadow.GetTouchable()[i2][j2]) {
+								if(shadow.GetTouchable()[i2][j2]) {
 									PushBackBox_Ball(keys,
 										{ shadow.GetPos()[i2][j2].x - shadow.GetSize().x * 0.5f,shadow.GetPos()[i2][j2].y - shadow.GetSize().y * 0.5f },
 										{ shadow.GetPos()[i2][j2].x + shadow.GetSize().x * 0.5f,shadow.GetPos()[i2][j2].y - shadow.GetSize().y * 0.5f },
@@ -641,9 +647,9 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 							}
 						}
 
-						if (shadow.GetMapChip()[i2][j2] == 2) {
+						if(shadow.GetMapChip()[i2][j2] == 2) {
 
-							if (ColisionBox_Ball(
+							if(ColisionBox_Ball(
 								{ shadow.GetPos()[i2][j2].x - shadow.GetSize().x * 0.5f,shadow.GetPos()[i2][j2].y - shadow.GetSize().y * 0.5f },
 								{ shadow.GetPos()[i2][j2].x + shadow.GetSize().x * 0.5f,shadow.GetPos()[i2][j2].y - shadow.GetSize().y * 0.5f },
 								{ shadow.GetPos()[i2][j2].x - shadow.GetSize().x * 0.5f,shadow.GetPos()[i2][j2].y + shadow.GetSize().y * 0.5f },
@@ -662,23 +668,23 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 				blockCount = 0;
 
 				//一回以上当たっていた時、当たらなくなるまで再計算
-				if (hitCount_ >= 1) {
+				if(hitCount_ >= 1) {
 
 					isHitRect_ = true;
 					int loopCount = 0;
 
-					while (isHitRect_) {
+					while(isHitRect_) {
 
 						int saveHitCount = hitCount_;
 
-						for (int i2 = 0; i2 < shadow.GetMapChip().size(); i2++) {
-							for (int j2 = 0; j2 < shadow.GetMapChip()[0].size(); j2++) {
+						for(int i2 = 0; i2 < shadow.GetMapChip().size(); i2++) {
+							for(int j2 = 0; j2 < shadow.GetMapChip()[0].size(); j2++) {
 
-								if (shadow.GetMapChip()[i2][j2] != 7 && shadow.GetMapChip()[i2][j2] != 8) {
-									if (shadow.GetMapChip()[i2][j2] == 1 or shadow.GetMapChip()[i2][j2] == 11) {
+								if(shadow.GetMapChip()[i2][j2] != 7 && shadow.GetMapChip()[i2][j2] != 8) {
+									if(shadow.GetMapChip()[i2][j2] == 1 or shadow.GetMapChip()[i2][j2] == 11) {
 
 										blockCount++;
-										if (shadow.GetTouchable()[i2][j2]) {
+										if(shadow.GetTouchable()[i2][j2]) {
 
 											PushBackBox_Ball(keys,
 												{ shadow.GetPos()[i2][j2].x - shadow.GetSize().x * 0.5f,shadow.GetPos()[i2][j2].y - shadow.GetSize().y * 0.5f },
@@ -699,11 +705,11 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 						}
 						blockCount = 0;
 
-						for (int i = 0; i < screen.GetPos().size(); i++) {
+						for(int i = 0; i < screen.GetPos().size(); i++) {
 
-							if (screen.GetPos(i, 6).x >= screen.GetPos(i, 2).x && screen.GetPos(i, 7).x >= screen.GetPos(i, 3).x) {
+							if(screen.GetPos(i, 6).x >= screen.GetPos(i, 2).x && screen.GetPos(i, 7).x >= screen.GetPos(i, 3).x) {
 
-								if (
+								if(
 									PushBackBox_Ball(keys,
 										screen.GetPos(i, 0), screen.GetPos(i, 1), screen.GetPos(i, 2), screen.GetPos(i, 7),
 										screen.GetPrePos(i, 0), screen.GetPrePos(i, 1), screen.GetPrePos(i, 2), screen.GetPrePos(i, 7),
@@ -717,9 +723,9 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 									);
 								}
 
-							} else if (screen.GetPos(i, 7).x <= screen.GetPos(i, 3).x && screen.GetPos(i, 6).x <= screen.GetPos(i, 2).x) {
+							} else if(screen.GetPos(i, 7).x <= screen.GetPos(i, 3).x && screen.GetPos(i, 6).x <= screen.GetPos(i, 2).x) {
 
-								if (
+								if(
 									PushBackBox_Ball(keys,
 										screen.GetPos(i, 0), screen.GetPos(i, 1), screen.GetPos(i, 6), screen.GetPos(i, 3),
 										screen.GetPrePos(i, 0), screen.GetPrePos(i, 1), screen.GetPrePos(i, 6), screen.GetPrePos(i, 3),
@@ -733,9 +739,9 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 									);
 								}
 
-							} else if (screen.GetPos(i, 6).x >= screen.GetPos(i, 2).x && screen.GetPos(i, 7).x <= screen.GetPos(i, 3).x) {
+							} else if(screen.GetPos(i, 6).x >= screen.GetPos(i, 2).x && screen.GetPos(i, 7).x <= screen.GetPos(i, 3).x) {
 
-								if (
+								if(
 									PushBackBox_Ball(keys,
 										screen.GetPos(i, 0), screen.GetPos(i, 1), screen.GetPos(i, 2), screen.GetPos(i, 3),
 										screen.GetPrePos(i, 0), screen.GetPrePos(i, 1), screen.GetPrePos(i, 2), screen.GetPrePos(i, 3),
@@ -753,7 +759,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 
 						//上下===============================================
 						//下に出た時
-						if (pos_.y > (screen.GetScreenLeftTop().y + screen.GetSize().y) - size_.y * 0.5f) {
+						if(pos_.y > (screen.GetScreenLeftTop().y + screen.GetSize().y) - size_.y * 0.5f) {
 							pos_.y = (screen.GetScreenLeftTop().y + screen.GetSize().y) - size_.y * 0.5f;
 
 							isJump_ = false;
@@ -764,7 +770,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 							hitCount_++;
 
 							//上に出た時
-						} else if (pos_.y < screen.GetScreenLeftTop().y + size_.y * 0.5f) {
+						} else if(pos_.y < screen.GetScreenLeftTop().y + size_.y * 0.5f) {
 							pos_.y = screen.GetScreenLeftTop().y + size_.y * 0.5f;
 
 							hitCount_++;
@@ -773,13 +779,13 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 
 						//左右===============================================
 						//右に出た時
-						if (pos_.x > (screen.GetScreenLeftTop().x + screen.GetSize().x) - size_.x * 0.5f) {
+						if(pos_.x > (screen.GetScreenLeftTop().x + screen.GetSize().x) - size_.x * 0.5f) {
 							pos_.x = (screen.GetScreenLeftTop().x + screen.GetSize().x) - size_.x * 0.5f;
 
 							hitCount_++;
 
 							//左に出た時
-						} else if (pos_.x < screen.GetScreenLeftTop().x + size_.x * 0.5f) {
+						} else if(pos_.x < screen.GetScreenLeftTop().x + size_.x * 0.5f) {
 							pos_.x = screen.GetScreenLeftTop().x + size_.x * 0.5f;
 
 							hitCount_++;
@@ -789,7 +795,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 						loopCount++;
 
 						//ループを抜ける-------------------------------
-						if (loopCount > 64) {//無限ループになりそうなときにブレイク
+						if(loopCount > 64) {//無限ループになりそうなときにブレイク
 							loopCount = 0;
 							isHitRect_ = false;
 
@@ -800,14 +806,14 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 							break;
 						}
 
-						if (saveHitCount == hitCount_) {//当たらなくなった時
+						if(saveHitCount == hitCount_) {//当たらなくなった時
 							isHitRect_ = false;
 						}
 					}
 				}
 
 				//二つの矩形に当たっていたら前の座標に戻す
-				if (hitCount_ >= 3) {
+				if(hitCount_ >= 3) {
 					//pos_ = prePos_;
 					isJump_ = false;
 					isDrop_ = false;
@@ -818,21 +824,21 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 
 
 				//ゴールと当たったらクリアに移動
-				if (ColisionBox_Ball(shadow.GetGoalLT(), shadow.GetGoalRT(), shadow.GetGoalLB(), shadow.GetGoalRB(), pos_, (size_.x / 10)) &&
+				if(ColisionBox_Ball(shadow.GetGoalLT(), shadow.GetGoalRT(), shadow.GetGoalLB(), shadow.GetGoalRB(), pos_, (size_.x / 10)) &&
 					int(dropSpeed_) < 1) {
 
-					if (Global::character_ == 0) {
+					if(Global::character_ == 0) {
 
 						goalTutorialAlpha_ += 0x04;
 
-						if (Global::controlMode_ == 0) {
+						if(Global::controlMode_ == 0) {
 
-							if (keys[DIK_SPACE] && !Prekeys[DIK_SPACE]) {
+							if(keys[DIK_SPACE] && !Prekeys[DIK_SPACE]) {
 								cs.isEndChange_ = true;
 								pushSEHandle_ = Novice::PlayAudio(rs.selectPushSE_, 0, 0.5f);
 							}
 						} else {
-							if (Novice::IsPressButton(0, kPadButton11)) {
+							if(Novice::IsPressButton(0, kPadButton11)) {
 
 								cs.isEndChange_ = true;
 								pushSEHandle_ = Novice::PlayAudio(rs.selectPushSE_, 0, 0.5f);
@@ -844,13 +850,13 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 					goalTutorialAlpha_ -= 0x04;
 				}
 
-				if (Global::character_ == 1) {
+				if(Global::character_ == 1) {
 					goalTutorialAlpha_ -= 0x04;
 				}
 
-				if (goalTutorialAlpha_ > 0xff) {
+				if(goalTutorialAlpha_ > 0xff) {
 					goalTutorialAlpha_ = 0xff;
-				} else if (goalTutorialAlpha_ < 0) {
+				} else if(goalTutorialAlpha_ < 0) {
 					goalTutorialAlpha_ = 0;
 				}
 
@@ -866,7 +872,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 
 
 			//星をプレイヤーに追尾させる
-			for (int i = 0; i < starFollowPos_.size(); i++) {
+			for(int i = 0; i < starFollowPos_.size(); i++) {
 
 				preStarFollowPos_[i] = starFollowPos_[i];
 
@@ -888,13 +894,13 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 			tmp = (pos_ - screen.GetScreenLeftTop()) / shadow.GetSize();
 			centerAddress_ = { int(tmp.y),int(tmp.x) };
 
-			for (int i = 0; i < shadow.GetMapChip().size(); i++) {
+			for(int i = 0; i < shadow.GetMapChip().size(); i++) {
 
 
 
-				if (i == shadow.GetMapChip().size() - 1) {
+				if(i == shadow.GetMapChip().size() - 1) {
 
-					if (shadow.GetMapChip()[i][centerAddress_.y] == 2) {// とげ
+					if(shadow.GetMapChip()[i][centerAddress_.y] == 2) {// とげ
 						break;
 					}
 
@@ -902,21 +908,21 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 					break;
 				} else {
 
-					if (i <= centerAddress_.x) { continue; }
+					if(i <= centerAddress_.x) { continue; }
 
-					if (shadow.GetMapChip()[i][centerAddress_.y] != 0) {
+					if(shadow.GetMapChip()[i][centerAddress_.y] != 0) {
 
 
-						if (shadow.GetMapChip()[i][centerAddress_.y] == 1) {
+						if(shadow.GetMapChip()[i][centerAddress_.y] == 1) {
 							SaveData::playerShadowPos_ = pos_.operator+({ 0.0f,-1.0f });// 通常影
 							break;
 
-						} else if (shadow.GetMapChip()[i][centerAddress_.y] == 11) {// スイッチ影
-							if (map.GetIsPressSwitch()) {
+						} else if(shadow.GetMapChip()[i][centerAddress_.y] == 11) {// スイッチ影
+							if(map.GetIsPressSwitch()) {
 								SaveData::playerShadowPos_ = pos_.operator+({ 0.0f,-1.0f });
 								break;
 							}
-						} else if (shadow.GetMapChip()[i][centerAddress_.y] == 2) {// とげ
+						} else if(shadow.GetMapChip()[i][centerAddress_.y] == 2) {// とげ
 							break;
 						}
 					}
@@ -938,7 +944,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 void PlayerShadow::Draw(const Resources& rs, Screen screen) {
 
 	//シーンに応じて処理を分ける
-	switch (Scene::sceneNum_) {
+	switch(Scene::sceneNum_) {
 		//====================================================================================
 	case TITLE://							   タイトル画面
 		//====================================================================================
@@ -951,10 +957,10 @@ void PlayerShadow::Draw(const Resources& rs, Screen screen) {
 	case GAME://								ゲーム本編
 		//====================================================================================
 
-		if (isAlive_) {
+		if(isAlive_) {
 
 			//追尾する星
-			for (int i = 0; i < starFollowPos_.size(); i++) {
+			for(int i = 0; i < starFollowPos_.size(); i++) {
 				//星アイテム
 				My::DrawStar(
 					starFollowPos_[i],
@@ -966,9 +972,9 @@ void PlayerShadow::Draw(const Resources& rs, Screen screen) {
 			}
 
 			//プレイヤー
-			if (!isJump_) {
+			if(!isJump_) {
 
-				if (fabsf(velocity_.x) <= 2 && fabsf(velocity_.y) <= 2) {
+				if(fabsf(velocity_.x) <= 2 && fabsf(velocity_.y) <= 2) {
 					//停止しているとき-------------------------------------
 
 					DrawCat(
@@ -981,7 +987,7 @@ void PlayerShadow::Draw(const Resources& rs, Screen screen) {
 						0x555555ff
 					);
 
-					for (int i = 1; i < 5; i++) {
+					for(int i = 1; i < 5; i++) {
 						DrawCat(
 							{
 							pos_.x,
@@ -1003,7 +1009,7 @@ void PlayerShadow::Draw(const Resources& rs, Screen screen) {
 						0x555555ff
 					);
 
-					for (int i = 1; i < 5; i++) {
+					for(int i = 1; i < 5; i++) {
 						DrawCat(
 							{
 								pos_.x,
@@ -1023,7 +1029,7 @@ void PlayerShadow::Draw(const Resources& rs, Screen screen) {
 					0x555555ff
 				);
 
-				for (int i = 1; i < 5; i++) {
+				for(int i = 1; i < 5; i++) {
 					DrawCat(
 						{ pos_.x,pos_.y + size_.y * 0.2f },
 						(size_.x * 0.5f) + ((size_.x * 0.7f) * (float(jumpTimer_) / 46.0f)) + i * 0.6f,
@@ -1036,9 +1042,9 @@ void PlayerShadow::Draw(const Resources& rs, Screen screen) {
 
 
 
-			if (Global::character_ == 0) {
+			if(Global::character_ == 0) {
 
-				if (waitTimer_ > 240) {
+				if(waitTimer_ > 240) {
 
 					//W
 					Novice::DrawSpriteRect(
@@ -1080,7 +1086,7 @@ void PlayerShadow::Draw(const Resources& rs, Screen screen) {
 				}
 			} else {
 
-				if (Global::controlMode_ == 0) {
+				if(Global::controlMode_ == 0) {
 					//W
 					/*Novice::DrawSpriteRect(
 						int(pos_.x - size_.x * 1.5f),
@@ -1113,9 +1119,9 @@ void PlayerShadow::Draw(const Resources& rs, Screen screen) {
 
 		} else {
 
-			if (respawnTimeCount_ < 45) {
+			if(respawnTimeCount_ < 45) {
 
-				if (respawnTimeCount_ < 24) {
+				if(respawnTimeCount_ < 24) {
 					DrawCat(
 						{
 							pos_.x,
@@ -1127,7 +1133,7 @@ void PlayerShadow::Draw(const Resources& rs, Screen screen) {
 						0x555555ff
 					);
 
-					for (int i = 1; i < 5; i++) {
+					for(int i = 1; i < 5; i++) {
 						DrawCat(
 							{
 							pos_.x,
@@ -1140,7 +1146,7 @@ void PlayerShadow::Draw(const Resources& rs, Screen screen) {
 					}
 				}
 
-				for (int i = 0; i < 4; i++) {
+				for(int i = 0; i < 4; i++) {
 					Novice::DrawEllipse(
 						int(pos_.x),
 						int(pos_.y),
@@ -1153,7 +1159,7 @@ void PlayerShadow::Draw(const Resources& rs, Screen screen) {
 				}
 			}
 
-			if (preIsAlive_) {
+			if(preIsAlive_) {
 				//死亡効果音
 				killedSEHandle_ = Novice::PlayAudio(rs.playerKilledSE_, 0, 0.5f);
 			}
@@ -1179,7 +1185,7 @@ void PlayerShadow::PlayerShadowManager(const Resources& rs, PlayerShadow playerS
 
 void PlayerShadow::DrawResetAction(const Resources& rs, int timeCount, int kActionTime) {
 
-	switch (Scene::sceneNum_) {
+	switch(Scene::sceneNum_) {
 
 	case TITLE:
 		break;
@@ -1189,8 +1195,8 @@ void PlayerShadow::DrawResetAction(const Resources& rs, int timeCount, int kActi
 
 	case GAME:
 
-		if (Global::character_ == 0) {
-			for (int i = 0; i < 5; i++) {
+		if(Global::character_ == 0) {
+			for(int i = 0; i < 5; i++) {
 				Novice::DrawBox(
 					int(pos_.x - 40 - i * 2),
 					int(pos_.y - 80 - i * 2),
@@ -1203,7 +1209,7 @@ void PlayerShadow::DrawResetAction(const Resources& rs, int timeCount, int kActi
 			}
 
 
-			if (Global::controlMode_ == 1) {
+			if(Global::controlMode_ == 1) {
 
 				//ゴール
 				My::DrawQuad(
@@ -1243,7 +1249,7 @@ void PlayerShadow::DrawResetAction(const Resources& rs, int timeCount, int kActi
 		}
 
 
-		if (!isAlive_) {
+		if(!isAlive_) {
 
 			const int kRowMax = 2;
 			const int kColMax = 8;
@@ -1258,16 +1264,16 @@ void PlayerShadow::DrawResetAction(const Resources& rs, int timeCount, int kActi
 			float devideTime = (float(kActionTime) / kColMax) / 4;
 
 			//表示する情報の決定
-			for (int i = 0; i < kRowMax; i++) {
-				for (int j = 0; j < kColMax; j++) {
+			for(int i = 0; i < kRowMax; i++) {
+				for(int j = 0; j < kColMax; j++) {
 
 					size[i][j] = { float(Global::windowSize_.x) / float(kColMax), float(Global::windowSize_.y) };
 					size[i][j].y += size[i][j].y * i;
 				}
 			}
 
-			for (int i = 0; i < kRowMax; i++) {
-				for (int j = 0; j < kColMax; j++) {
+			for(int i = 0; i < kRowMax; i++) {
+				for(int j = 0; j < kColMax; j++) {
 					//座標の初期化
 					pos[i][j].x = (float(Global::windowSize_.x) / float(kColMax)) * j + (float(Global::windowSize_.x) / float(kColMax * 2));
 					pos[i][j].y = -size[i][j].y / 2.0f;
@@ -1278,16 +1284,16 @@ void PlayerShadow::DrawResetAction(const Resources& rs, int timeCount, int kActi
 					devideTime;
 
 					//0~1に収める
-					if (moveT[i][j] > 1.0f) {
+					if(moveT[i][j] > 1.0f) {
 						moveT[i][j] = 1.0f;
-					} else if (moveT[i][j] < 0.0f) {
+					} else if(moveT[i][j] < 0.0f) {
 						moveT[i][j] = 0.0f;
 					}
 				}
 			}
 
-			for (int i = 0; i < kRowMax; i++) {
-				for (int j = 0; j < kColMax; j++) {
+			for(int i = 0; i < kRowMax; i++) {
+				for(int j = 0; j < kColMax; j++) {
 
 					//媒介変数Tに応じて座標を更新
 					pos[i][j].y = pos[kRowMax - 1][j].y +
@@ -1299,8 +1305,8 @@ void PlayerShadow::DrawResetAction(const Resources& rs, int timeCount, int kActi
 			int color = 0x7f;
 
 			//描画
-			for (int i = kRowMax - 1; i >= 0; i--) {
-				for (int j = 0; j < kColMax; j++) {
+			for(int i = kRowMax - 1; i >= 0; i--) {
+				for(int j = 0; j < kColMax; j++) {
 
 					Novice::DrawQuad(
 						int(pos[i][j].x - size[i][j].x * 0.5f),
@@ -1319,7 +1325,7 @@ void PlayerShadow::DrawResetAction(const Resources& rs, int timeCount, int kActi
 				}
 			}
 
-			for (int j = 0; j < kColMax; j++) {
+			for(int j = 0; j < kColMax; j++) {
 				My::DrawStar(
 					{
 					pos[kRowMax - 1][j].x,
@@ -1356,9 +1362,9 @@ void PlayerShadow::DrawResetAction(const Resources& rs, int timeCount, int kActi
 
 void PlayerShadow::DrawFrame(Map map, Screen screen) {
 
-	if (Scene::sceneNum_ == GAME) {
+	if(Scene::sceneNum_ == GAME) {
 
-		switch (Global::character_) {
+		switch(Global::character_) {
 
 		case 0:
 
@@ -1372,7 +1378,7 @@ void PlayerShadow::DrawFrame(Map map, Screen screen) {
 				kFillModeWireFrame
 			);
 
-			for (int i = 0; i < 12; i++) {
+			for(int i = 0; i < 12; i++) {
 
 				Novice::DrawBox(
 					int(screen.GetScreenLeftTop().x) - i,
@@ -1399,7 +1405,7 @@ void PlayerShadow::DrawFrame(Map map, Screen screen) {
 				kFillModeWireFrame
 			);
 
-			for (int i = 0; i < 12; i++) {
+			for(int i = 0; i < 12; i++) {
 
 				Novice::DrawBox(
 					int(map.GetPuzzleLeftTop().x) - i,
