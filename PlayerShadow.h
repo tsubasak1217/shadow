@@ -67,6 +67,10 @@ class PlayerShadow {
 
 public:
 
+	static bool preOnBlock_;
+
+public:
+
 	PlayerShadow(Screen screen, Shadow shadow) {
 		pos_ = {
 			shadow.firstPlayerPos_.x + screen.GetScreenLeftTop().x,

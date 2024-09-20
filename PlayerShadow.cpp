@@ -2,11 +2,13 @@
 #include "Particle.h"
 #include "Shadow.h"
 #include "SaveData.h"
+#include "SaveManager.h"
 
 bool PlayerShadow::isAlive_ = true;
 bool PlayerShadow::preIsAlive_ = true;
+bool PlayerShadow::preOnBlock_ = false;
 
-void PlayerShadow::Init(int sceneNum, Screen screen, Shadow shadow, const char* keys, ChangeScene cs) {
+void PlayerShadow::Init(int sceneNum, Screen screen, Shadow shadow, const char* keys, ChangeScene cs){
 
 	switch(sceneNum) {
 		//====================================================================================
@@ -89,14 +91,14 @@ void PlayerShadow::Init(int sceneNum, Screen screen, Shadow shadow, const char* 
 	}
 }
 
-void PlayerShadow::InitStar() {
+void PlayerShadow::InitStar(){
 	starFollowPos_.clear();
 	preStarFollowPos_.clear();
 	starTheta_.clear();
 }
 
 void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, ChangeScene& cs, Screen& screen,
-	Shadow& shadow, Player& player, Map& map, Light& light, bool isPause) {
+	Shadow& shadow, Player& player, Map& map, Light& light, bool isPause){
 	Vec2 tmp = { 0.0f };
 
 	//シーン遷移の始まった瞬間にシーンに合わせて初期化
@@ -404,6 +406,10 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 				if(boardingBlock_ >= 0) {
 					if(isJump_) {
 						boardingBlock_ = -1;
+					} else{
+						if(!isDrop_){
+							SaveManager::SetSaveOder(true);
+						}
 					}
 				}
 
@@ -431,7 +437,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 						if(!isHitMapchipShadow_ && !preIsHitMapchipShadow_){
 							if(player.GetIsMoveBlock()) {
 
-								if(pos_.x >= screen.GetPos(boardingBlock_, 0).x && pos_.x <= screen.GetPos(boardingBlock_, 1).x){
+								if(pos_.x >= screen.GetPos(boardingBlock_, 0).x - size_.x * 0.5f && pos_.x <= screen.GetPos(boardingBlock_, 1).x + size_.x * 0.5f){
 									pos_.x = screen.GetPos(a, 0).x +
 										Normalize(screen.GetPos(a, 1), screen.GetPos(a, 0)).x * preBoadingVecRatio_;
 
@@ -442,7 +448,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 
 							} else if(Global::isMoveShadow_ && player.swapTimeCount_ == 0) {
 								if(CheckLength({ 0.0f,0.0f }, { float(padDirection.x),float(padDirection.y) }) == 0.0f){
-									if(pos_.x >= screen.GetPos(boardingBlock_, 0).x && pos_.x <= screen.GetPos(boardingBlock_, 1).x){
+									if(pos_.x >= screen.GetPos(boardingBlock_, 0).x - size_.x * 0.5f && pos_.x <= screen.GetPos(boardingBlock_, 1).x + size_.x * 0.5f){
 										pos_.x = screen.GetPos(a, 0).x +
 											Normalize(screen.GetPos(a, 1), screen.GetPos(a, 0)).x * preBoadingVecRatio_;
 
@@ -650,6 +656,9 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 										)
 									{
 										isHitMapchipShadow_ = true;
+										if(hitSurface2_[blockCount - 1] == Top){
+											preOnBlock_ = true;
+										}
 									}
 								}
 							}
@@ -902,39 +911,73 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 			tmp = (pos_ - screen.GetScreenLeftTop()) / shadow.GetSize();
 			centerAddress_ = { int(tmp.y),int(tmp.x) };
 
-			for(int i = 0; i < shadow.GetMapChip().size(); i++) {
+			if(centerAddress_.x + 1 < (int)shadow.GetMapChip().size()){
 
+				if(shadow.GetMapChip()[centerAddress_.x + 1][centerAddress_.y] == 1){// 通常影
+					SaveManager::SetSaveOder(true);
 
-
-				if(i == shadow.GetMapChip().size() - 1) {
-
-					if(shadow.GetMapChip()[i][centerAddress_.y] == 2) {// とげ
-						break;
-					}
-
-					SaveData::playerShadowPos_ = pos_.operator+({ 0.0f,-1.0f });// 一番下に到達したとき
-					break;
-				} else {
-
-					if(i <= centerAddress_.x) { continue; }
-
-					if(shadow.GetMapChip()[i][centerAddress_.y] != 0) {
-
-
-						if(shadow.GetMapChip()[i][centerAddress_.y] == 1) {
-							SaveData::playerShadowPos_ = pos_.operator+({ 0.0f,-1.0f });// 通常影
-							break;
-
-						} else if(shadow.GetMapChip()[i][centerAddress_.y] == 11) {// スイッチ影
-							if(map.GetIsPressSwitch()) {
-								SaveData::playerShadowPos_ = pos_.operator+({ 0.0f,-1.0f });
-								break;
-							}
-						} else if(shadow.GetMapChip()[i][centerAddress_.y] == 2) {// とげ
-							break;
-						}
+				} else if(shadow.GetMapChip()[centerAddress_.x + 1][centerAddress_.y] == 11) {// スイッチ影
+					if(map.GetIsPressSwitch()) {
+						SaveManager::SetSaveOder(true);
 					}
 				}
+
+			} else{
+				SaveManager::SetSaveOder(true);
+			}
+
+
+			//for(int i = 0; i < shadow.GetMapChip().size(); i++) {
+
+			//	if(i == shadow.GetMapChip().size() - 1) {
+
+			//		if(shadow.GetMapChip()[i][centerAddress_.y] == 2) {// とげ
+			//			break;
+			//		}
+
+			//		SaveData::playerShadowPos_ = pos_.operator+({ 0.0f,-1.0f });// 一番下に到達したとき
+			//		break;
+			//	} else {
+
+			//		if(i <= centerAddress_.x) { continue; }
+
+			//		if(shadow.GetMapChip()[i][centerAddress_.y] != 0) {
+
+
+			//			if(shadow.GetMapChip()[i][centerAddress_.y] == 1) {
+			//				SaveData::playerShadowPos_ = pos_.operator+({ 0.0f,-1.0f });// 通常影
+			//				break;
+
+			//			} else if(shadow.GetMapChip()[i][centerAddress_.y] == 11) {// スイッチ影
+			//				if(map.GetIsPressSwitch()) {
+			//					SaveData::playerShadowPos_ = pos_.operator+({ 0.0f,-1.0f });
+			//					break;
+			//				}
+			//			} else if(shadow.GetMapChip()[i][centerAddress_.y] == 2) {// とげ
+			//				break;
+			//			}
+			//		}
+			//	}
+			//}
+
+			if(boardingBlock_ >= 0){
+				if(player.GetIsMoveBlock() == false){
+					preOnBlock_ = true;
+				}
+			}
+
+
+			if(isDrop_){
+				preOnBlock_ = false;
+			}
+
+
+			if(preOnBlock_){
+				SaveManager::SetSaveOder(true);
+			}
+
+			if(SaveManager::GetSaveOder() == true){
+				SaveData::playerShadowPos_ = pos_ + Vec2(0.0f, -1.0f);
 			}
 
 			break;
@@ -949,7 +992,7 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 	}
 }
 
-void PlayerShadow::Draw(const Resources& rs, Screen screen) {
+void PlayerShadow::Draw(const Resources& rs, Screen screen){
 
 	//シーンに応じて処理を分ける
 	switch(Scene::sceneNum_) {
@@ -1187,11 +1230,12 @@ void PlayerShadow::Draw(const Resources& rs, Screen screen) {
 	}
 }
 
-void PlayerShadow::PlayerShadowManager(const Resources& rs, PlayerShadow playerShadow) {
+void PlayerShadow::PlayerShadowManager(const Resources& rs, PlayerShadow playerShadow){
 	DrawResetAction(rs, 155 - (respawnTimeCount_), 138);
 }
 
-void PlayerShadow::DrawResetAction(const Resources& rs, int timeCount, int kActionTime) {
+
+void PlayerShadow::DrawResetAction(const Resources& rs, int timeCount, int kActionTime){
 
 	switch(Scene::sceneNum_) {
 
@@ -1368,7 +1412,7 @@ void PlayerShadow::DrawResetAction(const Resources& rs, int timeCount, int kActi
 	}
 }
 
-void PlayerShadow::DrawFrame(Map map, Screen screen) {
+void PlayerShadow::DrawFrame(Map map, Screen screen){
 
 	if(Scene::sceneNum_ == GAME) {
 

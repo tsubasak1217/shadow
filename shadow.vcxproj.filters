@@ -104,6 +104,9 @@
     <ClCompile Include="SaveData.cpp">
       <Filter>KamataEngine</Filter>
     </ClCompile>
+    <ClCompile Include="SaveManager.cpp">
+      <Filter>KamataEngine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="C:\KamataEngine\DirectXGame\audio\Audio.h">
@@ -195,5 +198,6 @@
     <ClInclude Include="selectLightParticle.h" />
     <ClInclude Include="AudioPlayer.h" />
     <ClInclude Include="SaveData.h" />
+    <ClInclude Include="SaveManager.h" />
   </ItemGroup>
 </Project>

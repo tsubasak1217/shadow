@@ -1,6 +1,7 @@
 ﻿#include "Light.h"
 #include "PlayerShadow.h"
 #include "SaveData.h"
+#include "SaveManager.h"
 
 //=========================================================初期化関数==============================================================
 void Light::Init(int sceneNum, Map map) {
@@ -145,7 +146,9 @@ void Light::Update(char* keys, const ChangeScene& cs, Map map, float rangeTheta,
 				}
 
 				if (PlayerShadow::GetIsPreAlive()) {
-					SaveData::lightPos_ = emitPos_;
+					//if(SaveManager::GetSaveOder() == true){
+						SaveData::lightPos_ = emitPos_;
+					//}
 				}
 			}
 

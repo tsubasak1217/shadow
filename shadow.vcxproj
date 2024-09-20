@@ -114,6 +114,7 @@
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="Pause.cpp" />
     <ClCompile Include="SaveData.cpp" />
+    <ClCompile Include="SaveManager.cpp" />
     <ClCompile Include="selectLightParticle.cpp" />
     <ClCompile Include="stageClearEffect.cpp" />
     <ClCompile Include="global.cpp" />
@@ -164,6 +165,7 @@
     <ClInclude Include="Particle.h" />
     <ClInclude Include="Pause.h" />
     <ClInclude Include="SaveData.h" />
+    <ClInclude Include="SaveManager.h" />
     <ClInclude Include="selectLightParticle.h" />
     <ClInclude Include="stageClearEffect.h" />
     <ClInclude Include="global.h" />

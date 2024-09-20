@@ -8,6 +8,7 @@
 #include"Pause.h"
 #include "ImGuiManager.h"
 #include "AudioPlayer.h"
+#include "SaveManager.h"
 
 //======================================================
 //					グローバル変数/定数
@@ -28,6 +29,7 @@ void DrawTutorial(const Resources& rs);
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
+	SaveManager::Initialize();
 	Global global;
 
 	// ライブラリの初期化
@@ -79,6 +81,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓更新処理ここから
 		///
 
+		SaveManager::SetSaveOder(false);
 
 		global.Update(keys, preKeys, rs);
 
@@ -94,6 +97,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		SCE.Update(stageClear, playerShadow.GetstarCount());
 		playerShadow.Update(keys, preKeys, rs, cs, screen, shadow, player, map, light, pause.isPause_);
+
 		for(int i = 0; i < 120; i++) {
 			particle[i].Update(emitter, playerShadow, screen, keys);
 		}
@@ -107,7 +111,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		for(int i = 0; i < 120; i++) {
 			SLParticle[i].Update(door, light);
 		}
-
 
 
 		//デバックでのみ操作可能

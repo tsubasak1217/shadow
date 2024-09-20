@@ -1,11 +1,12 @@
 ﻿#include "Player.h"
 #include "PlayerShadow.h"
 #include "SaveData.h"
+#include "SaveManager.h"
 
 //====================================================初期化関数=============================================================
-void Player::Init(int sceneNum, Map map) {
+void Player::Init(int sceneNum, Map map){
 
-	switch (sceneNum) {
+	switch(sceneNum) {
 		//====================================================================================
 	case TITLE://							   タイトル画面
 		//====================================================================================
@@ -28,7 +29,7 @@ void Player::Init(int sceneNum, Map map) {
 		direction_ = { 0.0f,0.0f };
 		velocity_ = { 0.0f,0.0f };
 		speed_ = 4.0f;
-		for (int i = 0; i < 4; i++) {
+		for(int i = 0; i < 4; i++) {
 			address_[i] = { 0,0 };
 			preAddress_[i] = address_[i];
 		}
@@ -67,14 +68,14 @@ void Player::Init(int sceneNum, Map map) {
 }
 
 //====================================================アップデート=============================================================
-void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, const Resources& rs) {
+void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, const Resources& rs){
 
 	//シーン遷移の始まった瞬間にシーンに合わせて初期化
-	if (cs.isStartChange_ && cs.preIsEndChange_) {
+	if(cs.isStartChange_ && cs.preIsEndChange_) {
 		Init(Scene::sceneNum_, map);
 	}
 
-	switch (Scene::sceneNum_) {
+	switch(Scene::sceneNum_) {
 		//====================================================================================
 	case TITLE://							   タイトル画面
 		//====================================================================================
@@ -87,13 +88,13 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 	case GAME://								ゲーム本編
 		//====================================================================================
 
-		if (keys[DIK_R]) {
-			if (!cs.isEndChange_) {
+		if(keys[DIK_R]) {
+			if(!cs.isEndChange_) {
 				Init(Scene::sceneNum_, map);
 			}
 		}
 
-		if (!isPause && !cs.isEndChange_ && !cs.isStartChange_) {
+		if(!isPause && !cs.isEndChange_ && !cs.isStartChange_) {
 
 
 			//毎フレームの初期化
@@ -101,7 +102,7 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 			killSwitch_ = false;
 
 			//動いていないとき、動いていない時間タイマーを加算
-			if (pos_.x == prePos_.x && pos_.y == prePos_.y) {
+			if(pos_.x == prePos_.x && pos_.y == prePos_.y) {
 				waitTimer_++;
 			} else {
 				waitTimer_ = 0;
@@ -110,40 +111,40 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 			//前のフレームの情報保存に関するもの
 			prePos_ = pos_;
 
-			if (swapTimeCount_ > 0) {
+			if(swapTimeCount_ > 0) {
 				swapTimeCount_--;
 			}
 
 
-			if (isBlockPushable_ && isViewTelop_) {
+			if(isBlockPushable_ && isViewTelop_) {
 
-				if (Global::character_ == 1) {
+				if(Global::character_ == 1) {
 					tutorialSpriteAlpha_ += 4;
 				}
 
-				if (tutorialSpriteAlpha_ > 0x7f) {
+				if(tutorialSpriteAlpha_ > 0x7f) {
 					tutorialSpriteAlpha_ = 0x7f;
 				}
 			} else {
 				tutorialSpriteAlpha_ -= 4;
-				if (tutorialSpriteAlpha_ < 0) {
+				if(tutorialSpriteAlpha_ < 0) {
 					tutorialSpriteAlpha_ = 0;
 				}
 			}
 
-			if (Global::character_ == 0) {
+			if(Global::character_ == 0) {
 				tutorialSpriteAlpha_ -= 4;
-				if (tutorialSpriteAlpha_ < 0) {
+				if(tutorialSpriteAlpha_ < 0) {
 					tutorialSpriteAlpha_ = 0;
 				}
 			}
 
 			//動けない時
-			if (isStopMove_) {
+			if(isStopMove_) {
 
 				moveStopTime_--;
 
-				if (moveStopTime_ < 0) {
+				if(moveStopTime_ < 0) {
 					isStopMove_ = false;
 					moveStopTime_ = 32;
 				}
@@ -152,14 +153,14 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 				/*------------------------------ブロックを動かすフラグを立てる-------------------------------*/
 				isBlockPushable_ = false;
 
-				if (!isViewTelop_) {
+				if(!isViewTelop_) {
 
-					if (Global::controlMode_ == 0) {
-						if (!keys[DIK_SPACE]) {
+					if(Global::controlMode_ == 0) {
+						if(!keys[DIK_SPACE]) {
 							isViewTelop_ = true;
 						}
 					} else {
-						if (!Novice::IsPressButton(0, kPadButton10)) {
+						if(!Novice::IsPressButton(0, kPadButton10)) {
 							isViewTelop_ = true;
 						}
 					}
@@ -169,10 +170,10 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 
 				//動かせる状態かどうか取得-------------------------------------------------
 
-				if (centerAddress_.x - 1 >= 0) {
-					if (map.GetMapChip()[centerAddress_.y][centerAddress_.x - 1] > 0 &&
+				if(centerAddress_.x - 1 >= 0) {
+					if(map.GetMapChip()[centerAddress_.y][centerAddress_.x - 1] > 0 &&
 						map.GetMapChip()[centerAddress_.y][centerAddress_.x - 1] <= 2) {
-						if (pos_.x - 2 <=
+						if(pos_.x - 2 <=
 							map.GetPos()[centerAddress_.y][centerAddress_.x - 1].x
 							+ (map.GetSize().x * 0.5f) + (size_.x * 0.5f)) {
 
@@ -181,10 +182,10 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 					}
 				}
 
-				if (centerAddress_.x + 1 < map.GetMapChip()[0].size()) {
-					if (map.GetMapChip()[centerAddress_.y][centerAddress_.x + 1] > 0 &&
+				if(centerAddress_.x + 1 < map.GetMapChip()[0].size()) {
+					if(map.GetMapChip()[centerAddress_.y][centerAddress_.x + 1] > 0 &&
 						map.GetMapChip()[centerAddress_.y][centerAddress_.x + 1] <= 2) {
-						if (pos_.x + 2 >=
+						if(pos_.x + 2 >=
 							map.GetPos()[centerAddress_.y][centerAddress_.x + 1].x
 							- (map.GetSize().x * 0.5f) - (size_.x * 0.5f)) {
 
@@ -193,10 +194,10 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 					}
 				}
 
-				if (centerAddress_.y - 1 >= 0) {
-					if (map.GetMapChip()[centerAddress_.y - 1][centerAddress_.x] > 0 &&
+				if(centerAddress_.y - 1 >= 0) {
+					if(map.GetMapChip()[centerAddress_.y - 1][centerAddress_.x] > 0 &&
 						map.GetMapChip()[centerAddress_.y - 1][centerAddress_.x] <= 2) {
-						if (pos_.y - 2 <=
+						if(pos_.y - 2 <=
 							map.GetPos()[centerAddress_.y - 1][centerAddress_.x].y
 							+ (map.GetSize().y * 0.5f) + (size_.y * 0.5f)) {
 
@@ -205,10 +206,10 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 					}
 				}
 
-				if (centerAddress_.y + 1 < map.GetMapChip().size()) {
-					if (map.GetMapChip()[centerAddress_.y + 1][centerAddress_.x] > 0 &&
+				if(centerAddress_.y + 1 < map.GetMapChip().size()) {
+					if(map.GetMapChip()[centerAddress_.y + 1][centerAddress_.x] > 0 &&
 						map.GetMapChip()[centerAddress_.y + 1][centerAddress_.x] <= 2) {
-						if (pos_.y + 2 >=
+						if(pos_.y + 2 >=
 							map.GetPos()[centerAddress_.y + 1][centerAddress_.x].y
 							- (map.GetSize().y * 0.5f) - (size_.y * 0.5f)) {
 
@@ -219,7 +220,7 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 
 				velocity_ = { 0.0f,0.0f };
 
-				if (Global::controlMode_ == 0) {
+				if(Global::controlMode_ == 0) {
 					direction_.x = float(keys[DIK_RIGHT] - keys[DIK_LEFT]);
 					direction_.y = float(keys[DIK_DOWN] - keys[DIK_UP]);
 				} else {
@@ -236,40 +237,40 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 				velocity_.y *= speed_;
 
 
-				if (!isMoveBlock_) {
+				if(!isMoveBlock_) {
 
 					//------------------------------------------------------------------------------
-					if (Global::character_ == 1) {
+					if(Global::character_ == 1) {
 
-						for (int i = 0; i < 4; i++) {
+						for(int i = 0; i < 4; i++) {
 
-							if (address_[i].x >= 0 && address_[i].x < map.GetMapChip()[0].size()) {
-								if (address_[i].y >= 0 && address_[i].y < map.GetMapChip().size()) {
+							if(address_[i].x >= 0 && address_[i].x < map.GetMapChip()[0].size()) {
+								if(address_[i].y >= 0 && address_[i].y < map.GetMapChip().size()) {
 
-									switch (i) {
+									switch(i) {
 
 									case LeftTop://---------------------------------------------------------------------------------------
 
-										if (Global::controlMode_ == 0) {
-											if (keys[DIK_SPACE]) {
+										if(Global::controlMode_ == 0) {
+											if(keys[DIK_SPACE]) {
 
-												if (keys[DIK_RIGHT]) {
+												if(keys[DIK_RIGHT]) {
 
 													//左側にブロックがあり
-													if (address_[i].x - 1 >= 0) {
-														if (map.GetMapChip()[address_[i].y][address_[i].x - 1] > 0) {
-															if (map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 2) {
+													if(address_[i].x - 1 >= 0) {
+														if(map.GetMapChip()[address_[i].y][address_[i].x - 1] > 0) {
+															if(map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 2) {
 
 																//すぐ左にブロックがあるとき(接しているとき)
-																if (pos_.x - 2 <=
+																if(pos_.x - 2 <=
 																	map.GetPos()[address_[i].y][address_[i].x - 1].x
 																	+ (map.GetSize().x * 0.5f) + (size_.x * 0.5f)) {
 
-																	if (address_[i].y == address_[2].y) {
+																	if(address_[i].y == address_[2].y) {
 
 																		//プレイヤーの右側が空いていれば
-																		if (address_[i].x + 1 < map.GetMapChip()[0].size()) {
-																			if (map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 0) {
+																		if(address_[i].x + 1 < map.GetMapChip()[0].size()) {
+																			if(map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 0) {
 
 																				//動かすフラグを立てる
 																				isMoveBlock_ = true;
@@ -293,22 +294,22 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 													}
 
 													//上側にブロックがあり
-													if (address_[i].y - 1 >= 0) {
-														if (map.GetMapChip()[address_[i].y - 1][address_[i].x] > 0) {
-															if (map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 2) {
+													if(address_[i].y - 1 >= 0) {
+														if(map.GetMapChip()[address_[i].y - 1][address_[i].x] > 0) {
+															if(map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 2) {
 
 																//すぐ上にブロックがあるとき(接しているとき)
-																if (pos_.y - 2 <=
+																if(pos_.y - 2 <=
 																	map.GetPos()[address_[i].y - 1][address_[i].x].y
 																	+ (map.GetSize().y * 0.5f) + (size_.y * 0.5f)) {
 
-																	if (address_[i].x == address_[1].x) {
+																	if(address_[i].x == address_[1].x) {
 
 																		//ブロックのの右側が空いていて
-																		if (address_[i].x + 1 < map.GetMapChip()[0].size()) {
-																			if (map.GetMapChip()[address_[i].y - 1][address_[i].x + 1] <= 0) {
+																		if(address_[i].x + 1 < map.GetMapChip()[0].size()) {
+																			if(map.GetMapChip()[address_[i].y - 1][address_[i].x + 1] <= 0) {
 																				// プレイヤーの右側も空いているとき
-																				if (map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 0) {
+																				if(map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 0) {
 																					//動かすフラグを立てる
 																					isMoveBlock_ = true;
 																					moveDirection_ = Right;
@@ -332,23 +333,23 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 															}
 														}
 													}
-												} else if (keys[DIK_LEFT]) {
+												} else if(keys[DIK_LEFT]) {
 
 													//左側にブロックがあり
-													if (address_[i].x - 1 >= 0) {
-														if (map.GetMapChip()[address_[i].y][address_[i].x - 1] > 0) {
-															if (map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 2) {
+													if(address_[i].x - 1 >= 0) {
+														if(map.GetMapChip()[address_[i].y][address_[i].x - 1] > 0) {
+															if(map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 2) {
 
 																//すぐ左にブロックがあるとき(接しているとき)
-																if (pos_.x - 2 <=
+																if(pos_.x - 2 <=
 																	map.GetPos()[address_[i].y][address_[i].x - 1].x
 																	+ (map.GetSize().x * 0.5f) + (size_.x * 0.5f)) {
 
-																	if (address_[i].y == address_[2].y) {
+																	if(address_[i].y == address_[2].y) {
 
 																		//動かすブロックの左側が空いていれば
-																		if (address_[i].x - 2 >= 0) {
-																			if (map.GetMapChip()[address_[i].y][address_[i].x - 2] <= 0) {
+																		if(address_[i].x - 2 >= 0) {
+																			if(map.GetMapChip()[address_[i].y][address_[i].x - 2] <= 0) {
 
 																				//動かすフラグを立てる
 																				isMoveBlock_ = true;
@@ -372,22 +373,22 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 													}
 
 													//上側にブロックがあり
-													if (address_[i].y - 1 >= 0) {
-														if (map.GetMapChip()[address_[i].y - 1][address_[i].x] > 0) {
-															if (map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 2) {
+													if(address_[i].y - 1 >= 0) {
+														if(map.GetMapChip()[address_[i].y - 1][address_[i].x] > 0) {
+															if(map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 2) {
 
 																//すぐ上にブロックがあるとき(接しているとき)
-																if (pos_.y - 2 <=
+																if(pos_.y - 2 <=
 																	map.GetPos()[address_[i].y - 1][address_[i].x].y
 																	+ (map.GetSize().y * 0.5f) + (size_.y * 0.5f)) {
 
-																	if (address_[i].x == address_[1].x) {
+																	if(address_[i].x == address_[1].x) {
 
 																		//ブロックのの左側が空いていて
-																		if (address_[i].x - 1 >= 0) {
-																			if (map.GetMapChip()[address_[i].y - 1][address_[i].x - 1] <= 0) {
+																		if(address_[i].x - 1 >= 0) {
+																			if(map.GetMapChip()[address_[i].y - 1][address_[i].x - 1] <= 0) {
 																				// プレイヤーの左側も空いているとき
-																				if (map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 0) {
+																				if(map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 0) {
 																					//動かすフラグを立てる
 																					isMoveBlock_ = true;
 																					moveDirection_ = Left;
@@ -413,23 +414,23 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 													}
 												}
 
-												if (keys[DIK_UP]) {
+												if(keys[DIK_UP]) {
 
 													//上側にブロックがあり
-													if (address_[i].y - 1 >= 0) {
-														if (map.GetMapChip()[address_[i].y - 1][address_[i].x] > 0) {
-															if (map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 2) {
+													if(address_[i].y - 1 >= 0) {
+														if(map.GetMapChip()[address_[i].y - 1][address_[i].x] > 0) {
+															if(map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 2) {
 
 																//すぐ上にブロックがあるとき(接しているとき)
-																if (pos_.y - 2 <=
+																if(pos_.y - 2 <=
 																	map.GetPos()[address_[i].y - 1][address_[i].x].y
 																	+ (map.GetSize().y * 0.5f) + (size_.y * 0.5f)) {
 
-																	if (address_[i].x == address_[1].x) {
+																	if(address_[i].x == address_[1].x) {
 
 																		//ブロックのの上側が空いていれば
-																		if (address_[i].y - 2 >= 0) {
-																			if (map.GetMapChip()[address_[i].y - 2][address_[i].x] <= 0) {
+																		if(address_[i].y - 2 >= 0) {
+																			if(map.GetMapChip()[address_[i].y - 2][address_[i].x] <= 0) {
 
 																				//動かすフラグを立てる
 																				isMoveBlock_ = true;
@@ -453,22 +454,22 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 													}
 
 													//左側にブロックがあり
-													if (address_[i].x - 1 >= 0) {
-														if (map.GetMapChip()[address_[i].y][address_[i].x - 1] > 0) {
-															if (map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 2) {
+													if(address_[i].x - 1 >= 0) {
+														if(map.GetMapChip()[address_[i].y][address_[i].x - 1] > 0) {
+															if(map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 2) {
 
 																//すぐ左にブロックがあるとき(接しているとき)
-																if (pos_.x - 2 <=
+																if(pos_.x - 2 <=
 																	map.GetPos()[address_[i].y][address_[i].x - 1].x
 																	+ (map.GetSize().x * 0.5f) + (size_.x * 0.5f)) {
 
-																	if (address_[i].y == address_[2].y) {
+																	if(address_[i].y == address_[2].y) {
 
 																		//動かすブロックの上側が空いていて
-																		if (address_[i].y - 1 >= 0) {
-																			if (map.GetMapChip()[address_[i].y - 1][address_[i].x - 1] <= 0) {
+																		if(address_[i].y - 1 >= 0) {
+																			if(map.GetMapChip()[address_[i].y - 1][address_[i].x - 1] <= 0) {
 																				//プレイヤーの上も空いている時
-																				if (map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 0) {
+																				if(map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 0) {
 
 																					//動かすフラグを立てる
 																					isMoveBlock_ = true;
@@ -493,23 +494,23 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 															}
 														}
 													}
-												} else if (keys[DIK_DOWN]) {
+												} else if(keys[DIK_DOWN]) {
 
 													//上側にブロックがあり
-													if (address_[i].y - 1 >= 0) {
-														if (map.GetMapChip()[address_[i].y - 1][address_[i].x] > 0) {
-															if (map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 2) {
+													if(address_[i].y - 1 >= 0) {
+														if(map.GetMapChip()[address_[i].y - 1][address_[i].x] > 0) {
+															if(map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 2) {
 
 																//すぐ上にブロックがあるとき(接しているとき)
-																if (pos_.y - 2 <=
+																if(pos_.y - 2 <=
 																	map.GetPos()[address_[i].y - 1][address_[i].x].y
 																	+ (map.GetSize().x * 0.5f) + (size_.x * 0.5f)) {
 
-																	if (address_[i].x == address_[1].x) {
+																	if(address_[i].x == address_[1].x) {
 
 																		//プレイヤーの下側が空いていれば
-																		if (address_[i].y + 1 < map.GetMapChip().size()) {
-																			if (map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 0) {
+																		if(address_[i].y + 1 < map.GetMapChip().size()) {
+																			if(map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 0) {
 
 																				//動かすフラグを立てる
 																				isMoveBlock_ = true;
@@ -533,22 +534,22 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 													}
 
 													//左側にブロックがあり
-													if (address_[i].x - 1 >= 0) {
-														if (map.GetMapChip()[address_[i].y][address_[i].x - 1] > 0) {
-															if (map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 2) {
+													if(address_[i].x - 1 >= 0) {
+														if(map.GetMapChip()[address_[i].y][address_[i].x - 1] > 0) {
+															if(map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 2) {
 
 																//すぐ左にブロックがあるとき(接しているとき)
-																if (pos_.x - 2 <=
+																if(pos_.x - 2 <=
 																	map.GetPos()[address_[i].y][address_[i].x - 1].x
 																	+ (map.GetSize().x * 0.5f) + (size_.x * 0.5f)) {
 
-																	if (address_[i].y == address_[2].y) {
+																	if(address_[i].y == address_[2].y) {
 
 																		//動かすブロックの下側が空いていて
-																		if (address_[i].y + 1 < map.GetMapChip().size()) {
-																			if (map.GetMapChip()[address_[i].y + 1][address_[i].x - 1] <= 0) {
+																		if(address_[i].y + 1 < map.GetMapChip().size()) {
+																			if(map.GetMapChip()[address_[i].y + 1][address_[i].x - 1] <= 0) {
 																				//プレイヤーの下も空いている時
-																				if (map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 0) {
+																				if(map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 0) {
 
 																					//動かすフラグを立てる
 																					isMoveBlock_ = true;
@@ -577,25 +578,25 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 											}
 										} else {
 
-											if (Novice::IsPressButton(0, kPadButton10)) {
+											if(Novice::IsPressButton(0, kPadButton10)) {
 
-												if (velocity_.x > 0) {
+												if(velocity_.x > 0) {
 
 													//左側にブロックがあり
-													if (address_[i].x - 1 >= 0) {
-														if (map.GetMapChip()[address_[i].y][address_[i].x - 1] > 0) {
-															if (map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 2) {
+													if(address_[i].x - 1 >= 0) {
+														if(map.GetMapChip()[address_[i].y][address_[i].x - 1] > 0) {
+															if(map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 2) {
 
 																//すぐ左にブロックがあるとき(接しているとき)
-																if (pos_.x - 2 <=
+																if(pos_.x - 2 <=
 																	map.GetPos()[address_[i].y][address_[i].x - 1].x
 																	+ (map.GetSize().x * 0.5f) + (size_.x * 0.5f)) {
 
-																	if (address_[i].y == address_[2].y) {
+																	if(address_[i].y == address_[2].y) {
 
 																		//プレイヤーの右側が空いていれば
-																		if (address_[i].x + 1 < map.GetMapChip()[0].size()) {
-																			if (map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 0) {
+																		if(address_[i].x + 1 < map.GetMapChip()[0].size()) {
+																			if(map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 0) {
 
 																				//動かすフラグを立てる
 																				isMoveBlock_ = true;
@@ -619,28 +620,28 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 													}
 
 													//上側にブロックがあり
-													if (address_[i].y - 1 >= 0) {
-														if (map.GetMapChip()[address_[i].y - 1][address_[i].x] > 0) {
-															if (map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 2) {
+													if(address_[i].y - 1 >= 0) {
+														if(map.GetMapChip()[address_[i].y - 1][address_[i].x] > 0) {
+															if(map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 2) {
 
 																//すぐ上にブロックがあるとき(接しているとき)
-																if (pos_.y - 2 <=
+																if(pos_.y - 2 <=
 																	map.GetPos()[address_[i].y - 1][address_[i].x].y
 																	+ (map.GetSize().y * 0.5f) + (size_.y * 0.5f)) {
 
-																	if (address_[i].x == address_[1].x) {
+																	if(address_[i].x == address_[1].x) {
 
 																		//プレイヤーの右側が空いていて
-																		if (address_[i].x + 1 < map.GetMapChip()[0].size()) {
-																			if (map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 0) {
+																		if(address_[i].x + 1 < map.GetMapChip()[0].size()) {
+																			if(map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 0) {
 																				//箱の右側も空いていれば
-																				if (map.GetMapChip()[address_[i].y - 1][address_[i].x + 1] <= 0) {
+																				if(map.GetMapChip()[address_[i].y - 1][address_[i].x + 1] <= 0) {
 
 																					//動かすフラグを立てる
 																					isMoveBlock_ = true;
 																					moveDirection_ = Right;
 																					//動かすブロックのアドレスを保存
-																					moveBlockAddress_ = { address_[i].x,address_[i].y - 1};
+																					moveBlockAddress_ = { address_[i].x,address_[i].y - 1 };
 																					moveStartPos_ = map.GetPos()[address_[i].y - 1][address_[i].x];
 																					moveBoxSEHandle_ = Novice::PlayAudio(rs.moveBoxSE_, 0, 0.1f);
 																					//プレイヤーの座標を保存
@@ -661,23 +662,23 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 													}
 
 
-												} else if (velocity_.x < 0) {
+												} else if(velocity_.x < 0) {
 
 													//左側にブロックがあり
-													if (address_[i].x - 1 >= 0) {
-														if (map.GetMapChip()[address_[i].y][address_[i].x - 1] > 0) {
-															if (map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 2) {
+													if(address_[i].x - 1 >= 0) {
+														if(map.GetMapChip()[address_[i].y][address_[i].x - 1] > 0) {
+															if(map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 2) {
 
 																//すぐ左にブロックがあるとき(接しているとき)
-																if (pos_.x - 2 <=
+																if(pos_.x - 2 <=
 																	map.GetPos()[address_[i].y][address_[i].x - 1].x
 																	+ (map.GetSize().x * 0.5f) + (size_.x * 0.5f)) {
 
-																	if (address_[i].y == address_[2].y) {
+																	if(address_[i].y == address_[2].y) {
 
 																		//動かすブロックの左側が空いていれば
-																		if (address_[i].x - 2 >= 0) {
-																			if (map.GetMapChip()[address_[i].y][address_[i].x - 2] <= 0) {
+																		if(address_[i].x - 2 >= 0) {
+																			if(map.GetMapChip()[address_[i].y][address_[i].x - 2] <= 0) {
 
 																				//動かすフラグを立てる
 																				isMoveBlock_ = true;
@@ -701,22 +702,22 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 													}
 
 													//上側にブロックがあり
-													if (address_[i].y - 1 >= 0) {
-														if (map.GetMapChip()[address_[i].y - 1][address_[i].x] > 0) {
-															if (map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 2) {
+													if(address_[i].y - 1 >= 0) {
+														if(map.GetMapChip()[address_[i].y - 1][address_[i].x] > 0) {
+															if(map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 2) {
 
 																//すぐ上にブロックがあるとき(接しているとき)
-																if (pos_.y - 2 <=
+																if(pos_.y - 2 <=
 																	map.GetPos()[address_[i].y - 1][address_[i].x].y
 																	+ (map.GetSize().y * 0.5f) + (size_.y * 0.5f)) {
 
-																	if (address_[i].x == address_[1].x) {
+																	if(address_[i].x == address_[1].x) {
 
 																		//プレイヤーの左側が空いていて
-																		if (address_[i].x - 1 >= 0) {
-																			if (map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 0) {
+																		if(address_[i].x - 1 >= 0) {
+																			if(map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 0) {
 																				//箱の左側も空いていれば
-																				if (map.GetMapChip()[address_[i].y - 1][address_[i].x - 1] <= 0) {
+																				if(map.GetMapChip()[address_[i].y - 1][address_[i].x - 1] <= 0) {
 
 																					//動かすフラグを立てる
 																					isMoveBlock_ = true;
@@ -743,23 +744,23 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 													}
 												}
 
-												if (velocity_.y < 0) {
+												if(velocity_.y < 0) {
 
 													//上側にブロックがあり
-													if (address_[i].y - 1 >= 0) {
-														if (map.GetMapChip()[address_[i].y - 1][address_[i].x] > 0) {
-															if (map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 2) {
+													if(address_[i].y - 1 >= 0) {
+														if(map.GetMapChip()[address_[i].y - 1][address_[i].x] > 0) {
+															if(map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 2) {
 
 																//すぐ上にブロックがあるとき(接しているとき)
-																if (pos_.y - 2 <=
+																if(pos_.y - 2 <=
 																	map.GetPos()[address_[i].y - 1][address_[i].x].y
 																	+ (map.GetSize().y * 0.5f) + (size_.y * 0.5f)) {
 
-																	if (address_[i].x == address_[1].x) {
+																	if(address_[i].x == address_[1].x) {
 
 																		//ブロックのの上側が空いていれば
-																		if (address_[i].y - 2 >= 0) {
-																			if (map.GetMapChip()[address_[i].y - 2][address_[i].x] <= 0) {
+																		if(address_[i].y - 2 >= 0) {
+																			if(map.GetMapChip()[address_[i].y - 2][address_[i].x] <= 0) {
 
 																				//動かすフラグを立てる
 																				isMoveBlock_ = true;
@@ -783,22 +784,22 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 													}
 
 													//左側にブロックがあり
-													if (address_[i].x - 1 >= 0) {
-														if (map.GetMapChip()[address_[i].y][address_[i].x - 1] > 0) {
-															if (map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 2) {
+													if(address_[i].x - 1 >= 0) {
+														if(map.GetMapChip()[address_[i].y][address_[i].x - 1] > 0) {
+															if(map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 2) {
 
 																//すぐ左にブロックがあるとき(接しているとき)
-																if (pos_.x - 2 <=
+																if(pos_.x - 2 <=
 																	map.GetPos()[address_[i].y][address_[i].x - 1].x
 																	+ (map.GetSize().x * 0.5f) + (size_.x * 0.5f)) {
 
-																	if (address_[i].y == address_[2].y) {
+																	if(address_[i].y == address_[2].y) {
 
 																		//動かすブロックの上側が空いていて
-																		if (address_[i].y - 1 >= 0) {
-																			if (map.GetMapChip()[address_[i].y - 1][address_[i].x - 1] <= 0) {
+																		if(address_[i].y - 1 >= 0) {
+																			if(map.GetMapChip()[address_[i].y - 1][address_[i].x - 1] <= 0) {
 																				// プレイヤーの上も空いているとき
-																				if (map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 0) {
+																				if(map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 0) {
 
 																					//動かすフラグを立てる
 																					isMoveBlock_ = true;
@@ -823,23 +824,23 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 															}
 														}
 													}
-												} else if (velocity_.y > 0) {
+												} else if(velocity_.y > 0) {
 
 													//上側にブロックがあり
-													if (address_[i].y - 1 >= 0) {
-														if (map.GetMapChip()[address_[i].y - 1][address_[i].x] > 0) {
-															if (map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 2) {
+													if(address_[i].y - 1 >= 0) {
+														if(map.GetMapChip()[address_[i].y - 1][address_[i].x] > 0) {
+															if(map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 2) {
 
 																//すぐ上にブロックがあるとき(接しているとき)
-																if (pos_.y - 2 <=
+																if(pos_.y - 2 <=
 																	map.GetPos()[address_[i].y - 1][address_[i].x].y
 																	+ (map.GetSize().x * 0.5f) + (size_.x * 0.5f)) {
 
-																	if (address_[i].x == address_[1].x) {
+																	if(address_[i].x == address_[1].x) {
 
 																		//プレイヤーの下側が空いていれば
-																		if (address_[i].y + 1 < map.GetMapChip().size()) {
-																			if (map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 0) {
+																		if(address_[i].y + 1 < map.GetMapChip().size()) {
+																			if(map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 0) {
 
 																				//動かすフラグを立てる
 																				isMoveBlock_ = true;
@@ -863,22 +864,22 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 													}
 
 													//左側にブロックがあり
-													if (address_[i].x - 1 >= 0) {
-														if (map.GetMapChip()[address_[i].y][address_[i].x - 1] > 0) {
-															if (map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 2) {
+													if(address_[i].x - 1 >= 0) {
+														if(map.GetMapChip()[address_[i].y][address_[i].x - 1] > 0) {
+															if(map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 2) {
 
 																//すぐ左にブロックがあるとき(接しているとき)
-																if (pos_.x - 2 <=
+																if(pos_.x - 2 <=
 																	map.GetPos()[address_[i].y][address_[i].x - 1].x
 																	+ (map.GetSize().x * 0.5f) + (size_.x * 0.5f)) {
 
-																	if (address_[i].y == address_[2].y) {
+																	if(address_[i].y == address_[2].y) {
 
 																		//動かすブロックの下側が空いていて
-																		if (address_[i].y + 1 < map.GetMapChip().size()) {
-																			if (map.GetMapChip()[address_[i].y + 1][address_[i].x - 1] <= 0) {
+																		if(address_[i].y + 1 < map.GetMapChip().size()) {
+																			if(map.GetMapChip()[address_[i].y + 1][address_[i].x - 1] <= 0) {
 																				// プレイヤーの下も空いているとき
-																				if (map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 0) {
+																				if(map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 0) {
 
 																					//動かすフラグを立てる
 																					isMoveBlock_ = true;
@@ -911,26 +912,26 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 
 									case RightTop://---------------------------------------------------------------------------------------
 
-										if (Global::controlMode_ == 0) {
-											if (keys[DIK_SPACE]) {
+										if(Global::controlMode_ == 0) {
+											if(keys[DIK_SPACE]) {
 
-												if (keys[DIK_RIGHT]) {
+												if(keys[DIK_RIGHT]) {
 
 													//右側にブロックがあり
-													if (address_[i].x + 1 < map.GetMapChip()[0].size()) {
-														if (map.GetMapChip()[address_[i].y][address_[i].x + 1] > 0) {
-															if (map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 2) {
+													if(address_[i].x + 1 < map.GetMapChip()[0].size()) {
+														if(map.GetMapChip()[address_[i].y][address_[i].x + 1] > 0) {
+															if(map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 2) {
 
 																//プレイヤーが右のブロックと接しているとき
-																if (pos_.x + 2 >=
+																if(pos_.x + 2 >=
 																	map.GetPos()[address_[i].y][address_[i].x + 1].x
 																	- (map.GetSize().x * 0.5f) - (size_.x * 0.5f)) {
 
-																	if (address_[i].y == address_[3].y) {
+																	if(address_[i].y == address_[3].y) {
 
 																		//動かすブロックの右が空いているとき
-																		if (address_[i].x + 2 < map.GetMapChip()[0].size()) {
-																			if (map.GetMapChip()[address_[i].y][address_[i].x + 2] <= 0) {
+																		if(address_[i].x + 2 < map.GetMapChip()[0].size()) {
+																			if(map.GetMapChip()[address_[i].y][address_[i].x + 2] <= 0) {
 
 																				//動かすフラグを立てる
 																				isMoveBlock_ = true;
@@ -952,23 +953,23 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 															}
 														}
 													}
-												} else if (keys[DIK_LEFT]) {
+												} else if(keys[DIK_LEFT]) {
 
 													//右側にブロックがあり
-													if (address_[i].x + 1 < map.GetMapChip()[0].size()) {
-														if (map.GetMapChip()[address_[i].y][address_[i].x + 1] > 0) {
-															if (map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 2) {
+													if(address_[i].x + 1 < map.GetMapChip()[0].size()) {
+														if(map.GetMapChip()[address_[i].y][address_[i].x + 1] > 0) {
+															if(map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 2) {
 
 																//プレイヤーが右のブロックと接しているとき
-																if (pos_.x + 2 >=
+																if(pos_.x + 2 >=
 																	map.GetPos()[address_[i].y][address_[i].x + 1].x
 																	- (map.GetSize().x * 0.5f) - (size_.x * 0.5f)) {
 
-																	if (address_[i].y == address_[3].y) {
+																	if(address_[i].y == address_[3].y) {
 
 																		//動かすブロックの左側が空いていれば
-																		if (address_[i].x - 1 >= 0) {
-																			if (map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 0) {
+																		if(address_[i].x - 1 >= 0) {
+																			if(map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 0) {
 
 																				//動かすフラグを立てる
 																				isMoveBlock_ = true;
@@ -992,23 +993,23 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 													}
 												}
 
-												if (keys[DIK_UP]) {
+												if(keys[DIK_UP]) {
 
 													//上側にブロックがあり
-													if (address_[i].y - 1 >= 0) {
-														if (map.GetMapChip()[address_[i].y - 1][address_[i].x] > 0) {
-															if (map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 2) {
+													if(address_[i].y - 1 >= 0) {
+														if(map.GetMapChip()[address_[i].y - 1][address_[i].x] > 0) {
+															if(map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 2) {
 
 																//すぐ上にブロックがあるとき(接しているとき)
-																if (pos_.y - 2 <=
+																if(pos_.y - 2 <=
 																	map.GetPos()[address_[i].y - 1][address_[i].x].y
 																	+ (map.GetSize().y * 0.5f) + (size_.y * 0.5f)) {
 
-																	if (address_[i].x == address_[0].x) {
+																	if(address_[i].x == address_[0].x) {
 
 																		//ブロックのの上側が空いていれば
-																		if (address_[i].y - 2 >= 0) {
-																			if (map.GetMapChip()[address_[i].y - 2][address_[i].x] <= 0) {
+																		if(address_[i].y - 2 >= 0) {
+																			if(map.GetMapChip()[address_[i].y - 2][address_[i].x] <= 0) {
 
 																				//動かすフラグを立てる
 																				isMoveBlock_ = true;
@@ -1030,23 +1031,23 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 															}
 														}
 													}
-												} else if (keys[DIK_DOWN]) {
+												} else if(keys[DIK_DOWN]) {
 
 													//上側にブロックがあり
-													if (address_[i].y - 1 >= 0) {
-														if (map.GetMapChip()[address_[i].y - 1][address_[i].x] > 0) {
-															if (map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 2) {
+													if(address_[i].y - 1 >= 0) {
+														if(map.GetMapChip()[address_[i].y - 1][address_[i].x] > 0) {
+															if(map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 2) {
 
 																//すぐ上にブロックがあるとき(接しているとき)
-																if (pos_.y - 2 <=
+																if(pos_.y - 2 <=
 																	map.GetPos()[address_[i].y - 1][address_[i].x].y
 																	+ (map.GetSize().x * 0.5f) + (size_.x * 0.5f)) {
 
-																	if (address_[i].x == address_[0].x) {
+																	if(address_[i].x == address_[0].x) {
 
 																		//プレイヤーの下側が空いていれば
-																		if (address_[i].y + 1 < map.GetMapChip().size()) {
-																			if (map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 0) {
+																		if(address_[i].y + 1 < map.GetMapChip().size()) {
+																			if(map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 0) {
 
 																				//動かすフラグを立てる
 																				isMoveBlock_ = true;
@@ -1072,25 +1073,25 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 											}
 										} else {
 
-											if (Novice::IsPressButton(0, kPadButton10)) {
+											if(Novice::IsPressButton(0, kPadButton10)) {
 
-												if (velocity_.x > 0) {
+												if(velocity_.x > 0) {
 
 													//右側にブロックがあり
-													if (address_[i].x + 1 < map.GetMapChip()[0].size()) {
-														if (map.GetMapChip()[address_[i].y][address_[i].x + 1] > 0) {
-															if (map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 2) {
+													if(address_[i].x + 1 < map.GetMapChip()[0].size()) {
+														if(map.GetMapChip()[address_[i].y][address_[i].x + 1] > 0) {
+															if(map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 2) {
 
 																//プレイヤーが右のブロックと接しているとき
-																if (pos_.x + 2 >=
+																if(pos_.x + 2 >=
 																	map.GetPos()[address_[i].y][address_[i].x + 1].x
 																	- (map.GetSize().x * 0.5f) - (size_.x * 0.5f)) {
 
-																	if (address_[i].y == address_[3].y) {
+																	if(address_[i].y == address_[3].y) {
 
 																		//動かすブロックの右が空いているとき
-																		if (address_[i].x + 2 < map.GetMapChip()[0].size()) {
-																			if (map.GetMapChip()[address_[i].y][address_[i].x + 2] <= 0) {
+																		if(address_[i].x + 2 < map.GetMapChip()[0].size()) {
+																			if(map.GetMapChip()[address_[i].y][address_[i].x + 2] <= 0) {
 
 																				//動かすフラグを立てる
 																				isMoveBlock_ = true;
@@ -1112,23 +1113,23 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 															}
 														}
 													}
-												} else if (velocity_.x < 0) {
+												} else if(velocity_.x < 0) {
 
 													//右側にブロックがあり
-													if (address_[i].x + 1 < map.GetMapChip()[0].size()) {
-														if (map.GetMapChip()[address_[i].y][address_[i].x + 1] > 0) {
-															if (map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 2) {
+													if(address_[i].x + 1 < map.GetMapChip()[0].size()) {
+														if(map.GetMapChip()[address_[i].y][address_[i].x + 1] > 0) {
+															if(map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 2) {
 
 																//プレイヤーが右のブロックと接しているとき
-																if (pos_.x + 2 >=
+																if(pos_.x + 2 >=
 																	map.GetPos()[address_[i].y][address_[i].x + 1].x
 																	- (map.GetSize().x * 0.5f) - (size_.x * 0.5f)) {
 
-																	if (address_[i].y == address_[3].y) {
+																	if(address_[i].y == address_[3].y) {
 
 																		//動かすブロックの左側が空いていれば
-																		if (address_[i].x - 1 >= 0) {
-																			if (map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 0) {
+																		if(address_[i].x - 1 >= 0) {
+																			if(map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 0) {
 
 																				//動かすフラグを立てる
 																				isMoveBlock_ = true;
@@ -1152,23 +1153,23 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 													}
 												}
 
-												if (velocity_.y < 0) {
+												if(velocity_.y < 0) {
 
 													//上側にブロックがあり
-													if (address_[i].y - 1 >= 0) {
-														if (map.GetMapChip()[address_[i].y - 1][address_[i].x] > 0) {
-															if (map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 2) {
+													if(address_[i].y - 1 >= 0) {
+														if(map.GetMapChip()[address_[i].y - 1][address_[i].x] > 0) {
+															if(map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 2) {
 
 																//すぐ上にブロックがあるとき(接しているとき)
-																if (pos_.y - 2 <=
+																if(pos_.y - 2 <=
 																	map.GetPos()[address_[i].y - 1][address_[i].x].y
 																	+ (map.GetSize().y * 0.5f) + (size_.y * 0.5f)) {
 
-																	if (address_[i].x == address_[0].x) {
+																	if(address_[i].x == address_[0].x) {
 
 																		//ブロックのの上側が空いていれば
-																		if (address_[i].y - 2 >= 0) {
-																			if (map.GetMapChip()[address_[i].y - 2][address_[i].x] <= 0) {
+																		if(address_[i].y - 2 >= 0) {
+																			if(map.GetMapChip()[address_[i].y - 2][address_[i].x] <= 0) {
 
 																				//動かすフラグを立てる
 																				isMoveBlock_ = true;
@@ -1190,23 +1191,23 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 															}
 														}
 													}
-												} else if (velocity_.y > 0) {
+												} else if(velocity_.y > 0) {
 
 													//上側にブロックがあり
-													if (address_[i].y - 1 >= 0) {
-														if (map.GetMapChip()[address_[i].y - 1][address_[i].x] > 0) {
-															if (map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 2) {
+													if(address_[i].y - 1 >= 0) {
+														if(map.GetMapChip()[address_[i].y - 1][address_[i].x] > 0) {
+															if(map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 2) {
 
 																//すぐ上にブロックがあるとき(接しているとき)
-																if (pos_.y - 2 <=
+																if(pos_.y - 2 <=
 																	map.GetPos()[address_[i].y - 1][address_[i].x].y
 																	+ (map.GetSize().x * 0.5f) + (size_.x * 0.5f)) {
 
-																	if (address_[i].x == address_[0].x) {
+																	if(address_[i].x == address_[0].x) {
 
 																		//プレイヤーの下側が空いていれば
-																		if (address_[i].y + 1 < map.GetMapChip().size()) {
-																			if (map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 0) {
+																		if(address_[i].y + 1 < map.GetMapChip().size()) {
+																			if(map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 0) {
 
 																				//動かすフラグを立てる
 																				isMoveBlock_ = true;
@@ -1235,26 +1236,26 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 										break;
 									case LeftBottom://---------------------------------------------------------------------------------------
 
-										if (Global::controlMode_ == 0) {
-											if (keys[DIK_SPACE]) {
+										if(Global::controlMode_ == 0) {
+											if(keys[DIK_SPACE]) {
 
-												if (keys[DIK_RIGHT]) {
+												if(keys[DIK_RIGHT]) {
 
 													//左側にブロックがあり
-													if (address_[i].x - 1 >= 0) {
-														if (map.GetMapChip()[address_[i].y][address_[i].x - 1] > 0) {
-															if (map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 2) {
+													if(address_[i].x - 1 >= 0) {
+														if(map.GetMapChip()[address_[i].y][address_[i].x - 1] > 0) {
+															if(map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 2) {
 
 																//すぐ左にブロックがあるとき(接しているとき)
-																if (pos_.x - 2 <=
+																if(pos_.x - 2 <=
 																	map.GetPos()[address_[i].y][address_[i].x - 1].x
 																	+ (map.GetSize().x * 0.5f) + (size_.x * 0.5f)) {
 
-																	if (address_[i].y == address_[0].y) {
+																	if(address_[i].y == address_[0].y) {
 
 																		//プレイヤーの右側が空いていれば
-																		if (address_[i].x + 1 < map.GetMapChip()[0].size()) {
-																			if (map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 0) {
+																		if(address_[i].x + 1 < map.GetMapChip()[0].size()) {
+																			if(map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 0) {
 
 																				//動かすフラグを立てる
 																				isMoveBlock_ = true;
@@ -1276,23 +1277,23 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 															}
 														}
 													}
-												} else if (keys[DIK_LEFT]) {
+												} else if(keys[DIK_LEFT]) {
 
 													//左側にブロックがあり
-													if (address_[i].x - 1 >= 0) {
-														if (map.GetMapChip()[address_[i].y][address_[i].x - 1] > 0) {
-															if (map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 2) {
+													if(address_[i].x - 1 >= 0) {
+														if(map.GetMapChip()[address_[i].y][address_[i].x - 1] > 0) {
+															if(map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 2) {
 
 																//すぐ左にブロックがあるとき(接しているとき)
-																if (pos_.x - 2 <=
+																if(pos_.x - 2 <=
 																	map.GetPos()[address_[i].y][address_[i].x - 1].x
 																	+ (map.GetSize().x * 0.5f) + (size_.x * 0.5f)) {
 
-																	if (address_[i].y == address_[0].y) {
+																	if(address_[i].y == address_[0].y) {
 
 																		//動かすブロックの左側が空いていれば
-																		if (address_[i].x - 2 >= 0) {
-																			if (map.GetMapChip()[address_[i].y][address_[i].x - 2] <= 0) {
+																		if(address_[i].x - 2 >= 0) {
+																			if(map.GetMapChip()[address_[i].y][address_[i].x - 2] <= 0) {
 
 																				//動かすフラグを立てる
 																				isMoveBlock_ = true;
@@ -1316,23 +1317,23 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 													}
 												}
 
-												if (keys[DIK_UP]) {
+												if(keys[DIK_UP]) {
 
 													//下側にブロックがあり
-													if (address_[i].y + 1 < map.GetMapChip().size()) {
-														if (map.GetMapChip()[address_[i].y + 1][address_[i].x] > 0) {
-															if (map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 2) {
+													if(address_[i].y + 1 < map.GetMapChip().size()) {
+														if(map.GetMapChip()[address_[i].y + 1][address_[i].x] > 0) {
+															if(map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 2) {
 
 																//すぐ下にブロックがあるとき(接しているとき)
-																if (pos_.y + 2 >=
+																if(pos_.y + 2 >=
 																	map.GetPos()[address_[i].y + 1][address_[i].x].y
 																	- (map.GetSize().y * 0.5f) - (size_.y * 0.5f)) {
 
-																	if (address_[i].x == address_[3].x) {
+																	if(address_[i].x == address_[3].x) {
 
 																		//プレイヤーの上側が空いていれば
-																		if (address_[i].y - 1 >= 0) {
-																			if (map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 0) {
+																		if(address_[i].y - 1 >= 0) {
+																			if(map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 0) {
 
 																				//動かすフラグを立てる
 																				isMoveBlock_ = true;
@@ -1354,23 +1355,23 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 															}
 														}
 													}
-												} else if (keys[DIK_DOWN]) {
+												} else if(keys[DIK_DOWN]) {
 
 													//下側にブロックがあり
-													if (address_[i].y + 1 < map.GetMapChip().size()) {
-														if (map.GetMapChip()[address_[i].y + 1][address_[i].x] > 0) {
-															if (map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 2) {
+													if(address_[i].y + 1 < map.GetMapChip().size()) {
+														if(map.GetMapChip()[address_[i].y + 1][address_[i].x] > 0) {
+															if(map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 2) {
 
 																//すぐ下にブロックがあるとき(接しているとき)
-																if (pos_.y + 2 >=
+																if(pos_.y + 2 >=
 																	map.GetPos()[address_[i].y + 1][address_[i].x].y
 																	- (map.GetSize().y * 0.5f) - (size_.y * 0.5f)) {
 
-																	if (address_[i].x == address_[3].x) {
+																	if(address_[i].x == address_[3].x) {
 
 																		//動かすブロックの下側が空いていれば
-																		if (address_[i].y + 2 < map.GetMapChip().size()) {
-																			if (map.GetMapChip()[address_[i].y + 2][address_[i].x] <= 0) {
+																		if(address_[i].y + 2 < map.GetMapChip().size()) {
+																			if(map.GetMapChip()[address_[i].y + 2][address_[i].x] <= 0) {
 
 																				//動かすフラグを立てる
 																				isMoveBlock_ = true;
@@ -1397,25 +1398,25 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 											}
 										} else {
 
-											if (Novice::IsPressButton(0, kPadButton10)) {
+											if(Novice::IsPressButton(0, kPadButton10)) {
 
-												if (velocity_.x > 0) {
+												if(velocity_.x > 0) {
 
 													//左側にブロックがあり
-													if (address_[i].x - 1 >= 0) {
-														if (map.GetMapChip()[address_[i].y][address_[i].x - 1] > 0) {
-															if (map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 2) {
+													if(address_[i].x - 1 >= 0) {
+														if(map.GetMapChip()[address_[i].y][address_[i].x - 1] > 0) {
+															if(map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 2) {
 
 																//すぐ左にブロックがあるとき(接しているとき)
-																if (pos_.x - 2 <=
+																if(pos_.x - 2 <=
 																	map.GetPos()[address_[i].y][address_[i].x - 1].x
 																	+ (map.GetSize().x * 0.5f) + (size_.x * 0.5f)) {
 
-																	if (address_[i].y == address_[0].y) {
+																	if(address_[i].y == address_[0].y) {
 
 																		//プレイヤーの右側が空いていれば
-																		if (address_[i].x + 1 < map.GetMapChip()[0].size()) {
-																			if (map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 0) {
+																		if(address_[i].x + 1 < map.GetMapChip()[0].size()) {
+																			if(map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 0) {
 
 																				//動かすフラグを立てる
 																				isMoveBlock_ = true;
@@ -1437,23 +1438,23 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 															}
 														}
 													}
-												} else if (velocity_.x < 0) {
+												} else if(velocity_.x < 0) {
 
 													//左側にブロックがあり
-													if (address_[i].x - 1 >= 0) {
-														if (map.GetMapChip()[address_[i].y][address_[i].x - 1] > 0) {
-															if (map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 2) {
+													if(address_[i].x - 1 >= 0) {
+														if(map.GetMapChip()[address_[i].y][address_[i].x - 1] > 0) {
+															if(map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 2) {
 
 																//すぐ左にブロックがあるとき(接しているとき)
-																if (pos_.x - 2 <=
+																if(pos_.x - 2 <=
 																	map.GetPos()[address_[i].y][address_[i].x - 1].x
 																	+ (map.GetSize().x * 0.5f) + (size_.x * 0.5f)) {
 
-																	if (address_[i].y == address_[0].y) {
+																	if(address_[i].y == address_[0].y) {
 
 																		//動かすブロックの左側が空いていれば
-																		if (address_[i].x - 2 >= 0) {
-																			if (map.GetMapChip()[address_[i].y][address_[i].x - 2] <= 0) {
+																		if(address_[i].x - 2 >= 0) {
+																			if(map.GetMapChip()[address_[i].y][address_[i].x - 2] <= 0) {
 
 																				//動かすフラグを立てる
 																				isMoveBlock_ = true;
@@ -1477,23 +1478,23 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 													}
 												}
 
-												if (velocity_.y < 0) {
+												if(velocity_.y < 0) {
 
 													//下側にブロックがあり
-													if (address_[i].y + 1 < map.GetMapChip().size()) {
-														if (map.GetMapChip()[address_[i].y + 1][address_[i].x] > 0) {
-															if (map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 2) {
+													if(address_[i].y + 1 < map.GetMapChip().size()) {
+														if(map.GetMapChip()[address_[i].y + 1][address_[i].x] > 0) {
+															if(map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 2) {
 
 																//すぐ下にブロックがあるとき(接しているとき)
-																if (pos_.y + 2 >=
+																if(pos_.y + 2 >=
 																	map.GetPos()[address_[i].y + 1][address_[i].x].y
 																	- (map.GetSize().y * 0.5f) - (size_.y * 0.5f)) {
 
-																	if (address_[i].x == address_[3].x) {
+																	if(address_[i].x == address_[3].x) {
 
 																		//プレイヤーの上側が空いていれば
-																		if (address_[i].y - 1 >= 0) {
-																			if (map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 0) {
+																		if(address_[i].y - 1 >= 0) {
+																			if(map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 0) {
 
 																				//動かすフラグを立てる
 																				isMoveBlock_ = true;
@@ -1515,23 +1516,23 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 															}
 														}
 													}
-												} else if (velocity_.y > 0) {
+												} else if(velocity_.y > 0) {
 
 													//下側にブロックがあり
-													if (address_[i].y + 1 < map.GetMapChip().size()) {
-														if (map.GetMapChip()[address_[i].y + 1][address_[i].x] > 0) {
-															if (map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 2) {
+													if(address_[i].y + 1 < map.GetMapChip().size()) {
+														if(map.GetMapChip()[address_[i].y + 1][address_[i].x] > 0) {
+															if(map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 2) {
 
 																//すぐ下にブロックがあるとき(接しているとき)
-																if (pos_.y + 2 >=
+																if(pos_.y + 2 >=
 																	map.GetPos()[address_[i].y + 1][address_[i].x].y
 																	- (map.GetSize().y * 0.5f) - (size_.y * 0.5f)) {
 
-																	if (address_[i].x == address_[3].x) {
+																	if(address_[i].x == address_[3].x) {
 
 																		//動かすブロックの下側が空いていれば
-																		if (address_[i].y + 2 < map.GetMapChip().size()) {
-																			if (map.GetMapChip()[address_[i].y + 2][address_[i].x] <= 0) {
+																		if(address_[i].y + 2 < map.GetMapChip().size()) {
+																			if(map.GetMapChip()[address_[i].y + 2][address_[i].x] <= 0) {
 
 																				//動かすフラグを立てる
 																				isMoveBlock_ = true;
@@ -1563,26 +1564,26 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 
 									case RightBottom://---------------------------------------------------------------------------------------
 
-										if (Global::controlMode_ == 0) {
-											if (keys[DIK_SPACE]) {
+										if(Global::controlMode_ == 0) {
+											if(keys[DIK_SPACE]) {
 
-												if (keys[DIK_RIGHT]) {
+												if(keys[DIK_RIGHT]) {
 
 													//右側にブロックがあり
-													if (address_[i].x + 1 < map.GetMapChip()[0].size()) {
-														if (map.GetMapChip()[address_[i].y][address_[i].x + 1] > 0) {
-															if (map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 2) {
+													if(address_[i].x + 1 < map.GetMapChip()[0].size()) {
+														if(map.GetMapChip()[address_[i].y][address_[i].x + 1] > 0) {
+															if(map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 2) {
 
 																//プレイヤーが右のブロックと接しているとき
-																if (pos_.x + 2 >=
+																if(pos_.x + 2 >=
 																	map.GetPos()[address_[i].y][address_[i].x + 1].x
 																	- (map.GetSize().x * 0.5f) - (size_.x * 0.5f)) {
 
-																	if (address_[i].y == address_[1].y) {
+																	if(address_[i].y == address_[1].y) {
 
 																		//動かすブロックの右が空いているとき
-																		if (address_[i].x + 2 < map.GetMapChip()[0].size()) {
-																			if (map.GetMapChip()[address_[i].y][address_[i].x + 2] <= 0) {
+																		if(address_[i].x + 2 < map.GetMapChip()[0].size()) {
+																			if(map.GetMapChip()[address_[i].y][address_[i].x + 2] <= 0) {
 
 																				//動かすフラグを立てる
 																				isMoveBlock_ = true;
@@ -1606,22 +1607,22 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 													}
 
 													//下側にブロックがあり
-													if (address_[i].y + 1 < map.GetMapChip().size()) {
-														if (map.GetMapChip()[address_[i].y + 1][address_[i].x] > 0) {
-															if (map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 2) {
+													if(address_[i].y + 1 < map.GetMapChip().size()) {
+														if(map.GetMapChip()[address_[i].y + 1][address_[i].x] > 0) {
+															if(map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 2) {
 
 																//すぐ下にブロックがあるとき(接しているとき)
-																if (pos_.y + 2 >=
+																if(pos_.y + 2 >=
 																	map.GetPos()[address_[i].y + 1][address_[i].x].y
 																	- (map.GetSize().y * 0.5f) - (size_.y * 0.5f)) {
 
-																	if (address_[i].x == address_[2].x) {
+																	if(address_[i].x == address_[2].x) {
 
 																		//プレイヤーの右側が空いていて
-																		if (address_[i].x + 1 < map.GetMapChip()[0].size()) {
-																			if (map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 0) {
+																		if(address_[i].x + 1 < map.GetMapChip()[0].size()) {
+																			if(map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 0) {
 																				//ブロックの右も空いていたら
-																				if (map.GetMapChip()[address_[i].y + 1][address_[i].x + 1] <= 0) {
+																				if(map.GetMapChip()[address_[i].y + 1][address_[i].x + 1] <= 0) {
 
 																					//動かすフラグを立てる
 																					isMoveBlock_ = true;
@@ -1647,23 +1648,23 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 														}
 													}
 
-												} else if (keys[DIK_LEFT]) {
+												} else if(keys[DIK_LEFT]) {
 
 													//右側にブロックがあり
-													if (address_[i].x + 1 < map.GetMapChip()[0].size()) {
-														if (map.GetMapChip()[address_[i].y][address_[i].x + 1] > 0) {
-															if (map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 2) {
+													if(address_[i].x + 1 < map.GetMapChip()[0].size()) {
+														if(map.GetMapChip()[address_[i].y][address_[i].x + 1] > 0) {
+															if(map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 2) {
 
 																//プレイヤーが右のブロックと接しているとき
-																if (pos_.x + 2 >=
+																if(pos_.x + 2 >=
 																	map.GetPos()[address_[i].y][address_[i].x + 1].x
 																	- (map.GetSize().x * 0.5f) - (size_.x * 0.5f)) {
 
-																	if (address_[i].y == address_[1].y) {
+																	if(address_[i].y == address_[1].y) {
 
 																		//動かすブロックの左側が空いていれば
-																		if (address_[i].x - 1 >= 0) {
-																			if (map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 0) {
+																		if(address_[i].x - 1 >= 0) {
+																			if(map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 0) {
 
 																				//動かすフラグを立てる
 																				isMoveBlock_ = true;
@@ -1688,22 +1689,22 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 													}
 
 													//下側にブロックがあり
-													if (address_[i].y + 1 < map.GetMapChip().size()) {
-														if (map.GetMapChip()[address_[i].y + 1][address_[i].x] > 0) {
-															if (map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 2) {
+													if(address_[i].y + 1 < map.GetMapChip().size()) {
+														if(map.GetMapChip()[address_[i].y + 1][address_[i].x] > 0) {
+															if(map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 2) {
 
 																//すぐ下にブロックがあるとき(接しているとき)
-																if (pos_.y + 2 >=
+																if(pos_.y + 2 >=
 																	map.GetPos()[address_[i].y + 1][address_[i].x].y
 																	- (map.GetSize().y * 0.5f) - (size_.y * 0.5f)) {
 
-																	if (address_[i].x == address_[2].x) {
+																	if(address_[i].x == address_[2].x) {
 
 																		//プレイヤーの左側が空いていて
-																		if (address_[i].x - 1 >= 0) {
-																			if (map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 0) {
+																		if(address_[i].x - 1 >= 0) {
+																			if(map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 0) {
 																				//ブロックの左も空いていたら
-																				if (map.GetMapChip()[address_[i].y + 1][address_[i].x - 1] <= 0) {
+																				if(map.GetMapChip()[address_[i].y + 1][address_[i].x - 1] <= 0) {
 
 																					//動かすフラグを立てる
 																					isMoveBlock_ = true;
@@ -1730,23 +1731,23 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 													}
 												}
 
-												if (keys[DIK_UP]) {
+												if(keys[DIK_UP]) {
 
 													//下側にブロックがあり
-													if (address_[i].y + 1 < map.GetMapChip().size()) {
-														if (map.GetMapChip()[address_[i].y + 1][address_[i].x] > 0) {
-															if (map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 2) {
+													if(address_[i].y + 1 < map.GetMapChip().size()) {
+														if(map.GetMapChip()[address_[i].y + 1][address_[i].x] > 0) {
+															if(map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 2) {
 
 																//すぐ下にブロックがあるとき(接しているとき)
-																if (pos_.y + 2 >=
+																if(pos_.y + 2 >=
 																	map.GetPos()[address_[i].y + 1][address_[i].x].y
 																	- (map.GetSize().y * 0.5f) - (size_.y * 0.5f)) {
 
-																	if (address_[i].x == address_[2].x) {
+																	if(address_[i].x == address_[2].x) {
 
 																		//プレイヤーの上側が空いていれば
-																		if (address_[i].y - 1 >= 0) {
-																			if (map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 0) {
+																		if(address_[i].y - 1 >= 0) {
+																			if(map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 0) {
 
 																				//動かすフラグを立てる
 																				isMoveBlock_ = true;
@@ -1770,22 +1771,22 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 													}
 
 													//右側にブロックがあり
-													if (address_[i].x + 1 < map.GetMapChip()[0].size()) {
-														if (map.GetMapChip()[address_[i].y][address_[i].x + 1] > 0) {
-															if (map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 2) {
+													if(address_[i].x + 1 < map.GetMapChip()[0].size()) {
+														if(map.GetMapChip()[address_[i].y][address_[i].x + 1] > 0) {
+															if(map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 2) {
 
 																//プレイヤーが右のブロックと接しているとき
-																if (pos_.x + 2 >=
+																if(pos_.x + 2 >=
 																	map.GetPos()[address_[i].y][address_[i].x + 1].x
 																	- (map.GetSize().x * 0.5f) - (size_.x * 0.5f)) {
 
-																	if (address_[i].y == address_[1].y) {
+																	if(address_[i].y == address_[1].y) {
 
 																		//ブロックの上が空いていて
-																		if (address_[i].y - 1 >= 0) {
-																			if (map.GetMapChip()[address_[i].y - 1][address_[i].x + 1] <= 0) {
+																		if(address_[i].y - 1 >= 0) {
+																			if(map.GetMapChip()[address_[i].y - 1][address_[i].x + 1] <= 0) {
 																				//プレイヤーの上も空いているとき
-																				if (map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 0) {
+																				if(map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 0) {
 																					//動かすフラグを立てる
 																					isMoveBlock_ = true;
 																					moveDirection_ = Top;
@@ -1809,23 +1810,23 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 															}
 														}
 													}
-												} else if (keys[DIK_DOWN]) {
+												} else if(keys[DIK_DOWN]) {
 
 													//下側にブロックがあり
-													if (address_[i].y + 1 < map.GetMapChip().size()) {
-														if (map.GetMapChip()[address_[i].y + 1][address_[i].x] > 0) {
-															if (map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 2) {
+													if(address_[i].y + 1 < map.GetMapChip().size()) {
+														if(map.GetMapChip()[address_[i].y + 1][address_[i].x] > 0) {
+															if(map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 2) {
 
 																//すぐ下にブロックがあるとき(接しているとき)
-																if (pos_.y + 2 >=
+																if(pos_.y + 2 >=
 																	map.GetPos()[address_[i].y + 1][address_[i].x].y
 																	- (map.GetSize().y * 0.5f) - (size_.y * 0.5f)) {
 
-																	if (address_[i].x == address_[2].x) {
+																	if(address_[i].x == address_[2].x) {
 
 																		//動かすブロックの下側が空いていれば
-																		if (address_[i].y + 2 < map.GetMapChip().size()) {
-																			if (map.GetMapChip()[address_[i].y + 2][address_[i].x] <= 0) {
+																		if(address_[i].y + 2 < map.GetMapChip().size()) {
+																			if(map.GetMapChip()[address_[i].y + 2][address_[i].x] <= 0) {
 
 																				//動かすフラグを立てる
 																				isMoveBlock_ = true;
@@ -1849,22 +1850,22 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 													}
 
 													//右側にブロックがあり
-													if (address_[i].x + 1 < map.GetMapChip()[0].size()) {
-														if (map.GetMapChip()[address_[i].y][address_[i].x + 1] > 0) {
-															if (map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 2) {
+													if(address_[i].x + 1 < map.GetMapChip()[0].size()) {
+														if(map.GetMapChip()[address_[i].y][address_[i].x + 1] > 0) {
+															if(map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 2) {
 
 																//プレイヤーが右のブロックと接しているとき
-																if (pos_.x + 2 >=
+																if(pos_.x + 2 >=
 																	map.GetPos()[address_[i].y][address_[i].x + 1].x
 																	- (map.GetSize().x * 0.5f) - (size_.x * 0.5f)) {
 
-																	if (address_[i].y == address_[1].y) {
+																	if(address_[i].y == address_[1].y) {
 
 																		//ブロックの下が空いていて
-																		if (address_[i].y + 1 < map.GetMapChip().size()) {
-																			if (map.GetMapChip()[address_[i].y + 1][address_[i].x + 1] <= 0) {
+																		if(address_[i].y + 1 < map.GetMapChip().size()) {
+																			if(map.GetMapChip()[address_[i].y + 1][address_[i].x + 1] <= 0) {
 																				//プレイヤーの下も空いているとき
-																				if (map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 0) {
+																				if(map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 0) {
 																					//動かすフラグを立てる
 																					isMoveBlock_ = true;
 																					moveDirection_ = Bottom;
@@ -1892,25 +1893,25 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 											}
 										} else {
 
-											if (Novice::IsPressButton(0, kPadButton10)) {
+											if(Novice::IsPressButton(0, kPadButton10)) {
 
-												if (velocity_.x > 0) {
+												if(velocity_.x > 0) {
 
 													//右側にブロックがあり
-													if (address_[i].x + 1 < map.GetMapChip()[0].size()) {
-														if (map.GetMapChip()[address_[i].y][address_[i].x + 1] > 0) {
-															if (map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 2) {
+													if(address_[i].x + 1 < map.GetMapChip()[0].size()) {
+														if(map.GetMapChip()[address_[i].y][address_[i].x + 1] > 0) {
+															if(map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 2) {
 
 																//プレイヤーが右のブロックと接しているとき
-																if (pos_.x + 2 >=
+																if(pos_.x + 2 >=
 																	map.GetPos()[address_[i].y][address_[i].x + 1].x
 																	- (map.GetSize().x * 0.5f) - (size_.x * 0.5f)) {
 
-																	if (address_[i].y == address_[1].y) {
+																	if(address_[i].y == address_[1].y) {
 
 																		//動かすブロックの右が空いているとき
-																		if (address_[i].x + 2 < map.GetMapChip()[0].size()) {
-																			if (map.GetMapChip()[address_[i].y][address_[i].x + 2] <= 0) {
+																		if(address_[i].x + 2 < map.GetMapChip()[0].size()) {
+																			if(map.GetMapChip()[address_[i].y][address_[i].x + 2] <= 0) {
 
 																				//動かすフラグを立てる
 																				isMoveBlock_ = true;
@@ -1934,22 +1935,22 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 													}
 
 													//下側にブロックがあり
-													if (address_[i].y + 1 < map.GetMapChip().size()) {
-														if (map.GetMapChip()[address_[i].y + 1][address_[i].x] > 0) {
-															if (map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 2) {
+													if(address_[i].y + 1 < map.GetMapChip().size()) {
+														if(map.GetMapChip()[address_[i].y + 1][address_[i].x] > 0) {
+															if(map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 2) {
 
 																//すぐ下にブロックがあるとき(接しているとき)
-																if (pos_.y + 2 >=
+																if(pos_.y + 2 >=
 																	map.GetPos()[address_[i].y + 1][address_[i].x].y
 																	- (map.GetSize().y * 0.5f) - (size_.y * 0.5f)) {
 
-																	if (address_[i].x == address_[2].x) {
+																	if(address_[i].x == address_[2].x) {
 
 																		//プレイヤーの右側が空いていて
-																		if (address_[i].x + 1 < map.GetMapChip()[0].size()) {
-																			if (map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 0) {
+																		if(address_[i].x + 1 < map.GetMapChip()[0].size()) {
+																			if(map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 0) {
 																				//箱の右側も空いていれば
-																				if (map.GetMapChip()[address_[i].y + 1][address_[i].x + 1] <= 0) {
+																				if(map.GetMapChip()[address_[i].y + 1][address_[i].x + 1] <= 0) {
 
 																					//動かすフラグを立てる
 																					isMoveBlock_ = true;
@@ -1975,23 +1976,23 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 														}
 													}
 
-												} else if (velocity_.x < 0) {
+												} else if(velocity_.x < 0) {
 
 													//右側にブロックがあり
-													if (address_[i].x + 1 < map.GetMapChip()[0].size()) {
-														if (map.GetMapChip()[address_[i].y][address_[i].x + 1] > 0) {
-															if (map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 2) {
+													if(address_[i].x + 1 < map.GetMapChip()[0].size()) {
+														if(map.GetMapChip()[address_[i].y][address_[i].x + 1] > 0) {
+															if(map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 2) {
 
 																//プレイヤーが右のブロックと接しているとき
-																if (pos_.x + 2 >=
+																if(pos_.x + 2 >=
 																	map.GetPos()[address_[i].y][address_[i].x + 1].x
 																	- (map.GetSize().x * 0.5f) - (size_.x * 0.5f)) {
 
-																	if (address_[i].y == address_[1].y) {
+																	if(address_[i].y == address_[1].y) {
 
 																		//動かすブロックの左側が空いていれば
-																		if (address_[i].x - 1 >= 0) {
-																			if (map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 0) {
+																		if(address_[i].x - 1 >= 0) {
+																			if(map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 0) {
 
 																				//動かすフラグを立てる
 																				isMoveBlock_ = true;
@@ -2016,22 +2017,22 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 													}
 
 													//下側にブロックがあり
-													if (address_[i].y + 1 < map.GetMapChip().size()) {
-														if (map.GetMapChip()[address_[i].y + 1][address_[i].x] > 0) {
-															if (map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 2) {
+													if(address_[i].y + 1 < map.GetMapChip().size()) {
+														if(map.GetMapChip()[address_[i].y + 1][address_[i].x] > 0) {
+															if(map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 2) {
 
 																//すぐ下にブロックがあるとき(接しているとき)
-																if (pos_.y + 2 >=
+																if(pos_.y + 2 >=
 																	map.GetPos()[address_[i].y + 1][address_[i].x].y
 																	- (map.GetSize().y * 0.5f) - (size_.y * 0.5f)) {
 
-																	if (address_[i].x == address_[2].x) {
+																	if(address_[i].x == address_[2].x) {
 
 																		//プレイヤーの左側が空いていて
-																		if (address_[i].x - 1 >= 0) {
-																			if (map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 0) {
+																		if(address_[i].x - 1 >= 0) {
+																			if(map.GetMapChip()[address_[i].y][address_[i].x - 1] <= 0) {
 																				//箱の左側も空いていれば
-																				if (map.GetMapChip()[address_[i].y + 1][address_[i].x - 1] <= 0) {
+																				if(map.GetMapChip()[address_[i].y + 1][address_[i].x - 1] <= 0) {
 
 																					//動かすフラグを立てる
 																					isMoveBlock_ = true;
@@ -2058,23 +2059,23 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 													}
 												}
 
-												if (velocity_.y < 0) {
+												if(velocity_.y < 0) {
 
 													//下側にブロックがあり
-													if (address_[i].y + 1 < map.GetMapChip().size()) {
-														if (map.GetMapChip()[address_[i].y + 1][address_[i].x] > 0) {
-															if (map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 2) {
+													if(address_[i].y + 1 < map.GetMapChip().size()) {
+														if(map.GetMapChip()[address_[i].y + 1][address_[i].x] > 0) {
+															if(map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 2) {
 
 																//すぐ下にブロックがあるとき(接しているとき)
-																if (pos_.y + 2 >=
+																if(pos_.y + 2 >=
 																	map.GetPos()[address_[i].y + 1][address_[i].x].y
 																	- (map.GetSize().y * 0.5f) - (size_.y * 0.5f)) {
 
-																	if (address_[i].x == address_[2].x) {
+																	if(address_[i].x == address_[2].x) {
 
 																		//プレイヤーの上側が空いていれば
-																		if (address_[i].y - 1 >= 0) {
-																			if (map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 0) {
+																		if(address_[i].y - 1 >= 0) {
+																			if(map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 0) {
 
 																				//動かすフラグを立てる
 																				isMoveBlock_ = true;
@@ -2098,23 +2099,23 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 													}
 
 													//右側にブロックがあり
-													if (address_[i].x + 1 < map.GetMapChip()[0].size()) {
-														if (map.GetMapChip()[address_[i].y][address_[i].x + 1] > 0) {
-															if (map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 2) {
+													if(address_[i].x + 1 < map.GetMapChip()[0].size()) {
+														if(map.GetMapChip()[address_[i].y][address_[i].x + 1] > 0) {
+															if(map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 2) {
 
 																//プレイヤーが右のブロックと接しているとき
-																if (pos_.x + 2 >=
+																if(pos_.x + 2 >=
 																	map.GetPos()[address_[i].y][address_[i].x + 1].x
 																	- (map.GetSize().x * 0.5f) - (size_.x * 0.5f)) {
 
-																	if (address_[i].y == address_[1].y) {
+																	if(address_[i].y == address_[1].y) {
 
 																		//動かすブロックの上側が空いていて
-																		if (address_[i].y - 1 >= 0 ) {
-																			if (map.GetMapChip()[address_[i].y - 1][address_[i].x + 1] <= 0) {
+																		if(address_[i].y - 1 >= 0) {
+																			if(map.GetMapChip()[address_[i].y - 1][address_[i].x + 1] <= 0) {
 
 																				//プレイヤーの上も空いていれば
-																				if (map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 0) {
+																				if(map.GetMapChip()[address_[i].y - 1][address_[i].x] <= 0) {
 
 																					//動かすフラグを立てる
 																					isMoveBlock_ = true;
@@ -2140,23 +2141,23 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 														}
 													}
 
-												} else if (velocity_.y > 0) {
+												} else if(velocity_.y > 0) {
 
 													//下側にブロックがあり
-													if (address_[i].y + 1 < map.GetMapChip().size()) {
-														if (map.GetMapChip()[address_[i].y + 1][address_[i].x] > 0) {
-															if (map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 2) {
+													if(address_[i].y + 1 < map.GetMapChip().size()) {
+														if(map.GetMapChip()[address_[i].y + 1][address_[i].x] > 0) {
+															if(map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 2) {
 
 																//すぐ下にブロックがあるとき(接しているとき)
-																if (pos_.y + 2 >=
+																if(pos_.y + 2 >=
 																	map.GetPos()[address_[i].y + 1][address_[i].x].y
 																	- (map.GetSize().y * 0.5f) - (size_.y * 0.5f)) {
 
-																	if (address_[i].x == address_[2].x) {
+																	if(address_[i].x == address_[2].x) {
 
 																		//動かすブロックの下側が空いていれば
-																		if (address_[i].y + 2 < map.GetMapChip().size()) {
-																			if (map.GetMapChip()[address_[i].y + 2][address_[i].x] <= 0) {
+																		if(address_[i].y + 2 < map.GetMapChip().size()) {
+																			if(map.GetMapChip()[address_[i].y + 2][address_[i].x] <= 0) {
 
 																				//動かすフラグを立てる
 																				isMoveBlock_ = true;
@@ -2180,23 +2181,23 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 													}
 
 													//右側にブロックがあり
-													if (address_[i].x + 1 < map.GetMapChip()[0].size()) {
-														if (map.GetMapChip()[address_[i].y][address_[i].x + 1] > 0) {
-															if (map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 2) {
+													if(address_[i].x + 1 < map.GetMapChip()[0].size()) {
+														if(map.GetMapChip()[address_[i].y][address_[i].x + 1] > 0) {
+															if(map.GetMapChip()[address_[i].y][address_[i].x + 1] <= 2) {
 
 																//プレイヤーが右のブロックと接しているとき
-																if (pos_.x + 2 >=
+																if(pos_.x + 2 >=
 																	map.GetPos()[address_[i].y][address_[i].x + 1].x
 																	- (map.GetSize().x * 0.5f) - (size_.x * 0.5f)) {
 
-																	if (address_[i].y == address_[1].y) {
+																	if(address_[i].y == address_[1].y) {
 
 																		//動かすブロックの下側が空いていて
-																		if (address_[i].y + 1 < map.GetMapChip().size()) {
-																			if (map.GetMapChip()[address_[i].y + 1][address_[i].x + 1] <= 0) {
+																		if(address_[i].y + 1 < map.GetMapChip().size()) {
+																			if(map.GetMapChip()[address_[i].y + 1][address_[i].x + 1] <= 0) {
 
 																				//プレイヤーの下も空いていれば
-																				if (map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 0) {
+																				if(map.GetMapChip()[address_[i].y + 1][address_[i].x] <= 0) {
 
 																					//動かすフラグを立てる
 																					isMoveBlock_ = true;
@@ -2241,10 +2242,10 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 
 				/*-------------------------------移動処理-------------------------------*/
 
-				if (PlayerShadow::GetIsAlive()) {
-					if (Global::character_ == 1) {
-						if (!isStopMove_) {
-							if (!isMoveBlock_) {
+				if(PlayerShadow::GetIsAlive()) {
+					if(Global::character_ == 1) {
+						if(!isStopMove_) {
+							if(!isMoveBlock_) {
 								pos_.x += velocity_.x;
 								pos_.y += velocity_.y;
 							}
@@ -2255,15 +2256,15 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 
 
 				/*------------------------------ブロックを動かす-------------------------------*/
-				if (isMoveBlock_) {
+				if(isMoveBlock_) {
 
 					isViewTelop_ = false;
 
-					if (moveDirection_ != Top) {
+					if(moveDirection_ != Top) {
 						Global::isMoveShadow_ = true;
 					}
 
-					switch (moveDirection_) {
+					switch(moveDirection_) {
 
 					case Top:
 
@@ -2336,13 +2337,13 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 					}
 
 					//媒介変数を加算
-					if (blockMoveT_ < 1.0f) {
+					if(blockMoveT_ < 1.0f) {
 
-						if (PlayerShadow::GetIsAlive()) {
+						if(PlayerShadow::GetIsAlive()) {
 							blockMoveT_ += (1.0f / moveTime_);
 						}
 
-					} else if (blockMoveT_ >= 1.0f) {//-----------------------------------------------------
+					} else if(blockMoveT_ >= 1.0f) {//-----------------------------------------------------
 
 						tutorialSpriteAlpha_ = 0;
 
@@ -2353,7 +2354,7 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 						swapTimeCount_ = 3;
 
 						//ブロック番号を更新して座標を戻す
-						switch (moveDirection_) {
+						switch(moveDirection_) {
 
 						case Top:
 
@@ -2376,7 +2377,7 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 							isSwappped_ = true;
 
 							//押してた場合少し戻す
-							if (centerAddress_.y == moveBlockAddress_.y) {
+							if(centerAddress_.y == moveBlockAddress_.y) {
 								pos_.y++;
 							}
 
@@ -2402,7 +2403,7 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 							);
 
 							//押してた場合少し戻す
-							if (centerAddress_.x == moveBlockAddress_.x) {
+							if(centerAddress_.x == moveBlockAddress_.x) {
 								pos_.x--;
 							}
 
@@ -2430,7 +2431,7 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 							isSwappped_ = true;
 
 							//押してた場合少し戻す
-							if (centerAddress_.y == moveBlockAddress_.y) {
+							if(centerAddress_.y == moveBlockAddress_.y) {
 								pos_.y--;
 							}
 
@@ -2456,7 +2457,7 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 							);
 
 							//押してた場合少し戻す
-							if (centerAddress_.x == moveBlockAddress_.x) {
+							if(centerAddress_.x == moveBlockAddress_.x) {
 								pos_.x++;
 							}
 
@@ -2493,21 +2494,6 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 
 				} else {
 					Global::isMoveShadow_ = false;
-
-					if (PlayerShadow::GetIsAlive()) {
-
-						if(!isSwappped_){
-							centerAddress_.x = int((pos_.x - map.GetPuzzleLeftTop().x) / map.GetSize().x);
-							centerAddress_.y = int((pos_.y - map.GetPuzzleLeftTop().y) / map.GetSize().y);
-
-							SaveData::map_ = map.GetMapChip();
-							SaveData::savedMap_ = SaveData::map_;
-							SaveData::savedLightPos_ = SaveData::lightPos_;
-							SaveData::savedPlayerShadowPos_ = SaveData::playerShadowPos_;
-							SaveData::playerPos_ = map.GetPos()[centerAddress_.y][centerAddress_.x];
-							SaveData::savedPlayerPos_ = SaveData::playerPos_;
-						}
-					}
 				}
 			}
 
@@ -2521,34 +2507,34 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 
 			//上下===============================================
 			//下に出た時
-			if (pos_.y >= (map.GetPuzzleLeftTop().y + map.GetPuzzleMapSize().y) - size_.y * 0.5f) {
+			if(pos_.y >= (map.GetPuzzleLeftTop().y + map.GetPuzzleMapSize().y) - size_.y * 0.5f) {
 				pos_.y = (map.GetPuzzleLeftTop().y + map.GetPuzzleMapSize().y) - size_.y * 0.5f;
 
 				//上に出た時
-			} else if (pos_.y <= map.GetPuzzleLeftTop().y + size_.y * 0.5f) {
+			} else if(pos_.y <= map.GetPuzzleLeftTop().y + size_.y * 0.5f) {
 				pos_.y = map.GetPuzzleLeftTop().y + size_.y * 0.5f;
 
 			}
 
 			//左右===============================================
 			//右に出た時
-			if (pos_.x >= (map.GetPuzzleLeftTop().x + map.GetPuzzleMapSize().x) - size_.x * 0.5f) {
+			if(pos_.x >= (map.GetPuzzleLeftTop().x + map.GetPuzzleMapSize().x) - size_.x * 0.5f) {
 				pos_.x = (map.GetPuzzleLeftTop().x + map.GetPuzzleMapSize().x) - size_.x * 0.5f;
 
 				//左に出た時
-			} else if (pos_.x <= map.GetPuzzleLeftTop().x + size_.x * 0.5f) {
+			} else if(pos_.x <= map.GetPuzzleLeftTop().x + size_.x * 0.5f) {
 				pos_.x = map.GetPuzzleLeftTop().x + size_.x * 0.5f;
 
 			}
 
 			//座標が動いているときのみ処理
-			if (pos_.x != prePos_.x or pos_.y != prePos_.y) {
+			if(pos_.x != prePos_.x or pos_.y != prePos_.y) {
 
-				if (Global::controlMode_ == 0) {
-					if (keys[DIK_UP] or keys[DIK_DOWN] or keys[DIK_LEFT] or keys[DIK_RIGHT]) {
+				if(Global::controlMode_ == 0) {
+					if(keys[DIK_UP] or keys[DIK_DOWN] or keys[DIK_LEFT] or keys[DIK_RIGHT]) {
 
 						//前フレーム番地の保存
-						for (int i = 0; i < 4; i++) {
+						for(int i = 0; i < 4; i++) {
 							preAddress_[i] = address_[i];
 						}
 
@@ -2591,10 +2577,10 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 					}
 				} else {
 
-					if (velocity_.x != 0 or velocity_.y != 0) {
+					if(velocity_.x != 0 or velocity_.y != 0) {
 
 						//前フレーム番地の保存
-						for (int i = 0; i < 4; i++) {
+						for(int i = 0; i < 4; i++) {
 							preAddress_[i] = address_[i];
 						}
 
@@ -2642,12 +2628,12 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 			}
 
 			//プレイヤーがスイッチを踏んだかどうか判定-------------------------------------------------
-			for (int i = 0; i < 4; i++) {
+			for(int i = 0; i < 4; i++) {
 				//プレイヤーが直接踏んで起動させる場合
-				if (map.GetMapChipCopy()[address_[i].y][address_[i].x] == -2) {
+				if(map.GetMapChipCopy()[address_[i].y][address_[i].x] == -2) {
 
 					map.SetIsPressSwitch(true);
-					if (!isSwitchPushable_) {
+					if(!isSwitchPushable_) {
 						killSwitch_ = true;
 
 					}
@@ -2656,14 +2642,14 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 				}
 			}
 
-			for (int i = 0; i < map.GetMapChip().size(); i++) {
-				for (int j = 0; j < map.GetMapChip()[0].size(); j++) {
+			for(int i = 0; i < map.GetMapChip().size(); i++) {
+				for(int j = 0; j < map.GetMapChip()[0].size(); j++) {
 					//ブロックを置いて起動させる場合
-					if (map.GetMapChip()[i][j] == 1 or map.GetMapChip()[i][j] == 2) {
-						if (map.GetMapChipCopy()[i][j] == -2) {
+					if(map.GetMapChip()[i][j] == 1 or map.GetMapChip()[i][j] == 2) {
+						if(map.GetMapChipCopy()[i][j] == -2) {
 
 							map.SetIsPressSwitch(true);
-							if (!isSwitchPushable_) {
+							if(!isSwitchPushable_) {
 								killSwitch_ = true;
 
 							}
@@ -2673,7 +2659,34 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 				}
 			}
 
-			if (map.isPressSwitch_ && !map.preIsPressSwitch_) {
+
+			if(!isStopMove_){
+				if(!isMoveBlock_){
+					if(PlayerShadow::GetIsAlive()) {
+
+						if(!isSwappped_){
+							centerAddress_.x = int((pos_.x - map.GetPuzzleLeftTop().x) / map.GetSize().x);
+							centerAddress_.y = int((pos_.y - map.GetPuzzleLeftTop().y) / map.GetSize().y);
+
+							if(PlayerShadow::preOnBlock_){
+								if(!(!map.isPressSwitch_ && map.preIsPressSwitch_)){
+									SaveData::map_ = map.GetMapChip();
+									SaveData::savedMap_ = SaveData::map_;
+									SaveData::playerPos_ = map.GetPos()[centerAddress_.y][centerAddress_.x];
+									SaveData::savedPlayerPos_ = SaveData::playerPos_;
+									SaveData::savedLightPos_ = SaveData::lightPos_;
+								}
+							}
+
+							SaveData::savedPlayerShadowPos_ = SaveData::playerShadowPos_;
+
+						}
+					}
+				}
+			}
+
+
+			if(map.isPressSwitch_ && !map.preIsPressSwitch_) {
 				Novice::PlayAudio(rs.swicthOnSE_, 0, 0.12f);
 			}
 
@@ -2691,10 +2704,10 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 
 
 //====================================================描画=============================================================
-void Player::Draw(const char* keys, const Resources& rs) {
+void Player::Draw(const char* keys, const Resources& rs){
 
 	//シーンに応じて処理を分ける
-	switch (Scene::sceneNum_) {
+	switch(Scene::sceneNum_) {
 		//====================================================================================
 	case TITLE://							   タイトル画面
 		//====================================================================================
@@ -2709,11 +2722,11 @@ void Player::Draw(const char* keys, const Resources& rs) {
 
 		rs.whiteGH_;
 
-		if (!isStopMove_) {
-			if ((keys[DIK_SPACE] && isBlockPushable_) or (Novice::IsPressButton(0, kPadButton10) && isBlockPushable_) or
+		if(!isStopMove_) {
+			if((keys[DIK_SPACE] && isBlockPushable_) or (Novice::IsPressButton(0, kPadButton10) && isBlockPushable_) or
 				isMoveBlock_ or swapTimeCount_ == 3) {
 
-				if (Global::character_ == 1) {
+				if(Global::character_ == 1) {
 					DrawCat(pos_, size_.x * 1.4f, size_.y * 1.4f, 0xfff78cff);
 				} else {
 					DrawCat(
@@ -2728,7 +2741,7 @@ void Player::Draw(const char* keys, const Resources& rs) {
 
 				}
 
-			} else if (pos_.x == prePos_.x && pos_.y == prePos_.y) {
+			} else if(pos_.x == prePos_.x && pos_.y == prePos_.y) {
 				//停止しているとき-------------------------------------
 
 				DrawCat(
@@ -2763,14 +2776,14 @@ void Player::Draw(const char* keys, const Resources& rs) {
 				ChangeColor(0xdfdfdfff, 0xffbabbff, 32, float(moveStopTime_))
 			);
 
-			if (moveStopTime_ == 31) {
+			if(moveStopTime_ == 31) {
 				Novice::PlayAudio(rs.moveFailSE_, 0, 0.24f);
 			}
 		}
 
 		//ブロックを押す操作説明
-		if (Global::character_ == 1) {
-			for (int i = 0; i < 4; i++) {
+		if(Global::character_ == 1) {
+			for(int i = 0; i < 4; i++) {
 				Novice::DrawQuad(
 					int(pos_.x) - 64 - i * 2,
 					int(pos_.y - size_.y * 0.5f) - 64 - i * 2,
@@ -2797,12 +2810,12 @@ void Player::Draw(const char* keys, const Resources& rs) {
 			);
 		}
 
-		if (isBlockPushable_) {
+		if(isBlockPushable_) {
 
 
-		} else if (waitTimer_ > 240) {
+		} else if(waitTimer_ > 240) {
 
-			if (Global::character_ == 1) {
+			if(Global::character_ == 1) {
 
 				//←
 				Novice::DrawSpriteRect(
@@ -2854,9 +2867,9 @@ void Player::Draw(const char* keys, const Resources& rs) {
 			}
 		}
 
-		if (Global::character_ == 0) {
+		if(Global::character_ == 0) {
 
-			if (Global::controlMode_ == 0) {
+			if(Global::controlMode_ == 0) {
 				//W
 				/*Novice::DrawSpriteRect(
 					int(pos_.x - size_.x * 1.5f),
@@ -2897,7 +2910,7 @@ void Player::Draw(const char* keys, const Resources& rs) {
 
 }
 
-void Player::ReturnSavePoint(Map map) {
+void Player::ReturnSavePoint(Map map){
 	pos_ = SaveData::savedPlayerPos_;
 
 	//プレイヤーの番地を再計算
