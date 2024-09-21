@@ -52,6 +52,10 @@ struct Vector2 final {
 
 		return result;
 	}
+
+	bool operator==(Vector2 other){
+		return (x == other.x && y == other.y);
+	}
 };
 using Vec2 = Vector2<float>;
 

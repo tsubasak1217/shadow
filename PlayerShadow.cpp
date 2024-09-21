@@ -133,6 +133,10 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 			prePos_ = pos_;
 			preIsAlive_ = isAlive_;
 			preIsBackToRespawnPos_ = isBackToRespawnPos_;
+			preCenterAddress_ = centerAddress_;
+
+			// 毎フレーム初期化
+			adjustPos_ = { 0.0f,0.0f };
 
 			//動いてないとき、待機時間タイマーを加算
 			//動いていないとき、動いていない時間タイマーを加算
@@ -406,10 +410,6 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 				if(boardingBlock_ >= 0) {
 					if(isJump_) {
 						boardingBlock_ = -1;
-					} else{
-						if(!isDrop_){
-							SaveManager::SetSaveOder(true);
-						}
 					}
 				}
 
@@ -434,12 +434,16 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 							pos_
 						);
 
+						float length = CheckLength(screen.GetPos(a, 1), screen.GetPos(a, 0));
+						boadingVecRatio_ /= length;
+
 						if(!isHitMapchipShadow_ && !preIsHitMapchipShadow_){
 							if(player.GetIsMoveBlock()) {
 
 								if(pos_.x >= screen.GetPos(boardingBlock_, 0).x - size_.x * 0.5f && pos_.x <= screen.GetPos(boardingBlock_, 1).x + size_.x * 0.5f){
 									pos_.x = screen.GetPos(a, 0).x +
-										Normalize(screen.GetPos(a, 1), screen.GetPos(a, 0)).x * preBoadingVecRatio_;
+										length * preBoadingVecRatio_;
+									//Normalize(screen.GetPos(a, 1), screen.GetPos(a, 0)).x * preBoadingVecRatio_;
 
 									if(!isJump_) {
 										pos_.y = screen.GetPos(a, 0).y - (size_.y * 0.5f - 1);
@@ -450,7 +454,8 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 								if(CheckLength({ 0.0f,0.0f }, { float(padDirection.x),float(padDirection.y) }) == 0.0f){
 									if(pos_.x >= screen.GetPos(boardingBlock_, 0).x - size_.x * 0.5f && pos_.x <= screen.GetPos(boardingBlock_, 1).x + size_.x * 0.5f){
 										pos_.x = screen.GetPos(a, 0).x +
-											Normalize(screen.GetPos(a, 1), screen.GetPos(a, 0)).x * preBoadingVecRatio_;
+											length * preBoadingVecRatio_;
+										//Normalize(screen.GetPos(a, 1), screen.GetPos(a, 0)).x * preBoadingVecRatio_;
 
 										if(!isJump_) {
 											pos_.y = screen.GetPos(a, 0).y - (size_.y * 0.5f - 1);
@@ -499,7 +504,6 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 				//前フレーム番地の保存
 				for(int i = 0; i < 4; i++) {
 					preAddress_[i] = address_[i];
-
 				}
 
 
@@ -537,7 +541,8 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 								screen.GetPos(boardingBlock_, 0), screen.GetPos(boardingBlock_, 1),
 								pos_
 							);
-
+							float length = CheckLength(screen.GetPos(boardingBlock_, 0), screen.GetPos(boardingBlock_, 1));
+							boadingVecRatio_ /= length;
 							break;
 
 						} else {
@@ -558,7 +563,8 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 								screen.GetPos(boardingBlock_, 0), screen.GetPos(boardingBlock_, 1),
 								pos_
 							);
-
+							float length = CheckLength(screen.GetPos(boardingBlock_, 0), screen.GetPos(boardingBlock_, 1));
+							boadingVecRatio_ /= length;
 							break;
 
 						} else {
@@ -579,7 +585,8 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 								screen.GetPos(boardingBlock_, 0), screen.GetPos(boardingBlock_, 1),
 								pos_
 							);
-
+							float length = CheckLength(screen.GetPos(boardingBlock_, 0), screen.GetPos(boardingBlock_, 1));
+							boadingVecRatio_ /= length;
 							break;
 
 						} else {
@@ -657,7 +664,25 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 									{
 										isHitMapchipShadow_ = true;
 										if(hitSurface2_[blockCount - 1] == Top){
-											preOnBlock_ = true;
+											if(shadow.GetMapChip()[centerAddress_.x + 1][centerAddress_.y] == 1){// 通常影
+
+												if(address_[LeftBottom] == address_[RightBottom]){
+													SaveManager::SetSaveOder(true);
+													preOnBlock_ = true;
+												}
+
+											} else if(shadow.GetMapChip()[centerAddress_.x + 1][centerAddress_.y] == 11) {// スイッチ影
+												if(map.GetIsPressSwitch()) {
+
+													if(address_[LeftBottom] == address_[RightBottom]){
+														SaveManager::SetSaveOder(true);
+														//preOnBlock_ = true;
+													}
+												}
+											} else{
+												preOnBlock_ = false;
+											}
+
 										}
 									}
 								}
@@ -738,6 +763,9 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 										screen.GetPos(boardingBlock_, 0), screen.GetPos(boardingBlock_, 1),
 										pos_
 									);
+
+									float length = CheckLength(screen.GetPos(boardingBlock_, 0), screen.GetPos(boardingBlock_, 1));
+									boadingVecRatio_ /= length;
 								}
 
 							} else if(screen.GetPos(i, 7).x <= screen.GetPos(i, 3).x && screen.GetPos(i, 6).x <= screen.GetPos(i, 2).x) {
@@ -754,6 +782,8 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 										screen.GetPos(boardingBlock_, 0), screen.GetPos(boardingBlock_, 1),
 										pos_
 									);
+									float length = CheckLength(screen.GetPos(boardingBlock_, 0), screen.GetPos(boardingBlock_, 1));
+									boadingVecRatio_ /= length;
 								}
 
 							} else if(screen.GetPos(i, 6).x >= screen.GetPos(i, 2).x && screen.GetPos(i, 7).x <= screen.GetPos(i, 3).x) {
@@ -770,6 +800,8 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 										screen.GetPos(boardingBlock_, 0), screen.GetPos(boardingBlock_, 1),
 										pos_
 									);
+									float length = CheckLength(screen.GetPos(boardingBlock_, 0), screen.GetPos(boardingBlock_, 1));
+									boadingVecRatio_ /= length;
 								}
 							}
 						}
@@ -913,17 +945,29 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 
 			if(centerAddress_.x + 1 < (int)shadow.GetMapChip().size()){
 
+
 				if(shadow.GetMapChip()[centerAddress_.x + 1][centerAddress_.y] == 1){// 通常影
-					SaveManager::SetSaveOder(true);
+
+					if(address_[LeftBottom] == address_[RightBottom]){
+						SaveManager::SetSaveOder(true);
+						preOnBlock_ = true;
+					}
 
 				} else if(shadow.GetMapChip()[centerAddress_.x + 1][centerAddress_.y] == 11) {// スイッチ影
 					if(map.GetIsPressSwitch()) {
-						SaveManager::SetSaveOder(true);
+
+						if(address_[LeftBottom] == address_[RightBottom]){
+							SaveManager::SetSaveOder(true);
+							//preOnBlock_ = true;
+						}
 					}
+				} else{
+					preOnBlock_ = false;
 				}
 
 			} else{
 				SaveManager::SetSaveOder(true);
+				preOnBlock_ = true;
 			}
 
 
@@ -961,15 +1005,21 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 			//}
 
 			if(boardingBlock_ >= 0){
-				if(player.GetIsMoveBlock() == false){
-					preOnBlock_ = true;
+				if(boadingVecRatio_ > 0.05f && boadingVecRatio_ < 0.95f){
+					if(player.GetIsMoveBlock() == false){
+						preOnBlock_ = true;
+					}
 				}
 			}
 
 
 			if(isDrop_){
 				preOnBlock_ = false;
-			}
+			}/* else{
+				if(address_[LeftBottom] == address_[RightBottom]){
+					preOnBlock_ = true;
+				}
+			}*/
 
 
 			if(preOnBlock_){
@@ -977,7 +1027,11 @@ void PlayerShadow::Update(char* keys, char* Prekeys, const Resources& rs, Change
 			}
 
 			if(SaveManager::GetSaveOder() == true){
+				//if(adjustPos_.x != 0.0f && adjustPos_.y != 0.0f){
 				SaveData::playerShadowPos_ = pos_ + Vec2(0.0f, -1.0f);
+				/*} else{
+					SaveData::playerShadowPos_ = adjustPos_;
+				}*/
 			}
 
 			break;

@@ -2659,6 +2659,21 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 				}
 			}
 
+			//if(PlayerShadow::GetIsPreAlive()){
+			//	if(map.isPressSwitch_){
+			//		if(!isStopMove_){
+			//			if(!isMoveBlock_){
+			//				if(!isSwappped_){
+			//					if(map.preIsPressSwitch_){
+			//						//SaveManager::SetSaveOder(true);
+			//					}
+			//				}
+			//			}
+			//		}
+			//	}
+			//}
+
+
 
 			if(!isStopMove_){
 				if(!isMoveBlock_){
@@ -2670,14 +2685,25 @@ void Player::Update(char* keys, const ChangeScene& cs, Map& map, bool isPause, c
 
 							if(PlayerShadow::preOnBlock_){
 								if(!(!map.isPressSwitch_ && map.preIsPressSwitch_)){
-									SaveData::map_ = map.GetMapChip();
-									SaveData::savedMap_ = SaveData::map_;
-									SaveData::playerPos_ = map.GetPos()[centerAddress_.y][centerAddress_.x];
+
+									if(map.isPressSwitch_){
+										if(map.preIsPressSwitch_){
+											SaveData::playerPos_ = pos_;
+											SaveData::map_ = map.GetMapChip();
+										} else{
+											//SaveData::playerPos_ = map.GetPos()[centerAddress_.y][centerAddress_.x];
+
+										}
+									} else{
+										SaveData::playerPos_ = map.GetPos()[centerAddress_.y][centerAddress_.x];
+										SaveData::map_ = map.GetMapChip();
+									}
 									SaveData::savedPlayerPos_ = SaveData::playerPos_;
-									SaveData::savedLightPos_ = SaveData::lightPos_;
+									SaveData::savedMap_ = SaveData::map_;
 								}
 							}
 
+							SaveData::savedLightPos_ = SaveData::lightPos_;
 							SaveData::savedPlayerShadowPos_ = SaveData::playerShadowPos_;
 
 						}

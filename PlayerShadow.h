@@ -13,6 +13,7 @@ class PlayerShadow {
 	Vector2<int>address_[4];
 	Vector2<int>preAddress_[4];
 	Vector2<int>centerAddress_;
+	Vector2<int>preCenterAddress_;
 	float speed_;
 
 	static bool isAlive_;
@@ -64,6 +65,8 @@ class PlayerShadow {
 	int killedSEHandle_;
 	int pushSEHandle_;
 	int goalTutorialAlpha_;
+
+	Vec2 adjustPos_;
 
 public:
 
